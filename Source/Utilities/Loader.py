@@ -99,6 +99,8 @@ class Loader:
         for column_name in header_line:
             if column_name[1:] in PEDIGREE_COLUMNS:
                 dictionary_order[column_name[1:]] = header_line.index(column_name)
+            else:
+                raise ValueError("The column name", column_name[1:], "is not recognized!")
 
         return dictionary_order
 
@@ -111,6 +113,11 @@ class Loader:
 
         header_line = [column for column in next(csv_reader) if column != '']
 
+        for column_name in header_line:
+            if column_name in PEDIGREE_COLUMNS:
+                dictionary_order[column_name] = header_line.index(column_name)
+            else:
+                raise ValueError("The column name", column_name, "is not recognized!")
 
         return dictionary_order
 
@@ -128,20 +135,22 @@ class Loader:
                 file_line = re.sub('\t+', '\t', file_line)
                 file_line = file_line.strip('\n').split('\t')
                 buffer_data.append(file_line)
-
-
-            for file_line in buffer_data:
-                ordered_line = list()
-
-                for column_name in PEDIGREE_COLUMNS:
-                    ordered_line.append(file_line[dictionary_order.get(column_name)])
-
-                file_data.append(ordered_line)
-
         elif self.file_suffix.lower() in Loader.COMMA_SEPARATED:
             dictionary_order = self.manage_comma_separated(file)
+            csv_reader = csv.reader(file)
+
+            for file_line in csv_reader:
+                buffer_data.append(file_line)
         else:
             raise ValueError("The format of the file is not recognized!")
+
+        for file_line in buffer_data:
+            ordered_line = list()
+
+            for column_name in PEDIGREE_COLUMNS:
+                ordered_line.append(file_line[dictionary_order.get(column_name)])
+
+            file_data.append(ordered_line)
 
         file.close()
         return file_data
