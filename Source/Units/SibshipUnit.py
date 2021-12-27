@@ -1,14 +1,10 @@
-try:
-    from .Individual import Individual
-    from .MatingUnit import MatingUnit
-except ImportError:
-    pass
+from .Individual import Individual
 
 
 class SibshipUnit:
     def __init__(self, pedigree_identifier, mating_unit_relation):
         assert isinstance(pedigree_identifier,  str)
-        assert isinstance(mating_unit_relation, MatingUnit)
+        #assert isinstance(mating_unit_relation, (MatingUnit, type(None)))
 
         self.__pedigree_identifier      =   pedigree_identifier
         self.__siblings_individuals     =   dict()
@@ -61,7 +57,7 @@ class SibshipUnit:
 
 
     def __eq__(self, sibship_unit):
-        assert isinstance(sibship_unit, SibshipUnit)
+        assert isinstance(sibship_unit, (SibshipUnit, type(None)))
         return self.__hash__() == sibship_unit.__hash__()
 
 
@@ -78,5 +74,5 @@ class SibshipUnit:
 
     def add_sibling_individual(self, sibling_individual):
         assert isinstance(sibling_individual, Individual)
-        key = "Child-" + len(self.siblings_individuals)
+        key = "Child-" + str(len(self.siblings_individuals) + 1)
         self.__siblings_individuals[key] = sibling_individual

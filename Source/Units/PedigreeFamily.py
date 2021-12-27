@@ -1,6 +1,6 @@
-from .Individual     import Individual
-from .MatingUnit     import MatingUnit
-from .SibshipUnit    import SibshipUnit
+from .Individual    import Individual
+from .MatingUnit    import MatingUnit
+from .SibshipUnit   import SibshipUnit
 
 
 class PedigreeFamily:
@@ -87,3 +87,39 @@ class PedigreeFamily:
         assert isinstance(sibship_unit, SibshipUnit)
         key = sibship_unit.__repr__
         self.__pedigree_sibship_units[key] = sibship_unit
+
+
+    def build_mating_units(self):
+        for individual in self.pedigree_individuals:
+            current_individual = self.pedigree_individuals[individual]
+            assert isinstance(current_individual, Individual)
+
+            if current_individual.individual_father != '0' and current_individual.individual_mother != '0':
+                father = self.pedigree_individuals[current_individual.individual_father]
+                mother = self.pedigree_individuals[current_individual.individual_mother]
+
+                current_mating_unit = MatingUnit(self.pedigree_identifier, father, mother, None)
+                current_sibship_unit = SibshipUnit(self.pedigree_identifier, current_mating_unit)
+                current_mating_unit = MatingUnit(self.pedigree_identifier, father, mother, current_sibship_unit)
+
+                self.pedigree_mating_units[str(current_mating_unit)]    = current_mating_unit
+                self.pedigree_sibship_units[str(current_sibship_unit)]  = current_sibship_unit
+
+                current_individual.set_mating_unit_relation(self.pedigree_mating_units[str(current_mating_unit)])
+                current_individual.set_sibship_unit_relation(self.pedigree_sibship_units[str(current_mating_unit.sibship_unit_relation)])
+
+
+    def build_sibship_units(self):
+        for sibship_unit in self.pedigree_sibship_units:
+            current_sibship_unit = self.pedigree_sibship_units[sibship_unit]
+            assert isinstance(current_sibship_unit, SibshipUnit)
+
+            for individual in self.pedigree_individuals:
+                current_individual = self.pedigree_individuals[individual]
+                assert isinstance(current_individual, Individual)
+
+                if current_individual.sibship_unit_relation != None:
+                    if current_individual.sibship_unit_relation == current_sibship_unit:
+                        current_sibship_unit.add_sibling_individual(current_individual)
+                        current_individual.set_sibship_unit_relation(current_sibship_unit)
+

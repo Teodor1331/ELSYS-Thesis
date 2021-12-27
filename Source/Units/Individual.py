@@ -1,10 +1,3 @@
-try:
-    from .MatingUnit     import MatingUnit
-    from .SibshipUnit    import SibshipUnit
-except ImportError:
-    pass
-
-
 class Individual:
     def __init__(self, individual_data):
         assert isinstance(individual_data, list)
@@ -138,7 +131,7 @@ class Individual:
 
 
     def __eq__(self, individual):
-        assert isinstance(individual, Individual)
+        assert isinstance(individual, (Individual, type(None)))
         return self.__hash__() == individual.__hash__()
 
 
@@ -160,10 +153,8 @@ class Individual:
 
 
     def set_mating_unit_relation(self, mating_unit_relation):
-        assert isinstance(mating_unit_relation, MatingUnit)
         self.__mating_unit_relation = mating_unit_relation
 
 
     def set_sibship_unit_relation(self, sibship_unit_relation):
-        assert isinstance(sibship_unit_relation, SibshipUnit)
         self.__sibship_unit_relation = sibship_unit_relation

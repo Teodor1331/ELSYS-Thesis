@@ -15,8 +15,10 @@ class Builder:
         assert isinstance(file_data, list)
 
         self.__file_data        =   file_data
-        self.__file_pedigrees   =   self.read_file_units()[0]
-        self.__file_individuals =   self.read_file_units()[1]
+        self.__file_pedigrees   =   self.build_file_units()[0]
+        self.__file_individuals =   self.build_file_units()[1]
+
+        self.build_inner_units()
 
 
     @property
@@ -55,7 +57,7 @@ class Builder:
         del self.__file_individuals
 
 
-    def read_file_units(self):
+    def build_file_units(self):
         file_pedigrees      = list()
         file_individuals    = list()
 
@@ -66,3 +68,18 @@ class Builder:
                 file_individuals.append(Individual(file_unit))
 
         return (file_pedigrees, file_individuals)
+
+
+    def build_inner_units(self):
+        for file_individual in self.file_individuals:
+            assert isinstance(file_individual, Individual)
+
+            for file_pedigree in self.file_pedigrees:
+                assert isinstance(file_pedigree, PedigreeFamily)
+                if file_individual.pedigree_identifier == file_pedigree.pedigree_identifier:
+                    file_pedigree.add_individual(file_individual)
+
+        for file_pedigree in self.file_pedigrees:
+            assert isinstance(file_pedigree, PedigreeFamily)
+            file_pedigree.build_mating_units()
+            file_pedigree.build_sibship_units()
