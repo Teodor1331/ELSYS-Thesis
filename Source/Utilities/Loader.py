@@ -5,7 +5,6 @@ from pathlib    import Path
 from io         import TextIOWrapper
 
 
-
 PEDIGREE_COLUMNS = {
     "pedigree_identifier"       :   0,
     "individual_identifier"     :   1,
@@ -21,6 +20,8 @@ class Loader:
     COMMA_SEPARATED =   ['.csv']
 
     def __init__(self, file_path):
+        assert isinstance(file_path, str)
+
         self.__file_path    =   file_path
         self.__file_name    =   Path(file_path).name
         self.__file_stem    =   Path(file_path).stem

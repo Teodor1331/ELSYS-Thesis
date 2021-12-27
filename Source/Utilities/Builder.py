@@ -1,8 +1,22 @@
+import sys
+
+sys.path.append('..')
+
+
+from Units.Individual       import Individual
+from Units.PedigreeFamily   import PedigreeFamily
+
+
+from Loader import Loader
+
+
 class Builder:
     def __init__(self, file_data):
+        assert isinstance(file_data, list)
+
         self.__file_data        =   file_data
-        self.__file_pedigrees   =   None
-        self.__file_individuals =   None
+        self.__file_pedigrees   =   self.read_file_units()[0]
+        self.__file_individuals =   self.read_file_units()[1]
 
 
     @property
@@ -39,3 +53,16 @@ class Builder:
         del self.__file_data
         del self.__file_pedigrees
         del self.__file_individuals
+
+
+    def read_file_units(self):
+        file_pedigrees      = list()
+        file_individuals    = list()
+
+        for file_unit in self.file_data:
+            if PedigreeFamily(file_unit[0]) not in file_pedigrees:
+                file_pedigrees.append(PedigreeFamily(file_unit[0]))
+            if Individual(file_unit) not in file_individuals:
+                file_individuals.append(Individual(file_unit))
+
+        return (file_pedigrees, file_individuals)
