@@ -36,6 +36,21 @@ class Builder:
         return self.__file_individuals
 
 
+    @file_data.setter
+    def file_data(self, file_data):
+        self.__file_data = file_data
+
+
+    @file_pedigrees.setter
+    def file_pedigrees(self, file_pedigrees):
+        self.__file_pedigrees = file_pedigrees
+
+
+    @file_individuals.setter
+    def file_individuals(self, file_individuals):
+        self.__file_individuals = file_individuals
+
+
     @file_data.deleter
     def file_data(self):
         del self.__file_data

@@ -40,6 +40,26 @@ class MatingUnit:
         return self.__generation_rank
 
 
+    @pedigree_identifier.setter
+    def pedigree_identifier(self, pedigree_identifier):
+        self.__pedigree_identifier = pedigree_identifier
+
+
+    @male_mate_individual.setter
+    def male_mate_individual(self, male_mate_individual):
+        self.__male_mate_individual = male_mate_individual
+
+
+    @female_mate_individual.setter
+    def female_mate_individual(self, female_mate_individual):
+        self.__female_mate_individual = female_mate_individual
+
+
+    @sibship_unit_relation.setter
+    def sibship_unit_relation(self, sibship_unit_relation):
+        self.__sibship_unit_relation = sibship_unit_relation
+
+
     @pedigree_identifier.deleter
     def pedigree_identifier(self):
         del self.__pedigree_identifier

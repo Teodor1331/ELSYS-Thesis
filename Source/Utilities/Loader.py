@@ -54,6 +54,31 @@ class Loader:
         return self.__file_data
 
 
+    @file_path.setter
+    def file_path(self, file_path):
+        self.__file_path = file_path
+
+
+    @file_name.setter
+    def file_name(self, file_name):
+        self.__file_name = file_name
+
+
+    @file_stem.setter
+    def file_stem(self, file_stem):
+        self.__file_stem = file_stem
+
+
+    @file_suffix.setter
+    def file_suffix(self, file_suffix):
+        self.__file_suffix = file_suffix
+
+
+    @file_data.setter
+    def file_data(self, file_data):
+        self.__file_data = file_data
+
+
     @file_path.deleter
     def file_path(self):
         del self.__file_path

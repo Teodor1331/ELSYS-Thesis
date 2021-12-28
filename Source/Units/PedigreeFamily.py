@@ -31,6 +31,26 @@ class PedigreeFamily:
         return self.__pedigree_sibship_units
 
 
+    @pedigree_identifier.setter
+    def pedigree_identifier(self, pedigree_identifier):
+        self.__pedigree_identifier = pedigree_identifier
+
+
+    @pedigree_individuals.setter
+    def pedigree_individuals(self, pedigree_individuals):
+        self.__pedigree_individuals = pedigree_individuals
+
+
+    @pedigree_mating_units.setter
+    def pedigree_mating_units(self, pedigree_mating_units):
+        self.__pedigree_mating_units = pedigree_mating_units
+
+
+    @pedigree_sibship_units.setter
+    def pedigree_sibship_units(self, pedigree_sibship_units):
+        self.__pedigree_sibship_units = pedigree_sibship_units
+
+
     @pedigree_identifier.deleter
     def pedigree_identifier(self):
         del self.__pedigree_identifier
@@ -157,7 +177,7 @@ class PedigreeFamily:
                 proband_mating_unit = current_mating_unit
 
 
-        return (proband, proband_generation_rank, proband_mating_unit, proband_mating_unit, proband_sibship_unit)
+        return [proband, proband_generation_rank, proband_mating_unit, proband_mating_unit, proband_sibship_unit]
 
 
     def build_generation_rank(self):

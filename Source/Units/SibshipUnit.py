@@ -32,6 +32,26 @@ class SibshipUnit:
         return self.__generation_rank
 
 
+    @pedigree_identifier.setter
+    def pedigree_identifier(self, pedigree_identifier):
+        self.__pedigree_identifier = pedigree_identifier
+
+
+    @siblings_individuals.setter
+    def siblings_individuals(self, siblings_individuals):
+        self.__siblings_individuals = siblings_individuals
+
+
+    @mating_unit_relation.setter
+    def mating_unit_relation(self, mating_unit_relation):
+        self.__mating_unit_relation = mating_unit_relation
+
+
+    @generation_rank.setter
+    def generation_rank(self, generation_rank):
+        self.__generation_rank = generation_rank
+
+
     @pedigree_identifier.deleter
     def pedigree_identifier(self):
         del self.__pedigree_identifier
