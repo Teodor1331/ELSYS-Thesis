@@ -123,3 +123,89 @@ class PedigreeFamily:
                         current_sibship_unit.add_sibling_individual(current_individual)
                         current_individual.set_sibship_unit_relation(current_sibship_unit)
 
+
+    def get_proband_data(self):
+        proband                     =   None
+        proband_generation_rank     =   None
+        proband_mating_unit         =   None
+        proband_sibship_unit        =   None
+
+
+        for individual in self.pedigree_individuals:
+            current_individual = self.pedigree_individuals[individual]
+            assert isinstance(current_individual, Individual)
+
+            if current_individual.individual_role == 'prb':
+                current_individual.set_generation_rank(0)
+                proband                 = current_individual
+                proband_generation_rank = current_individual.generation_rank
+
+
+        for sibship_unit in self.pedigree_sibship_units:
+            current_sibship_unit = self.pedigree_sibship_units[sibship_unit]
+            assert isinstance(current_sibship_unit, SibshipUnit)
+
+            if proband.sibship_unit_relation == current_sibship_unit:
+                proband_sibship_unit = current_sibship_unit
+
+
+        for mating_unit in self.pedigree_mating_units:
+            current_mating_unit = self.pedigree_mating_units[mating_unit]
+            assert isinstance(current_mating_unit, MatingUnit)
+
+            if proband.mating_unit_relation == current_mating_unit:
+                proband_mating_unit = current_mating_unit
+
+
+        return (proband, proband_generation_rank, proband_mating_unit, proband_mating_unit, proband_sibship_unit)
+
+
+    def build_generation_rank(self):
+        proband_data = self.get_proband_data()
+
+        assert isinstance(proband_data[0], Individual)
+        assert isinstance(proband_data[1], int)
+
+        for sibship_unit in self.pedigree_sibship_units:
+            current_sibship_unit = self.pedigree_sibship_units[sibship_unit]
+            assert isinstance(current_sibship_unit, SibshipUnit)
+
+            if proband_data[0].sibship_unit_relation == current_sibship_unit:
+                for i in range(len(current_sibship_unit.siblings_individuals)):
+                    sibling = current_sibship_unit.siblings_individuals['Child-' + str(i + 1)]
+                    assert isinstance(sibling, Individual)
+                    sibling.set_generation_rank(proband_data[1])
+                    current_sibship_unit.change_sibling_individual(sibling, i)
+
+        for mating_unit in self.pedigree_mating_units:
+            current_mating_unit = self.pedigree_mating_units[mating_unit]
+            assert isinstance(current_mating_unit, MatingUnit)
+
+            if proband_data[0].mating_unit_relation == current_mating_unit:
+                current_mating_unit.male_mate_individual.set_generation_rank(proband_data[1] - 1)
+                current_mating_unit.female_mate_individual.set_generation_rank(proband_data[1] - 1)
+
+
+        for mating_unit in self.pedigree_mating_units:
+            current_mating_unit = self.pedigree_mating_units[mating_unit]
+            assert isinstance(current_mating_unit, MatingUnit)
+
+            if  proband_data[0] == current_mating_unit.male_mate_individual or \
+                proband_data[0] == current_mating_unit.female_mate_individual:
+                assert isinstance(current_mating_unit.sibship_unit_relation, SibshipUnit)
+
+                for i in range(len(current_mating_unit.sibship_unit_relation.siblings_individuals)):
+                    sibling = current_mating_unit.sibship_unit_relation.siblings_individuals['Child-' + str(i + 1)]
+                    assert isinstance(sibling, Individual)
+                    sibling.set_generation_rank(proband_data[1] + 1)
+                    current_mating_unit.sibship_unit_relation.change_sibling_individual(sibling, i)
+
+
+        for mating_unit in self.pedigree_mating_units:
+            current_mating_unit = self.pedigree_mating_units[mating_unit]
+            assert isinstance(current_mating_unit, MatingUnit)
+
+            if proband_data[0] == current_mating_unit.male_mate_individual:
+                current_mating_unit.female_mate_individual.set_generation_rank(proband_data[1])
+            elif proband_data[0] == current_mating_unit.female_mate_individual:
+                current_mating_unit.male_mate_individual.set_generation_rank(proband_data[1])

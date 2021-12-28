@@ -83,3 +83,4 @@ class Builder:
             assert isinstance(file_pedigree, PedigreeFamily)
             file_pedigree.build_mating_units()
             file_pedigree.build_sibship_units()
+            file_pedigree.build_generation_rank()

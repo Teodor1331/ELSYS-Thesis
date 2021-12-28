@@ -76,3 +76,14 @@ class SibshipUnit:
         assert isinstance(sibling_individual, Individual)
         key = "Child-" + str(len(self.siblings_individuals) + 1)
         self.__siblings_individuals[key] = sibling_individual
+
+
+    def change_sibling_individual(self, sibling_individual, index_child):
+        assert isinstance(sibling_individual, Individual)
+        assert isinstance(index_child, int)
+        key = "Child-" + str(index_child + 1)
+        self.__siblings_individuals[key] = sibling_individual
+
+
+    def set_generation_rank(self, generation_rank):
+        self.__generation_rank = generation_rank

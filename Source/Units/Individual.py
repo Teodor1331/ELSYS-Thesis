@@ -158,3 +158,7 @@ class Individual:
 
     def set_sibship_unit_relation(self, sibship_unit_relation):
         self.__sibship_unit_relation = sibship_unit_relation
+
+
+    def set_generation_rank(self, generation_rank):
+        self.__generation_rank = generation_rank

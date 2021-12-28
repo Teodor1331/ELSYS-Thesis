@@ -85,3 +85,7 @@ class MatingUnit:
     def mating_string(self):
         return  str(self.male_mate_individual) + \
                 str(self.female_mate_individual)
+
+
+    def set_generation_rank(self, generation_rank):
+        self.__generation_rank = generation_rank

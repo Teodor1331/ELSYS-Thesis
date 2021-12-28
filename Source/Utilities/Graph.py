@@ -3,11 +3,13 @@ import networkx as nx
 
 class Graph:
     def __init__(self, pedigree_family):
-        self.__pedigree_family          =   pedigree_family
-        self.__vertices_individuals     =   set()
-        self.__vertices_mating_units    =   set()
-        self.__vertices_sibship_units   =   set()
-        self.__graph_instance           =   nx.Graph()
+        self.__pedigree_family              =   pedigree_family
+        self.__vertices_individuals         =   set()
+        self.__vertices_mating_units        =   set()
+        self.__vertices_sibship_units       =   set()
+        self.__vertices_pedigree_union      =   set()
+        self.__vertices_generation_ranks    =   set()
+        self.__graph_instance               =   nx.Graph()
 
 
     @property
@@ -28,6 +30,16 @@ class Graph:
     @property
     def vertices_sibship_units(self):
         return self.__vertices_sibship_units
+
+
+    @property
+    def vertices_pedigree_union(self):
+        return self.__vertices_pedigree_union
+
+
+    @property
+    def vertices_generation_ranks(self):
+        return self.__vertices_generation_ranks
 
 
     @property
@@ -55,6 +67,16 @@ class Graph:
         del self.__vertices_sibship_units
 
 
+    @vertices_pedigree_union.deleter
+    def vertices_pedigree_union(self):
+        del self.__vertices_pedigree_union
+
+
+    @vertices_generation_ranks.deleter
+    def vertices_generation_ranks(self):
+        del self.__vertices_generation_ranks
+
+
     @graph_instance.deleter
     def graph_instance(self):
         del self.__graph_instance
@@ -65,4 +87,6 @@ class Graph:
         del self.__vertices_individuals
         del self.__vertices_mating_units
         del self.__vertices_sibship_units
+        del self.__vertices_pedigree_union
+        del self.__vertices_generation_ranks
         del self.__graph_instance
