@@ -1,6 +1,6 @@
-from .Individual    import Individual
-from .MatingUnit    import MatingUnit
-from .SibshipUnit   import SibshipUnit
+from FamilyUnits import Individual
+from FamilyUnits import MatingUnit
+from FamilyUnits import SibshipUnit
 
 
 class PedigreeFamily:
@@ -159,6 +159,7 @@ class PedigreeFamily:
                 current_individual.set_generation_rank(0)
                 proband                 = current_individual
                 proband_generation_rank = current_individual.generation_rank
+                break
 
 
         for sibship_unit in self.pedigree_sibship_units:
@@ -177,7 +178,7 @@ class PedigreeFamily:
                 proband_mating_unit = current_mating_unit
 
 
-        return [proband, proband_generation_rank, proband_mating_unit, proband_mating_unit, proband_sibship_unit]
+        return [proband, proband_generation_rank, proband_mating_unit, proband_sibship_unit]
 
 
     def build_generation_rank(self):
@@ -185,6 +186,8 @@ class PedigreeFamily:
 
         assert isinstance(proband_data[0], Individual)
         assert isinstance(proband_data[1], int)
+
+        touched_individuals = []
 
         for sibship_unit in self.pedigree_sibship_units:
             current_sibship_unit = self.pedigree_sibship_units[sibship_unit]
@@ -195,6 +198,7 @@ class PedigreeFamily:
                     sibling = current_sibship_unit.siblings_individuals['Child-' + str(i + 1)]
                     assert isinstance(sibling, Individual)
                     sibling.set_generation_rank(proband_data[1])
+                    touched_individuals.append(sibling)
                     current_sibship_unit.change_sibling_individual(sibling, i)
 
         for mating_unit in self.pedigree_mating_units:
@@ -204,6 +208,7 @@ class PedigreeFamily:
             if proband_data[0].mating_unit_relation == current_mating_unit:
                 current_mating_unit.male_mate_individual.set_generation_rank(proband_data[1] - 1)
                 current_mating_unit.female_mate_individual.set_generation_rank(proband_data[1] - 1)
+                touched_individuals.append(sibling)
 
 
         for mating_unit in self.pedigree_mating_units:

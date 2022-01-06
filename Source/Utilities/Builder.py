@@ -3,8 +3,8 @@ import sys
 sys.path.append('..')
 
 
-from Units.Individual       import Individual
-from Units.PedigreeFamily   import PedigreeFamily
+from FamilyUnits    import Individual
+from PedigreeFamily import PedigreeFamily
 
 
 from Loader import Loader
