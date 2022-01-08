@@ -1,11 +1,11 @@
 #pedigree_identifier	#individual_identifier		#individual_father	#individual_mother	#individual_sex		#individual_role
-ped1			father				0			0			1			prb			2	1 2
-ped1			mother				0			0			2			null			1	1 1
-ped1			son1				father			mother			1			null			2	1 2
-ped1			son2				father			mother			1			null			1	1 1
-ped1			dau1				father			mother			2			null			2	1 2
-ped1			dau2				father			mother			2			null			1	1 1
-ped1			son3				father			dau1			1			null			1	1 1
-ped1			son4				father			dau2			1			null			1	1 1
-ped1			dau3				mother			son1			2			null			2	1 1
-ped1			dau4				mother			son2			2			null			2	1 1
+ped1			father				0			0			1			null
+ped1			mother				0			0			2			null
+ped1			son1				father			mother			1			prb
+ped1			son2				father			mother			1			null
+ped1			dau1				father			mother			2			null
+ped1			dau2				father			mother			2			null
+ped1			son3				father			dau1			1			null
+ped1			son4				father			dau2			1			null
+ped1			dau3				mother			son1			2			null
+ped1			dau4				mother			son2			2			null

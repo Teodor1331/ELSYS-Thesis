@@ -144,93 +144,106 @@ class PedigreeFamily:
                         current_individual.sibship_unit_relation = current_sibship_unit
 
 
-    def get_proband_data(self):
-        proband                     =   None
-        proband_generation_rank     =   None
-        proband_mating_unit         =   None
-        proband_sibship_unit        =   None
-
-
+    def get_proband(self):
         for individual in self.pedigree_individuals:
             current_individual = self.pedigree_individuals[individual]
             assert isinstance(current_individual, Individual)
 
             if current_individual.individual_role == 'prb':
                 current_individual.generation_rank = 0
-                proband                 = current_individual
-                proband_generation_rank = current_individual.generation_rank
-                break
+                return current_individual
+
+        return None
 
 
-        for sibship_unit in self.pedigree_sibship_units:
-            current_sibship_unit = self.pedigree_sibship_units[sibship_unit]
-            assert isinstance(current_sibship_unit, SibshipUnit)
+    def validate_propagated_rank(self):
+        for individual in self.__pedigree_individuals:
+            current_individual = self.__pedigree_individuals[individual]
+            assert isinstance(current_individual, Individual)
 
-            if proband.sibship_unit_relation == current_sibship_unit:
-                proband_sibship_unit = current_sibship_unit
+            if current_individual.generation_rank is None:
+                return False
 
-
-        for mating_unit in self.pedigree_mating_units:
-            current_mating_unit = self.pedigree_mating_units[mating_unit]
-            assert isinstance(current_mating_unit, MatingUnit)
-
-            if proband.mating_unit_relation == current_mating_unit:
-                proband_mating_unit = current_mating_unit
-
-
-        return [proband, proband_generation_rank, proband_mating_unit, proband_sibship_unit]
+        return True
 
 
     def build_generation_rank(self):
-        proband_data = self.get_proband_data()
+        touched_individuals = list()
+        touched_individuals.append(self.get_proband())
 
-        assert isinstance(proband_data[0], Individual)
-        assert isinstance(proband_data[1], int)
+        while self.validate_propagated_rank() is False:
+            next_touched_individuals = list()
+            last_touched_individuals = list()
 
-        touched_individuals = []
+            for individual in touched_individuals:
+                assert isinstance(individual, Individual)
 
-        for sibship_unit in self.pedigree_sibship_units:
-            current_sibship_unit = self.pedigree_sibship_units[sibship_unit]
-            assert isinstance(current_sibship_unit, SibshipUnit)
+                for sibship_unit in self.pedigree_sibship_units:
+                    current_sibship_unit = self.pedigree_sibship_units[sibship_unit]
+                    assert isinstance(current_sibship_unit, SibshipUnit)
 
-            if proband_data[0].sibship_unit_relation == current_sibship_unit:
-                for i in range(len(current_sibship_unit.siblings_individuals)):
-                    sibling = current_sibship_unit.siblings_individuals[i]
-                    assert isinstance(sibling, Individual)
-                    sibling.generation_rank = proband_data[1]
-                    touched_individuals.append(sibling)
-                    current_sibship_unit.change_sibling_individual(sibling, i)
+                    if individual.sibship_unit_relation == current_sibship_unit:
+                        for i in range(len(current_sibship_unit.siblings_individuals)):
+                            sibling = current_sibship_unit.siblings_individuals[i]
+                            assert isinstance(sibling, Individual)
 
-        for mating_unit in self.pedigree_mating_units:
-            current_mating_unit = self.pedigree_mating_units[mating_unit]
-            assert isinstance(current_mating_unit, MatingUnit)
+                            if individual != sibling and sibling.generation_rank is None:
+                                sibling.generation_rank = individual.generation_rank
+                                current_sibship_unit.change_sibling_individual(sibling, i)
+                                next_touched_individuals.append(sibling)
+                        break
 
-            if proband_data[0].mating_unit_relation == current_mating_unit:
-                current_mating_unit.male_mate_individual.generation_rank    = proband_data[1] - 1
-                current_mating_unit.female_mate_individual.generation_rank  = proband_data[1] - 1
-                touched_individuals.append(sibling)
+                for mating_unit in self.pedigree_mating_units:
+                    current_mating_unit = self.pedigree_mating_units[mating_unit]
+                    assert isinstance(current_mating_unit, MatingUnit)
 
-
-        for mating_unit in self.pedigree_mating_units:
-            current_mating_unit = self.pedigree_mating_units[mating_unit]
-            assert isinstance(current_mating_unit, MatingUnit)
-
-            if  proband_data[0] == current_mating_unit.male_mate_individual or \
-                proband_data[0] == current_mating_unit.female_mate_individual:
-                assert isinstance(current_mating_unit.sibship_unit_relation, SibshipUnit)
-
-                for i in range(len(current_mating_unit.sibship_unit_relation.siblings_individuals)):
-                    sibling = current_mating_unit.sibship_unit_relation.siblings_individuals[i]
-                    assert isinstance(sibling, Individual)
-                    sibling.generation_rank = proband_data[1] + 1
-                    current_mating_unit.sibship_unit_relation.change_sibling_individual(sibling, i)
+                    if individual.mating_unit_relation == current_mating_unit:
+                        if current_mating_unit.male_mate_individual.generation_rank is None:
+                            current_mating_unit.male_mate_individual.generation_rank    = individual.generation_rank - 1
+                            next_touched_individuals.append(current_mating_unit.male_mate_individual)
+                        
+                        if current_mating_unit.female_mate_individual.generation_rank is None:
+                            current_mating_unit.female_mate_individual.generation_rank  = individual.generation_rank - 1
+                            next_touched_individuals.append(current_mating_unit.female_mate_individual)
 
 
-        for mating_unit in self.pedigree_mating_units:
-            current_mating_unit = self.pedigree_mating_units[mating_unit]
-            assert isinstance(current_mating_unit, MatingUnit)
+                for mating_unit in self.pedigree_mating_units:
+                    current_mating_unit = self.pedigree_mating_units[mating_unit]
+                    assert isinstance(current_mating_unit, MatingUnit)
 
-            if proband_data[0] == current_mating_unit.male_mate_individual:
-                current_mating_unit.female_mate_individual.generation_rank = proband_data[1]
-            elif proband_data[0] == current_mating_unit.female_mate_individual:
-                current_mating_unit.male_mate_individual.generation_rank = proband_data[1]
+                    if  individual == current_mating_unit.male_mate_individual or \
+                        individual == current_mating_unit.female_mate_individual:
+                        assert isinstance(current_mating_unit.sibship_unit_relation, SibshipUnit)
+
+                        for i in range(len(current_mating_unit.sibship_unit_relation.siblings_individuals)):
+                            sibling = current_mating_unit.sibship_unit_relation.siblings_individuals[i]
+                            assert isinstance(sibling, Individual)
+
+                            if sibling.generation_rank is None:
+                                sibling.generation_rank = individual.generation_rank + 1
+                                current_mating_unit.sibship_unit_relation.change_sibling_individual(sibling, i)
+                                next_touched_individuals.append(sibling)
+
+                for mating_unit in self.pedigree_mating_units:
+                    current_mating_unit = self.pedigree_mating_units[mating_unit]
+                    assert isinstance(current_mating_unit, MatingUnit)
+
+                    if  individual == current_mating_unit.male_mate_individual and \
+                        current_mating_unit.female_mate_individual.generation_rank is None:
+                        current_mating_unit.female_mate_individual.generation_rank = individual.generation_rank
+                        next_touched_individuals.append(current_mating_unit.female_mate_individual)
+                    elif individual == current_mating_unit.female_mate_individual and \
+                        current_mating_unit.male_mate_individual.generation_rank is None:
+                        current_mating_unit.male_mate_individual.generation_rank = individual.generation_rank
+                        next_touched_individuals.append(current_mating_unit.male_mate_individual)
+
+                print("Removed Individual: " + str(individual))
+                last_touched_individuals.append(individual)
+                print("The current individuals list is: " + str(touched_individuals))
+                print("The next individuals list is: " + str(next_touched_individuals))
+
+
+            touched_individuals = next_touched_individuals
+
+        print(touched_individuals)
+        print(self.validate_propagated_rank())
