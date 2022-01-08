@@ -101,16 +101,19 @@ class Individual:
 
     @mating_unit_relation.setter
     def mating_unit_relation(self, mating_unit_relation):
+        assert isinstance(mating_unit_relation, MatingUnit)
         self.__mating_unit_relation = mating_unit_relation
 
 
     @sibship_unit_relation.setter
     def sibship_unit_relation(self, sibship_unit_relation):
+        assert isinstance(sibship_unit_relation, SibshipUnit)
         self.__sibship_unit_relation = sibship_unit_relation
 
 
     @generation_rank.setter
     def generation_rank(self, generation_rank):
+        assert isinstance(generation_rank, int)
         self.__generation_rank = generation_rank
 
 
@@ -191,20 +194,6 @@ class Individual:
         del self.__generation_rank
 
 
-    def set_mating_unit_relation(self, mating_unit_relation):
-        assert isinstance(mating_unit_relation, MatingUnit)
-        self.__mating_unit_relation = mating_unit_relation
-
-
-    def set_sibship_unit_relation(self, sibship_unit_relation):
-        assert isinstance(sibship_unit_relation, SibshipUnit)
-        self.__sibship_unit_relation = sibship_unit_relation
-
-
-    def set_generation_rank(self, generation_rank):
-        self.__generation_rank = generation_rank
-
-
 class MatingUnit:
     def __init__(self, pedigree_identifier, male_mate_individual, female_mate_individual, sibship_unit_relation):
         assert isinstance(pedigree_identifier,      str)
@@ -261,7 +250,13 @@ class MatingUnit:
 
     @sibship_unit_relation.setter
     def sibship_unit_relation(self, sibship_unit_relation):
+        assert isinstance(sibship_unit_relation, SibshipUnit)
         self.__sibship_unit_relation = sibship_unit_relation
+
+
+    @generation_rank.setter
+    def generation_rank(self, generation_rank):
+        self.__generation_rank = generation_rank
 
 
     @pedigree_identifier.deleter
@@ -282,6 +277,11 @@ class MatingUnit:
     @sibship_unit_relation.deleter
     def sibship_unit_relation(self):
         del self.__sibship_unit_relation
+
+
+    @generation_rank.deleter
+    def generation_rank(self):
+        del self.__generation_rank
 
 
     def __hash__(self):
@@ -311,17 +311,13 @@ class MatingUnit:
                 str(self.female_mate_individual)
 
 
-    def set_generation_rank(self, generation_rank):
-        self.__generation_rank = generation_rank
-
-
 class SibshipUnit:
     def __init__(self, pedigree_identifier, mating_unit_relation):
         assert isinstance(pedigree_identifier,  str)
         assert isinstance(mating_unit_relation, (MatingUnit, type(None)))
 
         self.__pedigree_identifier      =   pedigree_identifier
-        self.__siblings_individuals     =   dict()
+        self.__siblings_individuals     =   list()
         self.__mating_unit_relation     =   mating_unit_relation
         self.__generation_rank          =   None
 
@@ -363,6 +359,7 @@ class SibshipUnit:
 
     @generation_rank.setter
     def generation_rank(self, generation_rank):
+        assert isinstance(generation_rank, int)
         self.__generation_rank = generation_rank
 
 
@@ -408,16 +405,10 @@ class SibshipUnit:
 
     def add_sibling_individual(self, sibling_individual):
         assert isinstance(sibling_individual, Individual)
-        key = "Child-" + str(len(self.siblings_individuals) + 1)
-        self.__siblings_individuals[key] = sibling_individual
+        self.__siblings_individuals.append(sibling_individual)
 
 
     def change_sibling_individual(self, sibling_individual, index_child):
         assert isinstance(sibling_individual, Individual)
         assert isinstance(index_child, int)
-        key = "Child-" + str(index_child + 1)
-        self.__siblings_individuals[key] = sibling_individual
-
-
-    def set_generation_rank(self, generation_rank):
-        self.__generation_rank = generation_rank
+        self.__siblings_individuals[index_child] = sibling_individual
