@@ -247,3 +247,60 @@ class PedigreeFamily:
 
         print(touched_individuals)
         print(self.validate_propagated_rank())
+        self.transform_generation_rank()
+
+        for mating_unit in self.pedigree_mating_units:
+            current_mating_unit = self.pedigree_mating_units[mating_unit]
+            assert isinstance(current_mating_unit, MatingUnit)
+
+            if  current_mating_unit.male_mate_individual.generation_rank == \
+                current_mating_unit.female_mate_individual.generation_rank:
+                current_mating_unit.generation_rank = current_mating_unit.male_mate_individual.generation_rank
+
+
+        for sibship_unit in self.pedigree_sibship_units:
+            current_sibship_unit = self.pedigree_sibship_units[sibship_unit]
+            assert isinstance(current_sibship_unit, SibshipUnit)
+            sibling = current_sibship_unit.siblings_individuals[0]
+            assert isinstance(sibling, Individual)
+            current_sibship_unit.generation_rank = sibling.generation_rank
+
+        
+        self.show_pedigree_individuals()
+
+
+
+    def transform_generation_rank(self):
+        generation_ranks = list()
+
+        for individual in self.pedigree_individuals:
+            current_individual = self.pedigree_individuals[individual]
+            assert isinstance(current_individual, Individual)
+            generation_ranks.append(current_individual.generation_rank)
+
+        difference_rank = max(generation_ranks) - min(generation_ranks)
+
+        for individual in self.pedigree_individuals:
+            current_individual = self.pedigree_individuals[individual]
+            assert isinstance(current_individual, Individual)
+            current_individual.generation_rank = current_individual.generation_rank + difference_rank
+
+
+    def show_pedigree_individuals(self):
+        for individual in self.pedigree_individuals:
+            current_individual = self.pedigree_individuals[individual]
+            assert isinstance(current_individual, Individual)
+            print(current_individual, current_individual.generation_rank)
+
+
+        for mating_unit in self.pedigree_mating_units:
+            current_mating_unit = self.pedigree_mating_units[mating_unit]
+            assert isinstance(current_mating_unit, MatingUnit)
+            print(current_mating_unit, current_mating_unit.generation_rank)
+
+
+        for sibship_unit in self.pedigree_sibship_units:
+            current_sibship_unit = self.pedigree_sibship_units[sibship_unit]
+            assert isinstance(current_sibship_unit, SibshipUnit)
+            print(current_sibship_unit, current_sibship_unit.generation_rank)
+
