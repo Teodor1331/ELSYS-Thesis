@@ -318,6 +318,7 @@ class SibshipUnit:
 
         self.__pedigree_identifier      =   pedigree_identifier
         self.__siblings_individuals     =   list()
+        self.__siblings_extended        =   list()
         self.__mating_unit_relation     =   mating_unit_relation
         self.__generation_rank          =   None
 
@@ -330,6 +331,11 @@ class SibshipUnit:
     @property
     def siblings_individuals(self):
         return self.__siblings_individuals
+
+
+    @property
+    def siblings_extended(self):
+        return self.__siblings_extended
 
 
     @property
@@ -352,6 +358,11 @@ class SibshipUnit:
         self.__siblings_individuals = siblings_individuals
 
 
+    @siblings_extended.setter
+    def siblings_extended(self, siblings_extended):
+        self.__siblings_extended = siblings_extended
+
+
     @mating_unit_relation.setter
     def mating_unit_relation(self, mating_unit_relation):
         self.__mating_unit_relation = mating_unit_relation
@@ -371,6 +382,11 @@ class SibshipUnit:
     @siblings_individuals.deleter
     def siblings_individuals(self):
         del self.__siblings_individuals
+
+
+    @siblings_extended.deleter
+    def siblings_extended(self):
+        del self.__siblings_extended
 
 
     @mating_unit_relation.deleter
@@ -399,6 +415,7 @@ class SibshipUnit:
     def __del__(self):
         del self.__pedigree_identifier
         del self.__siblings_individuals
+        del self.__siblings_extended
         del self.__mating_unit_relation
         del self.__generation_rank
 
