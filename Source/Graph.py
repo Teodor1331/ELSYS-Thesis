@@ -7,6 +7,36 @@ from FamilyUnits    import SibshipUnit
 from PedigreeFamily import PedigreeFamily
 
 
+class Interval():
+    def __init__(self, left_element, right_element):
+        self.__left_element     =   left_element
+        self.__right_element    =   right_element
+
+
+    @property
+    def left_element(self):
+        return self.__left_element
+
+
+    @property
+    def right_element(self):
+        return self.__right_element
+
+
+    def __del__(self):
+        del self.__left_element
+        del self.__right_element
+
+
+    def find_intersection(self, interval):
+        assert isinstance(interval, Interval)
+
+        return Interval(
+            max(self.left_element, interval.left_element),
+            min(self.right_element, interval.right_element)
+        )
+
+
 class Graph:
     def __init__(self, pedigree_family):
         assert isinstance(pedigree_family, PedigreeFamily)

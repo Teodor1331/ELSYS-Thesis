@@ -12,6 +12,7 @@ class Individual:
         self.__mating_unit_relation     =   None
         self.__sibship_unit_relation    =   None
         self.__generation_rank          =   None
+        self.__number_matings           =   0
 
 
     @property
@@ -62,6 +63,11 @@ class Individual:
     @property
     def generation_rank(self):
         return self.__generation_rank
+
+
+    @property
+    def number_matings(self):
+        return self.__number_matings
 
 
     @pedigree_identifier.setter
@@ -117,6 +123,11 @@ class Individual:
         self.__generation_rank = generation_rank
 
 
+    @number_matings.setter
+    def number_matings(self, number_matings):
+        self.__number_matings = number_matings
+
+
     @pedigree_identifier.deleter
     def pedigree_identifier(self):
         del self.__pedigree_identifier
@@ -167,6 +178,11 @@ class Individual:
         del self.__generation_rank
 
 
+    @number_matings.deleter
+    def number_matings(self):
+        del self.__number_matings
+
+
     def __hash__(self):
         return  hash(self.pedigree_identifier) + \
                 hash(self.individual_identifier)
@@ -192,6 +208,7 @@ class Individual:
         del self.__mating_unit_relation
         del self.__sibship_unit_relation
         del self.__generation_rank
+        del self.__number_matings
 
 
 class MatingUnit:

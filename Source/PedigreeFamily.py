@@ -128,6 +128,18 @@ class PedigreeFamily:
                 current_individual.mating_unit_relation     = self.pedigree_mating_units[str(current_mating_unit)]
                 current_individual.sibship_unit_relation    = self.pedigree_sibship_units[str(current_mating_unit.sibship_unit_relation)]
 
+        for individual in self.pedigree_individuals:
+            current_individual = self.pedigree_individuals[individual]
+            assert isinstance(current_individual, Individual)
+
+            for mating_unit in self.pedigree_mating_units:
+                current_mating_unit = self.pedigree_mating_units[mating_unit]
+                assert isinstance(current_mating_unit, MatingUnit)
+
+                if  current_individual == current_mating_unit.male_mate_individual or \
+                    current_individual == current_mating_unit.female_mate_individual:
+                    current_individual.number_matings += 1
+
 
     def build_sibship_units(self):
         for sibship_unit in self.pedigree_sibship_units:
