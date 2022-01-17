@@ -7,8 +7,8 @@ class Individual:
         self.__individual_father        =   individual_data[2]
         self.__individual_mother        =   individual_data[3]
         self.__individual_sex           =   individual_data[4]
-        self.__individual_role          =   individual_data[5]
-        self.__individual_statuses      =   list()
+        self.__individual_status        =   individual_data[5]
+        self.__individual_role          =   individual_data[6]
         self.__mating_unit_relation     =   None
         self.__sibship_unit_relation    =   None
         self.__generation_rank          =   None
@@ -40,13 +40,13 @@ class Individual:
 
 
     @property
-    def individual_role(self):
-        return self.__individual_role
+    def individual_status(self):
+        return self.__individual_status
 
 
     @property
-    def individual_statuses(self):
-        return self.__individual_statuses
+    def individual_role(self):
+        return self.__individual_role
 
 
     @property
@@ -89,14 +89,14 @@ class Individual:
         self.__individual_sex = individual_sex
 
 
+    @individual_status.setter
+    def individual_status(self, individual_status):
+        self.__individual_status = individual_status
+
+
     @individual_role.setter
     def individual_role(self, individual_role):
         self.__individual_role = individual_role
-
-
-    @individual_statuses.setter
-    def individual_statuses(self, individual_statuses):
-        self.__individual_statuses = individual_statuses
 
 
     @mating_unit_relation.setter
@@ -142,14 +142,14 @@ class Individual:
         del self.__individual_sex
 
 
+    @individual_status.deleter
+    def individual_status(self):
+        del self.__individual_status
+
+
     @individual_role.deleter
     def individual_role(self):
         del self.__individual_role
-
-
-    @individual_statuses.deleter
-    def individual_statuses(self):
-        del self.__individual_statuses
 
 
     @mating_unit_relation.deleter
@@ -178,7 +178,7 @@ class Individual:
 
 
     def __repr__(self):
-        return self.individual_identifier + str(self.generation_rank)
+        return self.individual_identifier
 
 
     def __del__(self):
@@ -187,8 +187,8 @@ class Individual:
         del self.__individual_father
         del self.__individual_mother
         del self.__individual_sex
+        del self.__individual_status
         del self.__individual_role
-        del self.__individual_statuses
         del self.__mating_unit_relation
         del self.__sibship_unit_relation
         del self.__generation_rank
@@ -295,7 +295,7 @@ class MatingUnit:
 
 
     def __repr__(self):
-        return "MU-" + self.mating_string()
+        return "MU" + self.mating_string()
 
 
     def __del__(self):
@@ -307,8 +307,8 @@ class MatingUnit:
 
 
     def mating_string(self):
-        return  str(self.male_mate_individual) + \
-                str(self.female_mate_individual)
+        return  '(' + str(self.male_mate_individual) + \
+                ', ' + str(self.female_mate_individual) + ')'
 
 
 class SibshipUnit:
@@ -409,7 +409,7 @@ class SibshipUnit:
 
 
     def __repr__(self):
-        return "SU-" + self.mating_unit_relation.mating_string()
+        return "SU" + self.mating_unit_relation.mating_string()
 
 
     def __del__(self):
@@ -423,6 +423,11 @@ class SibshipUnit:
     def add_sibling_individual(self, sibling_individual):
         assert isinstance(sibling_individual, Individual)
         self.__siblings_individuals.append(sibling_individual)
+
+
+    def add_sibling_individual_mate(self, sibling_individual_mate):
+        assert isinstance(sibling_individual_mate, Individual)
+        self.__siblings_extended.append(sibling_individual_mate)
 
 
     def change_sibling_individual(self, sibling_individual, index_child):

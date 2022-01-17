@@ -242,7 +242,6 @@ class PedigreeFamily:
                 print("The current individuals list is: " + str(touched_individuals))
                 print("The next individuals list is: " + str(next_touched_individuals))
 
-
             touched_individuals = next_touched_individuals
 
         print(touched_individuals)
@@ -265,10 +264,6 @@ class PedigreeFamily:
             assert isinstance(sibling, Individual)
             current_sibship_unit.generation_rank = sibling.generation_rank
 
-        
-        self.show_pedigree_individuals()
-
-
 
     def transform_generation_rank(self):
         generation_ranks = list()
@@ -286,21 +281,45 @@ class PedigreeFamily:
             current_individual.generation_rank = current_individual.generation_rank + difference_rank
 
 
-    def show_pedigree_individuals(self):
-        for individual in self.pedigree_individuals:
-            current_individual = self.pedigree_individuals[individual]
-            assert isinstance(current_individual, Individual)
-            print(current_individual, current_individual.generation_rank)
+    def build_extended_sibship_units(self):
+        for key_sibship in self.pedigree_sibship_units:
+            sibship_unit = self.pedigree_sibship_units[key_sibship]
+            assert isinstance(sibship_unit, SibshipUnit)
+
+            for sibling in sibship_unit.siblings_individuals:
+                for key_mating in self.pedigree_mating_units:
+                    mating_unit = self.pedigree_mating_units[key_mating]
+                    assert isinstance(mating_unit, MatingUnit)
+
+                    if  sibling == mating_unit.male_mate_individual:
+                        condition1 = mating_unit.female_mate_individual.individual_father == '0'
+                        condition2 = mating_unit.female_mate_individual.individual_mother == '0'
+
+                        if condition1 and condition2:
+                            sibship_unit.add_sibling_individual_mate(mating_unit.female_mate_individual)
+                    
+                    if  sibling == mating_unit.female_mate_individual:
+                        condition1 = mating_unit.male_mate_individual.individual_father == '0'
+                        condition2 = mating_unit.male_mate_individual.individual_mother == '0'
+
+                        if condition1 and condition2:
+                            sibship_unit.add_sibling_individual_mate(mating_unit.male_mate_individual)
 
 
-        for mating_unit in self.pedigree_mating_units:
-            current_mating_unit = self.pedigree_mating_units[mating_unit]
-            assert isinstance(current_mating_unit, MatingUnit)
-            print(current_mating_unit, current_mating_unit.generation_rank)
+    def print_pedigree_family_data(self):
+        print("Pedigree Family:", self.pedigree_identifier)
 
+        for key in self.pedigree_individuals:
+            individual = self.pedigree_individuals[key]
+            assert isinstance(individual, Individual)
+            print("Individual:", individual, individual.generation_rank)
 
-        for sibship_unit in self.pedigree_sibship_units:
-            current_sibship_unit = self.pedigree_sibship_units[sibship_unit]
-            assert isinstance(current_sibship_unit, SibshipUnit)
-            print(current_sibship_unit, current_sibship_unit.generation_rank)
+        for key in self.pedigree_mating_units:
+            mating_unit = self.pedigree_mating_units[key]
+            assert isinstance(mating_unit, MatingUnit)
+            print("Mating Unit:", mating_unit, mating_unit.generation_rank)
 
+        for key in self.pedigree_sibship_units:
+            sibship_unit = self.pedigree_sibship_units[key]
+            assert isinstance(sibship_unit, SibshipUnit)
+            print("Sibship Unit:", sibship_unit, sibship_unit.generation_rank)

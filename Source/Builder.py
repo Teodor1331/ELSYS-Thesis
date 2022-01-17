@@ -96,3 +96,4 @@ class Builder:
             file_pedigree.build_mating_units()
             file_pedigree.build_sibship_units()
             file_pedigree.build_generation_rank()
+            file_pedigree.build_extended_sibship_units()

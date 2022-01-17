@@ -1,13 +1,13 @@
-#pedigree_identifier	#individual_identifier		#individual_father	#individual_mother	#individual_sex		#individual_role
-ped1			father				0			0			1			null
-ped1			mother				0			0			2			null
-ped1			son1				father			mother			1			prb
-ped1			son2				father			mother			1			null
-ped1			dau1				father			mother			2			null
-ped1			dau2				father			mother			2			null
-ped1            	wife                		0           		0           		2           		null
-ped1            	kiddo               		son1        		wife        		1           		null
-ped1            	father-hus          		0           		0           		1           		null
-ped1            	mother-hus          		0           		0           		2           		null
-ped1            	husband             		father-hus  		mother-hus  		1           		null
-ped1            	kiddo2              		husband     		wife        		2           		null
+#pedigree_identifier	#individual_identifier		#individual_father	#individual_mother	#individual_sex		#individual_status	#individual_role
+ped1			father				0			0			1			1			null
+ped1			mother				0			0			2			1			null
+ped1			son1				father			mother			1			1			prb
+ped1			son2				father			mother			1			1			null
+ped1			dau1				father			mother			2			1			null
+ped1			dau2				father			mother			2			1			null
+ped1            	wife                		0           		0           		2           		1			null
+ped1            	kiddo               		son1        		wife        		1           		1			null
+ped1            	father-hus          		0           		0           		1           		1			null
+ped1            	mother-hus          		0           		0           		2           		1			null
+ped1            	husband             		father-hus  		mother-hus  		1           		1			null
+ped1            	kiddo2              		husband     		wife        		2           		1			null

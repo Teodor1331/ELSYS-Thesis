@@ -1,10 +1,18 @@
 import networkx as nx
 
 
+from FamilyUnits    import Individual
+from FamilyUnits    import MatingUnit
+from FamilyUnits    import SibshipUnit
+from PedigreeFamily import PedigreeFamily
+
+
 class Graph:
     def __init__(self, pedigree_family):
+        assert isinstance(pedigree_family, PedigreeFamily)
+        
         self.__pedigree_family              =   pedigree_family
-        self.__vertices_individuals         =   set()
+        self.__vertices_individuals         =   self.build_vertices_individuals()
         self.__vertices_mating_units        =   set()
         self.__vertices_sibship_units       =   set()
         self.__vertices_pedigree_union      =   set()
@@ -45,6 +53,41 @@ class Graph:
     @property
     def graph_instance(self):
         return self.__graph_instance
+
+
+    @pedigree_family.setter
+    def pedigree_family(self, pedigree_family):
+        self.__pedigree_family = pedigree_family
+
+
+    @vertices_individuals.setter
+    def vertices_individuals(self, vertices_individuals):
+        self.__vertices_individuals = vertices_individuals
+
+
+    @vertices_mating_units.setter
+    def vertices_mating_units(self, vertices_mating_units):
+        self.__vertices_mating_units = vertices_mating_units
+
+
+    @vertices_sibship_units.setter
+    def vertices_sibship_units(self, vertices_sibship_units):
+        self.__vertices_sibship_units = vertices_sibship_units
+
+
+    @vertices_pedigree_union.setter
+    def vertices_pedigree_union(self, vertices_pedigree_union):
+        self.__vertices_pedigree_union = vertices_pedigree_union
+
+
+    @vertices_generation_ranks.setter
+    def vertices_generation_ranks(self, vertices_generation_ranks):
+        self.__vertices_generation_ranks = vertices_generation_ranks
+
+
+    @graph_instance.setter
+    def graph_instance(self, graph_instance):
+        self.__graph_instance = graph_instance
 
 
     @pedigree_family.deleter
@@ -90,3 +133,14 @@ class Graph:
         del self.__vertices_pedigree_union
         del self.__vertices_generation_ranks
         del self.__graph_instance
+
+
+    def build_vertices_individuals(self):
+        vertices_individuals = set()
+
+        for key in self.pedigree_family.pedigree_individuals:
+            individual = self.pedigree_family.pedigree_individuals[key]
+            assert isinstance(individual, Individual)
+            vertices_individuals.add(individual)
+
+        return vertices_individuals

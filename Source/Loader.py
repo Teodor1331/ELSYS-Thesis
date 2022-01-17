@@ -6,12 +6,13 @@ from io         import TextIOWrapper
 
 
 PEDIGREE_COLUMNS = {
-    "pedigree_identifier"       :   0,
-    "individual_identifier"     :   1,
-    "individual_father"         :   2,
-    "individual_mother"         :   3,
-    "individual_sex"            :   4,
-    "individual_role"           :   5,
+    'pedigree_identifier'       :   0,
+    'individual_identifier'     :   1,
+    'individual_father'         :   2,
+    'individual_mother'         :   3,
+    'individual_sex'            :   4,
+    'individual_status'         :   5,
+    'individual_role'           :   6,
 }
 
 
