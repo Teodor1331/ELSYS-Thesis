@@ -13,9 +13,9 @@ class Graph:
         
         self.__pedigree_family              =   pedigree_family
         self.__vertices_individuals         =   self.build_vertices_individuals()
-        self.__vertices_mating_units        =   set()
-        self.__vertices_sibship_units       =   set()
-        self.__vertices_pedigree_union      =   set()
+        self.__vertices_mating_units        =   self.build_vertices_mating_units()
+        self.__vertices_sibship_units       =   self.build_vertices_sibship_units()
+        self.__vertices_pedigree_union      =   self.build_vertices_pedigree_union()
         self.__vertices_generation_ranks    =   set()
         self.__graph_instance               =   nx.Graph()
 
@@ -144,3 +144,33 @@ class Graph:
             vertices_individuals.add(individual)
 
         return vertices_individuals
+
+
+    def build_vertices_mating_units(self):
+        vertices_mating_units = set()
+
+        for key in self.pedigree_family.pedigree_mating_units:
+            mating_unit = self.pedigree_family.pedigree_mating_units[key]
+            assert isinstance(mating_unit, MatingUnit)
+            vertices_mating_units.add(mating_unit)
+
+        return vertices_mating_units
+
+
+    def build_vertices_sibship_units(self):
+        vertices_sibship_units = set()
+
+        for key in self.pedigree_family.pedigree_sibship_units:
+            sibship_unit = self.pedigree_family.pedigree_sibship_units[key]
+            assert isinstance(sibship_unit, SibshipUnit)
+            vertices_sibship_units.add(sibship_unit)
+
+        return vertices_sibship_units
+
+
+    def build_vertices_pedigree_union(self):
+        vertices_pedigree_union = set()
+        vertices_pedigree_union.union(self.vertices_individuals)
+        vertices_pedigree_union.union(self.vertices_mating_units)
+        vertices_pedigree_union.union(self.vertices_sibship_units)
+        return vertices_pedigree_union
