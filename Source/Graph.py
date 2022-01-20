@@ -1,4 +1,5 @@
 import networkx as nx
+import dynetworkx as dnx
 
 
 from FamilyUnits    import Individual
@@ -31,6 +32,12 @@ class Interval():
     def find_intersection(self, interval):
         assert isinstance(interval, Interval)
 
+        condition1 = self.right_element < interval.left_element
+        condition2 = self.left_element > interval.right_element
+
+        if condition1 or condition2:
+            return None
+
         return Interval(
             max(self.left_element, interval.left_element),
             min(self.right_element, interval.right_element)
@@ -47,7 +54,7 @@ class Graph:
         self.__vertices_sibship_units       =   self.build_vertices_sibship_units()
         self.__vertices_pedigree_union      =   self.build_vertices_pedigree_union()
         self.__vertices_generation_ranks    =   set()
-        self.__graph_instance               =   nx.Graph()
+        self.__graph_instance               =   self.build_pedigree_graph()
 
 
     @property
@@ -166,41 +173,97 @@ class Graph:
 
 
     def build_vertices_individuals(self):
-        vertices_individuals = set()
+        vertices_individuals = list()
 
         for key in self.pedigree_family.pedigree_individuals:
             individual = self.pedigree_family.pedigree_individuals[key]
             assert isinstance(individual, Individual)
-            vertices_individuals.add(individual)
+            vertices_individuals.append(individual)
 
         return vertices_individuals
 
 
     def build_vertices_mating_units(self):
-        vertices_mating_units = set()
+        vertices_mating_units = list()
 
         for key in self.pedigree_family.pedigree_mating_units:
             mating_unit = self.pedigree_family.pedigree_mating_units[key]
             assert isinstance(mating_unit, MatingUnit)
-            vertices_mating_units.add(mating_unit)
+            vertices_mating_units.append(mating_unit)
 
         return vertices_mating_units
 
 
     def build_vertices_sibship_units(self):
-        vertices_sibship_units = set()
+        vertices_sibship_units = list()
 
         for key in self.pedigree_family.pedigree_sibship_units:
             sibship_unit = self.pedigree_family.pedigree_sibship_units[key]
             assert isinstance(sibship_unit, SibshipUnit)
-            vertices_sibship_units.add(sibship_unit)
+            vertices_sibship_units.append(sibship_unit)
 
         return vertices_sibship_units
 
 
     def build_vertices_pedigree_union(self):
-        vertices_pedigree_union = set()
-        vertices_pedigree_union.union(self.vertices_individuals)
-        vertices_pedigree_union.union(self.vertices_mating_units)
-        vertices_pedigree_union.union(self.vertices_sibship_units)
+        vertices_pedigree_union = list()
+        vertices_pedigree_union += list(self.vertices_individuals)
+        vertices_pedigree_union += list(self.vertices_mating_units)
+        vertices_pedigree_union += list(self.vertices_sibship_units)
         return vertices_pedigree_union
+
+
+    def build_pedigree_graph(self):
+        graph_instance = nx.Graph()
+
+        graph_instance.add_nodes_from(self.vertices_individuals)
+        graph_instance.add_nodes_from(self.vertices_mating_units)
+        graph_instance.add_nodes_from(self.vertices_sibship_units)
+
+        for mating_unit in self.vertices_mating_units:
+            assert isinstance(mating_unit, MatingUnit)
+
+            male_individual = mating_unit.male_mate_individual
+            female_individual = mating_unit.female_mate_individual
+
+            assert isinstance(male_individual, Individual)
+            assert isinstance(female_individual, Individual)
+
+            graph_instance.add_edge(male_individual, mating_unit)
+            graph_instance.add_edge(female_individual, mating_unit)
+
+        for sibship_unit in self.vertices_sibship_units:
+            assert isinstance(sibship_unit, SibshipUnit)
+            
+            for sibling in sibship_unit.siblings_individuals:
+                graph_instance.add_edge(sibling, sibship_unit)
+
+        for mating_unit in self.vertices_mating_units:
+            assert isinstance(mating_unit, MatingUnit)
+            graph_instance.add_edge(mating_unit, mating_unit.sibship_unit_relation)
+
+        return graph_instance
+
+
+    def find_all_possible_edges(self):
+        return None
+
+
+    def find_edges_rule_a(self):
+        return None
+
+
+    def find_egdes_rule_b(self):
+        return None
+
+
+    def find_edges_rule_c(self):
+        return None
+
+
+    def find_edges_rule_d(self):
+        return None
+
+
+    def find_edges_rule_e(self):
+        return None

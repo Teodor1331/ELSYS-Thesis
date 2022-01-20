@@ -31,52 +31,57 @@ class Loader:
 
 
     @property
-    def file_path(self):
+    def file_path(self) -> str:
         return self.__file_path
 
 
     @property
-    def file_name(self):
+    def file_name(self) -> str:
         return self.__file_name
 
 
     @property
-    def file_stem(self):
+    def file_stem(self) -> str:
         return self.__file_stem
 
 
     @property
-    def file_suffix(self):
+    def file_suffix(self) -> str:
         return self.__file_suffix
 
 
     @property
-    def file_data(self):
+    def file_data(self) -> list:
         return self.__file_data
 
 
     @file_path.setter
-    def file_path(self, file_path):
+    def file_path(self, file_path) -> None:
+        assert isinstance(file_path, str)
         self.__file_path = file_path
 
 
     @file_name.setter
-    def file_name(self, file_name):
+    def file_name(self, file_name) -> None:
+        assert isinstance(file_name, str)
         self.__file_name = file_name
 
 
     @file_stem.setter
-    def file_stem(self, file_stem):
+    def file_stem(self, file_stem) -> None:
+        assert isinstance(file_stem)
         self.__file_stem = file_stem
 
 
     @file_suffix.setter
-    def file_suffix(self, file_suffix):
+    def file_suffix(self, file_suffix) -> None:
+        assert isinstance(file_suffix, str)
         self.__file_suffix = file_suffix
 
 
     @file_data.setter
-    def file_data(self, file_data):
+    def file_data(self, file_data) -> None:
+        assert isinstance(file_data, list)
         self.__file_data = file_data
 
 

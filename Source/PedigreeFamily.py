@@ -249,15 +249,15 @@ class PedigreeFamily:
                         current_mating_unit.male_mate_individual.generation_rank = individual.generation_rank
                         next_touched_individuals.append(current_mating_unit.male_mate_individual)
 
-                print("Removed Individual: " + str(individual))
+                #print("Removed Individual: " + str(individual))
                 last_touched_individuals.append(individual)
-                print("The current individuals list is: " + str(touched_individuals))
-                print("The next individuals list is: " + str(next_touched_individuals))
+                #print("The current individuals list is: " + str(touched_individuals))
+                #print("The next individuals list is: " + str(next_touched_individuals))
 
             touched_individuals = next_touched_individuals
 
-        print(touched_individuals)
-        print(self.validate_propagated_rank())
+        #print(touched_individuals)
+        #print(self.validate_propagated_rank())
         self.transform_generation_rank()
 
         for mating_unit in self.pedigree_mating_units:

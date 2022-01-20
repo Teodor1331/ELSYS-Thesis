@@ -189,7 +189,8 @@ class Individual:
 
 
     def __eq__(self, individual):
-        assert isinstance(individual, (Individual, type(None)))
+        if not isinstance(individual, (Individual, type(None))):
+            return False
         return self.__hash__() == individual.__hash__()
 
 
@@ -307,7 +308,8 @@ class MatingUnit:
 
 
     def __eq__(self, mating_unit):
-        assert isinstance(mating_unit, (MatingUnit, type(None)))
+        if not isinstance(mating_unit, MatingUnit):
+            return False
         return self.__hash__() == mating_unit.__hash__()
 
 
@@ -421,7 +423,8 @@ class SibshipUnit:
 
 
     def __eq__(self, sibship_unit):
-        assert isinstance(sibship_unit, (SibshipUnit, type(None)))
+        if not isinstance(sibship_unit, (SibshipUnit, type(None))):
+            return False
         return self.__hash__() == sibship_unit.__hash__()
 
 

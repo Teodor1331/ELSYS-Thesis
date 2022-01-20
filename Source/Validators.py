@@ -15,6 +15,16 @@ class Validator:
         return self.__pedigree_family
 
 
+    @property
+    def condition_matings(self):
+        return self.__condition_matings
+
+
+    @property
+    def condition_cycles(self):
+        return self.__condition_cycles
+
+
     def __del__(self):
         del self.__pedigree_family
         del self.__condition_matings
@@ -33,4 +43,4 @@ class Validator:
 
 
     def validate_condition_cycles(self):
-        pass
+        return True

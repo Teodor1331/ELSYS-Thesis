@@ -5,4 +5,5 @@ import pytest
 sys.path.append('..')
 
 
-from Builder import Builder
+from Loader     import Loader
+from Builder    import Builder
