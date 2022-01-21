@@ -9,6 +9,8 @@ class PedigreeFamily:
         self.__pedigree_individuals     =   dict()
         self.__pedigree_mating_units    =   dict()
         self.__pedigree_sibship_units   =   dict()
+        self.__max_generation_rank      =   None
+        self.__min_generation_rank      =   None
 
 
     @property
@@ -31,6 +33,16 @@ class PedigreeFamily:
         return self.__pedigree_sibship_units
 
 
+    @property
+    def max_generation_rank(self):
+        return self.__max_generation_rank
+
+
+    @property
+    def min_generation_rank(self):
+        return self.__min_generation_rank
+
+
     @pedigree_identifier.setter
     def pedigree_identifier(self, pedigree_identifier):
         self.__pedigree_identifier = pedigree_identifier
@@ -49,6 +61,16 @@ class PedigreeFamily:
     @pedigree_sibship_units.setter
     def pedigree_sibship_units(self, pedigree_sibship_units):
         self.__pedigree_sibship_units = pedigree_sibship_units
+
+
+    @max_generation_rank.setter
+    def max_gneration_rank(self, max_generation_rank):
+        self.__max_generation_rank = max_generation_rank
+
+
+    @min_generation_rank.setter
+    def min_generation_rank(self, min_generation_rank):
+        self.__min_generation_rank = min_generation_rank
 
 
     @pedigree_identifier.deleter
@@ -71,6 +93,16 @@ class PedigreeFamily:
         del self.__pedigree_sibship_units
 
 
+    @max_generation_rank.deleter
+    def max_generation_rank(self):
+        del self.__max_generation_rank
+
+
+    @min_generation_rank.deleter
+    def min_generation_rank(self):
+        del self.__min_generation_rank
+
+
     def __hash__(self):
         return hash(self.pedigree_identifier)
 
@@ -89,6 +121,8 @@ class PedigreeFamily:
         del self.__pedigree_individuals
         del self.__pedigree_mating_units
         del self.__pedigree_sibship_units
+        del self.__max_generation_rank
+        del self.__min_generation_rank
 
 
     def add_individual(self, individual):
@@ -286,6 +320,8 @@ class PedigreeFamily:
             generation_ranks.append(current_individual.generation_rank)
 
         difference_rank = max(generation_ranks) - min(generation_ranks)
+        self.__min_generation_rank = 1
+        self.__max_generation_rank = difference_rank + 1
 
         for individual in self.pedigree_individuals:
             current_individual = self.pedigree_individuals[individual]
@@ -317,6 +353,21 @@ class PedigreeFamily:
                         if condition1 and condition2:
                             sibship_unit.add_sibling_individual_mate(mating_unit.male_mate_individual)
 
+
+    def get_individuals_by_generation(self, generation_rank):
+        generation_individuals = list()
+        
+        if self.min_generation_rank < generation_rank < self.max_generation_rank:
+            pass
+
+        for key in self.pedigree_individuals:
+            individual = self.pedigree_individuals[key]
+            assert isinstance(individual, Individual)
+            
+            if individual.generation_rank == generation_rank:
+                generation_individuals.append(individual)
+
+        return generation_individuals
 
     def print_pedigree_family_data(self):
         print("Pedigree Family:", self.pedigree_identifier)
