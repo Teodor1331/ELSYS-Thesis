@@ -302,14 +302,12 @@ class PedigreeFamily:
                 current_mating_unit.female_mate_individual.generation_rank:
                 current_mating_unit.generation_rank = current_mating_unit.male_mate_individual.generation_rank
 
-
         for sibship_unit in self.pedigree_sibship_units:
             current_sibship_unit = self.pedigree_sibship_units[sibship_unit]
             assert isinstance(current_sibship_unit, SibshipUnit)
             sibling = current_sibship_unit.siblings_individuals[0]
             assert isinstance(sibling, Individual)
             current_sibship_unit.generation_rank = sibling.generation_rank
-
 
     def transform_generation_rank(self):
         generation_ranks = list()
@@ -352,7 +350,7 @@ class PedigreeFamily:
 
                         if condition1 and condition2:
                             sibship_unit.add_sibling_individual_mate(mating_unit.male_mate_individual)
-
+                            
 
     def get_individuals_by_generation(self, generation_rank):
         generation_individuals = list()

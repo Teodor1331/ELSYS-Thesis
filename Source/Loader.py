@@ -5,30 +5,34 @@ from pathlib    import Path
 from io         import TextIOWrapper
 
 
-PEDIGREE_COLUMNS = {
-    'pedigree_identifier'       :   0,
-    'individual_identifier'     :   1,
-    'individual_father'         :   2,
-    'individual_mother'         :   3,
-    'individual_sex'            :   4,
-    'individual_status'         :   5,
-    'individual_role'           :   6,
-}
-
-
 class Loader:
-    TAB_SEPARATED   =   ['.txt', '.ped']
-    COMMA_SEPARATED =   ['.csv']
+    PEDIGREE_COLUMNS = {
+        'pedigree_identifier'       :   0,
+        'individual_identifier'     :   1,
+        'individual_father'         :   2,
+        'individual_mother'         :   3,
+        'individual_sex'            :   4,
+        'individual_status'         :   5,
+        'individual_role'           :   6,
+    }
 
-    def __init__(self, file_path):
-        assert isinstance(file_path, str)
+    TAB_SEPARATED_EXTENSIONS    =   ['.txt', '.ped']
+    COMMA_SEPARATED_EXTENSIONS  =   ['.csv']
 
-        self.__file_path    =   file_path
-        self.__file_name    =   Path(file_path).name
-        self.__file_stem    =   Path(file_path).stem
-        self.__file_suffix  =   Path(file_path).suffix
-        self.__file_data    =   self.read_file_data()
-
+    def __init__(self, file_path) -> None:
+        try:
+            assert isinstance(file_path, str)
+        except AssertionError:
+            raise AssertionError("The file path is not a correct name!")
+        
+        try:
+            self.__file_path    =   file_path
+            self.__file_name    =   Path(file_path).name
+            self.__file_stem    =   Path(file_path).stem
+            self.__file_suffix  =   Path(file_path).suffix
+            self.__file_data    =   self.read_file_data()
+        except FileNotFoundError:
+            raise Exception("The file was not found!")
 
     @property
     def file_path(self) -> str:
@@ -86,31 +90,31 @@ class Loader:
 
 
     @file_path.deleter
-    def file_path(self):
+    def file_path(self) -> None:
         del self.__file_path
 
 
     @file_name.deleter
-    def file_name(self):
+    def file_name(self) -> None:
         del self.__file_name
 
 
     @file_stem.deleter
-    def file_stem(self):
+    def file_stem(self) -> None:
         del self.__file_stem
 
 
     @file_suffix.deleter
-    def file_suffix(self):
+    def file_suffix(self) -> None:
         del self.__file_suffix
 
 
     @file_data.deleter
-    def file_data(self):
+    def file_data(self) -> None:
         del self.__file_data
 
 
-    def __del__(self):
+    def __del__(self) -> None:
         del self.__file_path
         del self.__file_name
         del self.__file_stem
@@ -128,7 +132,7 @@ class Loader:
         header_line = header_line.strip('\n').split('\t')
 
         for column_name in header_line:
-            if column_name[1:] in PEDIGREE_COLUMNS:
+            if column_name[1:] in Loader.PEDIGREE_COLUMNS:
                 dictionary_order[column_name[1:]] = header_line.index(column_name)
             else:
                 raise ValueError("The column name", column_name[1:], "is not recognized!")
@@ -145,7 +149,7 @@ class Loader:
         header_line = [column for column in next(csv_reader) if column != '']
 
         for column_name in header_line:
-            if column_name in PEDIGREE_COLUMNS:
+            if column_name in Loader.PEDIGREE_COLUMNS:
                 dictionary_order[column_name] = header_line.index(column_name)
             else:
                 raise ValueError("The column name", column_name, "is not recognized!")
@@ -158,7 +162,7 @@ class Loader:
         file_data   =   list()
         file = open(self.file_path)
 
-        if self.file_suffix.lower() in Loader.TAB_SEPARATED:
+        if self.file_suffix.lower() in Loader.TAB_SEPARATED_EXTENSIONS:
             dictionary_order = self.manage_tab_separated(file)
 
             for file_line in file:
@@ -166,7 +170,7 @@ class Loader:
                 file_line = re.sub('\t+', '\t', file_line)
                 file_line = file_line.strip('\n').split('\t')
                 buffer_data.append(file_line)
-        elif self.file_suffix.lower() in Loader.COMMA_SEPARATED:
+        elif self.file_suffix.lower() in Loader.COMMA_SEPARATED_EXTENSIONS:
             dictionary_order = self.manage_comma_separated(file)
             csv_reader = csv.reader(file)
 
@@ -178,7 +182,7 @@ class Loader:
         for file_line in buffer_data:
             ordered_line = list()
 
-            for column_name in PEDIGREE_COLUMNS:
+            for column_name in Loader.PEDIGREE_COLUMNS:
                 ordered_line.append(file_line[dictionary_order.get(column_name)])
 
             file_data.append(ordered_line)
