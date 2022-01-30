@@ -57,7 +57,7 @@ class Graph:
         self.__graph_instance               =   self.build_pedigree_graph()
 
         self.__required_vertices            =   None
-        self.__forbiddedn_vertices          =   None
+        self.__forbidden_graph              =   None
 
         #self.remove_edges_by_rules()
 
@@ -279,44 +279,24 @@ class Graph:
     def build_sets_from_individual(self, individual):
         assert isinstance(individual, Individual)
 
-        pedigree_vertices   =   list()
-        generation_vertices =   list()
-        children_vertices   =   list()
+        pedigree_vertices   =   set()
+        generation_vertices =   set()
+        children_vertices   =   set()
+
+        pedigree_vertices.add(individual)
+        generation_vertices.add(individual.generation_rank)
 
         for mating_unit in self.vertices_mating_units:
             assert isinstance(mating_unit, MatingUnit)
 
-            condition1 = (individual == mating_unit.male_mate_individual)
-            condition2 = (individual == mating_unit.female_mate_individual)
+            condition1 = (individual is mating_unit.male_mate_individual)
+            condition2 = (individual is mating_unit.female_mate_individual)
 
-            if condition1:
-                pedigree_vertices.append(mating_unit.female_mate_individual)
-            if condition2:
-                pedigree_vertices.append(mating_unit.male_mate_individual)
+            if condition1 or condition2:
+                relation_sibship_unit = mating_unit.sibship_unit_relation
 
-        relation_sibship = individual.sibship_unit_relation
-        
-        if relation_sibship is not None:
-            for sibling in relation_sibship.siblings_individuals:
-                if sibling is not individual:
-                    pedigree_vertices.append(sibling)
-
-        for relative in pedigree_vertices:
-            assert isinstance(relative, Individual)
-            generation_vertices.append(relative.generation_rank)
-
-        for person in pedigree_vertices:
-            for mating_unit in self.vertices_mating_units:
-                assert isinstance(mating_unit, MatingUnit)
-
-                condition1 = (person == mating_unit.male_mate_individual)
-                condition2 = (person == mating_unit.female_mate_individual)
-
-                if condition1 or condition2:
-                    sibship_unit = mating_unit.sibship_unit_relation
-
-                    for sibling in sibship_unit.siblings_individuals:
-                        children_vertices.append(sibling)
+                for sibling in relation_sibship_unit.siblings_individuals:
+                    children_vertices.add(sibling)
 
         return (pedigree_vertices, generation_vertices, children_vertices)
 
@@ -324,29 +304,20 @@ class Graph:
     def build_sets_from_mating_unit(self, mating_unit):
         assert isinstance(mating_unit, MatingUnit)
 
-        pedigree_vertices   =   list()
-        generation_vertices =   list()
-        children_vertices   =   list()
+        pedigree_vertices   =   set()
+        generation_vertices =   set()
+        children_vertices   =   set()
 
-        for individual in self.vertices_individuals:
-            assert isinstance(individual, Individual)
+        pedigree_vertices.add(mating_unit.male_mate_individual)
+        pedigree_vertices.add(mating_unit.female_mate_individual)
 
-            condition1 = (individual == mating_unit.male_mate_individual)
-            condition2 = (individual == mating_unit.female_mate_individual)
+        generation_vertices.add(mating_unit.male_mate_individual.generation_rank)
+        generation_vertices.add(mating_unit.female_mate_individual.generation_rank)
 
-            if condition1 or condition2:
-                pedigree_vertices.append(individual)
+        relation_sibship_unit = mating_unit.sibship_unit_relation
 
-        for individual in pedigree_vertices:
-            assert isinstance(individual, Individual)
-            generation_vertices.append(individual.generation_rank)
-
-        for relation in self.vertices_sibship_units:
-            assert isinstance(relation, SibshipUnit)
-
-            if relation == mating_unit.sibship_unit_relation:
-                for sibling in relation.siblings_individuals:
-                    children_vertices.append(sibling)
+        for sibling in relation_sibship_unit.siblings_individuals:
+            children_vertices.add(sibling)
 
         return (pedigree_vertices, generation_vertices, children_vertices)
 
@@ -354,32 +325,14 @@ class Graph:
     def build_sets_from_sibship_unit(self, sibship_unit):
         assert isinstance(sibship_unit, SibshipUnit)
 
-        pedigree_vertices       =   list()
-        generation_vertices     =   list()
-        children_vertices       =   list()
+        pedigree_vertices       =   set()
+        generation_vertices     =   set()
+        children_vertices       =   set()
 
         for sibling in sibship_unit.siblings_individuals:
-            pedigree_vertices.append(sibling)
-
-        for individual in pedigree_vertices:
-            assert isinstance(individual, Individual)
-            generation_vertices.append(individual.generation_rank)
-
-        for individual in pedigree_vertices:
-            assert isinstance(individual, Individual)
-
-            if individual.number_matings > 0:
-                for mating_unit in self.vertices_mating_units:
-                    assert isinstance(mating_unit, MatingUnit)
-
-                    condition1 = (individual == mating_unit.male_mate_individual)
-                    condition2 = (individual == mating_unit.female_mate_individual)
-
-                    if condition1 or condition2:
-                        relation = mating_unit.sibship_unit_relation
-
-                        for sibling in relation.siblings_individuals:
-                            children_vertices.append(sibling)
+            assert isinstance(sibling, Individual)
+            pedigree_vertices.add(sibling)
+            generation_vertices.add(sibling.generation_rank)
 
         return (pedigree_vertices, generation_vertices, children_vertices)
 
@@ -402,60 +355,26 @@ class Graph:
 
 
     def find_edges_rule_b(self):
-        edges_minus     =   list()
-        edges_plus      =   list()
+        edges_minus     =   set()
+        edges_plus      =   set()
 
-        for mating_unit in self.vertices_mating_units:
-            assert isinstance(mating_unit, MatingUnit)
+        for individual in self.vertices_individuals:
+            for mating_unit in self.vertices_mating_units:
+                generation_vertices_1 = self.build_sets_from_individual(individual)[1]
+                generation_vertices_2 = self.build_sets_from_mating_unit(mating_unit)[1]
 
-            male_mate = mating_unit.male_mate_individual
-            female_mate = mating_unit.female_mate_individual
+                if generation_vertices_1 == generation_vertices_2:
+                    edges_minus.add((individual, mating_unit))
 
-            for individual in self.vertices_individuals:
-                assert isinstance(individual, Individual)
+        for individual in self.vertices_individuals:
+            for mating_unit in self.vertices_mating_units:
+                pedigree_vertices_1 = self.build_sets_from_individual(individual)[0]
+                pedigree_vertices_2 = self.build_sets_from_mating_unit(mating_unit)[0]
 
-                condition1 = individual is not male_mate
-                condition2 = individual is not female_mate
-                condition3 = individual.generation_rank == mating_unit.generation_rank
-                #condition3 = individual.generation_rank != mating_unit.generation_rank
+                if pedigree_vertices_1.issubset(pedigree_vertices_2):
+                    edges_plus.add((individual, mating_unit))
 
-                intersection = self.find_sets_intersection(
-                    self.build_sets_from_individual(individual)[0],
-                    self.build_sets_from_mating_unit(mating_unit)[0]
-                )
-
-                intersection_gen = self.find_sets_intersection(
-                    self.build_sets_from_individual(individual)[1],
-                    self.build_sets_from_mating_unit(mating_unit)[1]
-                )
-
-                condition4 = len(intersection) != 0 and len(intersection_gen) != 0
-
-                #print('Individual:', individual, self.build_sets_from_individual(individual)[0])
-                #print('MatingUnit:', mating_unit, self.build_sets_from_mating_unit(mating_unit)[0])
-                #print('Intersection: ', intersection, len(intersection))
-                #print("Generation Intersection: ", intersection_gen, len(intersection_gen), '\n')
-
-                if condition1 and condition2 and condition3:
-                    edges_minus.append((mating_unit, individual))
-                    edges_minus.append((individual, mating_unit))
-
-        for mating_unit in self.vertices_mating_units:
-            assert isinstance(mating_unit, MatingUnit)
-
-            male_mate = mating_unit.male_mate_individual
-            female_mate = mating_unit.female_mate_individual
-
-            for individual in self.vertices_individuals:
-                assert isinstance(individual, Individual)
-
-                condition1 = individual is male_mate
-                condition2 = individual is female_mate
-
-                if condition1 or condition2:
-                    edges_plus.append((mating_unit, individual))
-                    edges_plus.append((individual, mating_unit))
-
+        edges_minus = edges_minus - edges_plus
         return (edges_minus, edges_plus)
 
 
