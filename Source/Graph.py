@@ -56,8 +56,8 @@ class Graph:
         self.__vertices_generation_ranks    =   set()
         self.__graph_instance               =   self.build_pedigree_graph()
 
-        self.__required_vertices            =   None
-        self.__forbidden_graph              =   None
+        self.__required_graph               =   self.build_required_graph()
+        self.__forbidden_graph              =   self.build_forbidden_graph()
 
         #self.remove_edges_by_rules()
 
@@ -99,6 +99,16 @@ class Graph:
         return self.__graph_instance
 
 
+    @property
+    def required_graph(self):
+        return self.__required_graph
+
+
+    @property
+    def forbidden_graph(self):
+        return self.__forbidden_graph
+
+
     @pedigree_family.setter
     def pedigree_family(self, pedigree_family):
         self.__pedigree_family = pedigree_family
@@ -132,6 +142,16 @@ class Graph:
     @graph_instance.setter
     def graph_instance(self, graph_instance):
         self.__graph_instance = graph_instance
+
+
+    @required_graph.setter
+    def required_graph(self, required_graph):
+        self.__required_graph = required_graph
+
+
+    @forbidden_graph.setter
+    def forbidden_graph(self, forbidden_graph):
+        self.__forbidden_graph = forbidden_graph
 
 
     @pedigree_family.deleter
@@ -168,6 +188,16 @@ class Graph:
     def graph_instance(self):
         del self.__graph_instance
 
+
+    @required_graph.deleter
+    def required_graph(self):
+        del self.__required_graph
+
+
+    @forbidden_graph.deleter
+    def forbidden_graph(self):
+        del self.__forbidden_graph
+
     
     def __del__(self):
         del self.__pedigree_family
@@ -177,6 +207,8 @@ class Graph:
         del self.__vertices_pedigree_union
         del self.__vertices_generation_ranks
         del self.__graph_instance
+        del self.__required_graph
+        del self.__forbidden_graph
 
 
     def build_vertices_individuals(self):
@@ -379,118 +411,82 @@ class Graph:
 
 
     def find_edges_rule_c(self):
-        edges_minus     =   list()
-        edges_plus      =   list()
+        edges_minus     =   set()
+        edges_plus      =   set()
 
-        for sibship_unit in self.vertices_sibship_units:
-            assert isinstance(sibship_unit, SibshipUnit)
+        for individual in self.vertices_individuals:
+            for sibship_unit in self.vertices_sibship_units:
+                generation_vertices_1 = self.build_sets_from_individual(individual)[1]
+                generation_vertices_2 = self.build_sets_from_sibship_unit(sibship_unit)[1]
+                
+                condition1 = individual.individual_father != '0'
+                condition2 = individual.individual_mother != '0'
 
-            for individual in self.vertices_individuals:
-                assert isinstance(individual, Individual)
-                condition1 = individual not in sibship_unit.siblings_individuals
-                condition2 = individual.generation_rank == sibship_unit.generation_rank
+                if  generation_vertices_1 == generation_vertices_2 and \
+                    condition1 and condition2:
+                    edges_minus.add((individual, sibship_unit))
 
-                intersection = self.find_sets_intersection(
-                    self.build_sets_from_individual(individual)[0],
-                    self.build_sets_from_sibship_unit(sibship_unit)[0]
-                )
+        for individual in self.vertices_individuals:
+            for sibship_unit in self.vertices_sibship_units:
+                pedigree_vertices_1 = self.build_sets_from_individual(individual)[0]
+                pedigree_vertices_2 = self.build_sets_from_sibship_unit(sibship_unit)[0]
 
-                intersection_gen = self.find_sets_intersection(
-                    self.build_sets_from_individual(individual)[1],
-                    self.build_sets_from_sibship_unit(sibship_unit)[1]
-                )
+                if pedigree_vertices_1.issubset(pedigree_vertices_2):
+                    edges_plus.add((individual, sibship_unit))
 
-                condition3 = len(intersection) != 0 and len(intersection_gen) != 0
-
-                if condition1 and condition2:
-                    edges_minus.append((individual, sibship_unit))
-                    edges_minus.append((sibship_unit, individual))
-
-        for sibship_unit in self.vertices_sibship_units:
-            assert isinstance(sibship_unit, SibshipUnit)
-
-            for individual in self.vertices_individuals:
-                assert isinstance(individual, Individual)
-
-                if individual in sibship_unit.siblings_individuals:
-                    edges_plus.append((individual, sibship_unit))
-                    edges_plus.append((sibship_unit, individual))
-
+        edges_minus = edges_minus - edges_plus
         return (edges_minus, edges_plus)
 
 
     def find_edges_rule_d(self):
-        edges_plus      =   list()
+        edges_plus      =   set()
 
         for mating_unit in self.vertices_mating_units:
-            assert isinstance(mating_unit, MatingUnit)
-
             for sibship_unit in self.vertices_sibship_units:
-                assert isinstance(sibship_unit, SibshipUnit)
+                children_set = self.build_sets_from_mating_unit(mating_unit)[2]
+                pedigree_set = self.build_sets_from_sibship_unit(sibship_unit)[0]
 
-                if mating_unit.sibship_unit_relation is sibship_unit:
-                    edges_plus.append((mating_unit, sibship_unit))
-                    edges_plus.append((sibship_unit, mating_unit))
+                if children_set == pedigree_set:
+                    edges_plus.add((mating_unit, sibship_unit))
 
         return edges_plus
 
 
     def find_edges_rule_e(self):
-        edges_minus     =   list()
+        edges_minus = set()
+        units_union = self.vertices_mating_units + self.vertices_sibship_units
 
         for mating_unit in self.vertices_mating_units:
-            assert isinstance(mating_unit, MatingUnit)
+            for vertex in units_union:
+                pedigree_vertices_1 = self.build_sets_from_mating_unit(mating_unit)[0]
+                generation_vertices_1 = self.build_sets_from_mating_unit(mating_unit)[1]
 
-            for sibship_unit in self.vertices_sibship_units:
-                assert isinstance(sibship_unit, SibshipUnit)
+                pedigree_vertices_2 = {}
+                generation_vertices_2 = {}
 
-                set_individuals_1 = self.build_sets_from_mating_unit(mating_unit)[0]
-                set_individuals_2 = self.build_sets_from_sibship_unit(sibship_unit)[0]
+                if isinstance(vertex, MatingUnit):
+                    pedigree_vertices_2 = self.build_sets_from_mating_unit(vertex)[0]
+                    generation_vertices_2 = self.build_sets_from_mating_unit(vertex)[1]
+                else:
+                    pedigree_vertices_2 = self.build_sets_from_sibship_unit(vertex)[0]
+                    generation_vertices_2 = self.build_sets_from_sibship_unit(vertex)[1]
 
-                set_ranks_1 = self.build_sets_from_mating_unit(mating_unit)[1]
-                set_ranks_2 = self.build_sets_from_sibship_unit(sibship_unit)[1]
+                intersection1 = (pedigree_vertices_1 & pedigree_vertices_2)
+                intersection2 = (generation_vertices_1 & generation_vertices_2)
 
-                #print("MatingUnit", mating_unit, set_individuals_1)
-                #print("SibshipUnit", sibship_unit, set_individuals_2)
-                #print("Intersection:", self.find_sets_intersection(set_individuals_1, set_individuals_2))
+                if len(intersection1) == 0 and len(intersection2) == 0:
+                    edges_minus.add((mating_unit, vertex)) 
 
-                #print("MatingUnit Ranks", mating_unit, set_ranks_1)
-                #print("SibshipUnit Ranks", sibship_unit, set_ranks_2)
-                #print("Intersection Ranks:", self.find_sets_intersection(set_ranks_1, set_ranks_2), '\n')
-
-                if mating_unit.sibship_unit_relation is not sibship_unit:
-                    edges_minus.append((mating_unit, sibship_unit))
-                    edges_minus.append((sibship_unit, mating_unit))
-
-        for i in range(len(self.vertices_mating_units)):
-            for j in range(len(self.vertices_mating_units)):
-                edges_minus.append((
-                    self.vertices_mating_units[i],
-                    self.vertices_mating_units[j]
-                ))
-
-        for i in range(len(self.vertices_sibship_units)):
-            for j in range(len(self.vertices_sibship_units)):
-                edges_minus.append((
-                    self.vertices_sibship_units[i],
-                    self.vertices_sibship_units[j]
-                ))
-
+        edges_minus = edges_minus - self.find_edges_rule_d()
         return edges_minus
 
 
     def remove_edges_by_rules(self):
-        self.__graph_instance.remove_edges_from(self.find_edges_rule_a())
+        pass
+        #self.__graph_instance.remove_edges_from(self.find_edges_rule_a())
         #self.__graph_instance.remove_edges_from(self.find_edges_rule_b()[0])
         #self.__graph_instance.remove_edges_from(self.find_edges_rule_c()[0])
         #self.__graph_instance.remove_edges_from(self.find_edges_rule_e())
-
-
-    def find_sets_intersection(self, first_list, second_list):
-        first_list  = set(first_list)
-        second_list = set(second_list)
-        intersection = first_list.intersection(second_list)
-        return intersection 
 
 
     def validate_edges_by_rules(self):
@@ -525,3 +521,16 @@ class Graph:
         print("SibshipUnit", sibship, "c(v):", self.build_sets_from_sibship_unit(sibship)[2])
 
         return True
+
+    
+    def build_required_graph(self):
+        return  (self.find_edges_rule_b()[1] | \
+                self.find_edges_rule_c()[1] | \
+                self.find_edges_rule_d())
+
+
+    def build_forbidden_graph(self):
+        return  self.find_edges_rule_a() | \
+                self.find_edges_rule_b()[0] | \
+                self.find_edges_rule_c()[0] | \
+                self.find_edges_rule_e()
