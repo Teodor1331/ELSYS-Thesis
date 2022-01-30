@@ -59,9 +59,9 @@ class Graph:
         self.__required_vertices            =   None
         self.__forbiddedn_vertices          =   None
 
-        self.remove_edges_by_rules()
+        #self.remove_edges_by_rules()
 
-        self.__graph_instance = self.graph_instance.to_undirected()
+        #self.__graph_instance = self.graph_instance.to_undirected()
 
 
     @property
@@ -221,7 +221,7 @@ class Graph:
 
 
     def build_pedigree_graph(self):
-        graph_instance = nx.DiGraph()
+        graph_instance = nx.Graph()
 
         graph_instance.add_nodes_from(self.vertices_individuals)
         graph_instance.add_nodes_from(self.vertices_mating_units)
@@ -232,7 +232,8 @@ class Graph:
 
             for individual in self.vertices_individuals:
                 assert isinstance(individual, Individual)
-                graph_instance.add_edge(current_individual, individual)
+                if current_individual is not individual:
+                    graph_instance.add_edge(current_individual, individual)
 
             for mating_unit in self.vertices_mating_units:
                 assert isinstance(mating_unit, MatingUnit)
@@ -376,7 +377,6 @@ class Graph:
 
                     if condition1 or condition2:
                         relation = mating_unit.sibship_unit_relation
-                        print(mating_unit, mating_unit.sibship_unit_relation)
 
                         for sibling in relation.siblings_individuals:
                             children_vertices.append(sibling)
@@ -385,7 +385,7 @@ class Graph:
 
 
     def find_edges_rule_a(self):
-        edges_minus     =   list()
+        edges_minus = set()
 
         start_index = self.pedigree_family.min_generation_rank
         final_index = self.pedigree_family.max_generation_rank
@@ -393,9 +393,10 @@ class Graph:
         for i in range(start_index, final_index + 1):
             current_individuals = self.pedigree_family.get_individuals_by_generation(i)
 
-            for n in range(len(current_individuals)):
-                for m in range(len(current_individuals)):
-                    edges_minus.append((current_individuals[n], current_individuals[m]))
+            for current_individual1 in current_individuals:
+                for current_individual2 in current_individuals:
+                    if current_individual1 is not current_individual2:
+                        edges_minus.add(frozenset([current_individual1, current_individual2]))
 
         return edges_minus
 
@@ -428,10 +429,12 @@ class Graph:
                     self.build_sets_from_mating_unit(mating_unit)[1]
                 )
 
-                print('Individual:', individual, self.build_sets_from_individual(individual)[0])
-                print('MatingUnit:', mating_unit, self.build_sets_from_mating_unit(mating_unit)[0])
-                print('Intersection: ', intersection, len(intersection))
-                print("Generation Intersection: ", intersection_gen, len(intersection_gen), '\n')
+                condition4 = len(intersection) != 0 and len(intersection_gen) != 0
+
+                #print('Individual:', individual, self.build_sets_from_individual(individual)[0])
+                #print('MatingUnit:', mating_unit, self.build_sets_from_mating_unit(mating_unit)[0])
+                #print('Intersection: ', intersection, len(intersection))
+                #print("Generation Intersection: ", intersection_gen, len(intersection_gen), '\n')
 
                 if condition1 and condition2 and condition3:
                     edges_minus.append((mating_unit, individual))
@@ -448,11 +451,6 @@ class Graph:
 
                 condition1 = individual is male_mate
                 condition2 = individual is female_mate
-
-                condition3 = len(self.find_sets_intersection(
-                    self.build_sets_from_individual(individual)[0],
-                    self.build_sets_from_mating_unit(mating_unit)[0]
-                )) != 0
 
                 if condition1 or condition2:
                     edges_plus.append((mating_unit, individual))
@@ -472,7 +470,18 @@ class Graph:
                 assert isinstance(individual, Individual)
                 condition1 = individual not in sibship_unit.siblings_individuals
                 condition2 = individual.generation_rank == sibship_unit.generation_rank
-                #condition2 = individual.generation_rank != sibship_unit.generation_rank
+
+                intersection = self.find_sets_intersection(
+                    self.build_sets_from_individual(individual)[0],
+                    self.build_sets_from_sibship_unit(sibship_unit)[0]
+                )
+
+                intersection_gen = self.find_sets_intersection(
+                    self.build_sets_from_individual(individual)[1],
+                    self.build_sets_from_sibship_unit(sibship_unit)[1]
+                )
+
+                condition3 = len(intersection) != 0 and len(intersection_gen) != 0
 
                 if condition1 and condition2:
                     edges_minus.append((individual, sibship_unit))
@@ -500,12 +509,6 @@ class Graph:
             for sibship_unit in self.vertices_sibship_units:
                 assert isinstance(sibship_unit, SibshipUnit)
 
-                set1 = self.build_sets_from_mating_unit(mating_unit)[0]
-                set2 = self.build_sets_from_sibship_unit(sibship_unit)[0]
-                intersection = self.find_sets_intersection(set1, set2)
-
-                condition = (len(set1) == len(set2) == len(intersection))
-
                 if mating_unit.sibship_unit_relation is sibship_unit:
                     edges_plus.append((mating_unit, sibship_unit))
                     edges_plus.append((sibship_unit, mating_unit))
@@ -522,18 +525,46 @@ class Graph:
             for sibship_unit in self.vertices_sibship_units:
                 assert isinstance(sibship_unit, SibshipUnit)
 
+                set_individuals_1 = self.build_sets_from_mating_unit(mating_unit)[0]
+                set_individuals_2 = self.build_sets_from_sibship_unit(sibship_unit)[0]
+
+                set_ranks_1 = self.build_sets_from_mating_unit(mating_unit)[1]
+                set_ranks_2 = self.build_sets_from_sibship_unit(sibship_unit)[1]
+
+                #print("MatingUnit", mating_unit, set_individuals_1)
+                #print("SibshipUnit", sibship_unit, set_individuals_2)
+                #print("Intersection:", self.find_sets_intersection(set_individuals_1, set_individuals_2))
+
+                #print("MatingUnit Ranks", mating_unit, set_ranks_1)
+                #print("SibshipUnit Ranks", sibship_unit, set_ranks_2)
+                #print("Intersection Ranks:", self.find_sets_intersection(set_ranks_1, set_ranks_2), '\n')
+
                 if mating_unit.sibship_unit_relation is not sibship_unit:
                     edges_minus.append((mating_unit, sibship_unit))
                     edges_minus.append((sibship_unit, mating_unit))
+
+        for i in range(len(self.vertices_mating_units)):
+            for j in range(len(self.vertices_mating_units)):
+                edges_minus.append((
+                    self.vertices_mating_units[i],
+                    self.vertices_mating_units[j]
+                ))
+
+        for i in range(len(self.vertices_sibship_units)):
+            for j in range(len(self.vertices_sibship_units)):
+                edges_minus.append((
+                    self.vertices_sibship_units[i],
+                    self.vertices_sibship_units[j]
+                ))
 
         return edges_minus
 
 
     def remove_edges_by_rules(self):
         self.__graph_instance.remove_edges_from(self.find_edges_rule_a())
-        self.__graph_instance.remove_edges_from(self.find_edges_rule_b()[0])
-        self.__graph_instance.remove_edges_from(self.find_edges_rule_c()[0])
-        self.__graph_instance.remove_edges_from(self.find_edges_rule_e())
+        #self.__graph_instance.remove_edges_from(self.find_edges_rule_b()[0])
+        #self.__graph_instance.remove_edges_from(self.find_edges_rule_c()[0])
+        #self.__graph_instance.remove_edges_from(self.find_edges_rule_e())
 
 
     def find_sets_intersection(self, first_list, second_list):

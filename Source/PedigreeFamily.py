@@ -324,7 +324,7 @@ class PedigreeFamily:
         for individual in self.pedigree_individuals:
             current_individual = self.pedigree_individuals[individual]
             assert isinstance(current_individual, Individual)
-            current_individual.generation_rank = current_individual.generation_rank + difference_rank
+            current_individual.generation_rank = current_individual.generation_rank + difference_rank + 1
 
 
     def build_extended_sibship_units(self):

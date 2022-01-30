@@ -1,3 +1,7 @@
+import networkx as nx
+import matplotlib.pyplot as plt
+
+
 from Loader     import Loader
 from Builder    import Builder
 from Graph      import Graph
@@ -7,10 +11,11 @@ from PedigreeFamily import PedigreeFamily
 
 
 import sys
+import argparse
 
 
-def main():
-    loader = Loader(sys.argv[1])
+def main(argv = sys.argv[1:]):
+    loader = Loader(argv[0])
     builder = Builder(loader.file_data)
     
     for pedigree in builder.file_pedigrees:
@@ -27,15 +32,16 @@ def main():
         print(len(graph.graph_instance.edges()))
 
 
+        print("\nGraph Edges by Rules:\n")
         print("Edges from rule A (-): ", graph.find_edges_rule_a(), '\n')
-        print("Edges from rule B (-): ", graph.find_edges_rule_b()[0], '\n')
-        print("Edges from rule B (+): ", graph.find_edges_rule_b()[1], '\n')
-        print("Edges from rule C (-): ", graph.find_edges_rule_c()[0], '\n')
-        print("Edges from rule C (+): ", graph.find_edges_rule_c()[1], '\n')
-        print("Edges from rule D (+): ", graph.find_edges_rule_d(), '\n')
-        print("Edges from rule E (-): ", graph.find_edges_rule_e(), '\n')
+        #print("Edges from rule B (-): ", graph.find_edges_rule_b()[0], '\n')
+        #print("Edges from rule B (+): ", graph.find_edges_rule_b()[1], '\n')
+        #print("Edges from rule C (-): ", graph.find_edges_rule_c()[0], '\n')
+        #print("Edges from rule C (+): ", graph.find_edges_rule_c()[1], '\n')
+        #print("Edges from rule D (+): ", graph.find_edges_rule_d(), '\n')
+        #print("Edges from rule E (-): ", graph.find_edges_rule_e(), '\n')
 
-        print("Validation of rules:", graph.validate_edges_by_rules())
+        #print("Validation of rules:", graph.validate_edges_by_rules())
 
 
 if __name__ == '__main__':
