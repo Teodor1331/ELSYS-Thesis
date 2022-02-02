@@ -1,22 +1,22 @@
 class Drawer:
-    def __init__(self, graph_instance):
-        self.__graph_instance   =   graph_instance
+    def __init__(self, intervals):
+        self.__intervals   =   intervals
 
 
     @property
-    def graph_instance(self):
-        return self.__graph_instance
+    def intervals(self):
+        return self.__intervals
 
 
-    @graph_instance.setter
-    def graph_instance(self, graph_instance):
-        self.__graph_instance
+    @intervals.setter
+    def intervals(self, intervals):
+        self.__intervals = intervals
 
 
-    @graph_instance.deleter
-    def graph_instance(self):
-        del self.__graph_instance
+    @intervals.deleter
+    def intervals(self):
+        del self.__intervals
 
 
     def __del__(self):
-        del self.__graph_instance
+        del self.__intervals

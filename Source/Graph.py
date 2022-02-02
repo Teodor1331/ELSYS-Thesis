@@ -1,47 +1,16 @@
 import networkx as nx
 import dynetworkx as dnx
 
-
-from FamilyUnits    import Individual
-from FamilyUnits    import MatingUnit
-from FamilyUnits    import SibshipUnit
-from PedigreeFamily import PedigreeFamily
+from ordered_set import OrderedSet
+from collections import deque
 
 
-class Interval():
-    def __init__(self, left_element, right_element):
-        self.__left_element     =   left_element
-        self.__right_element    =   right_element
-
-
-    @property
-    def left_element(self):
-        return self.__left_element
-
-
-    @property
-    def right_element(self):
-        return self.__right_element
-
-
-    def __del__(self):
-        del self.__left_element
-        del self.__right_element
-
-
-    def find_intersection(self, interval):
-        assert isinstance(interval, Interval)
-
-        condition1 = self.right_element < interval.left_element
-        condition2 = self.left_element > interval.right_element
-
-        if condition1 or condition2:
-            return None
-
-        return Interval(
-            max(self.left_element, interval.left_element),
-            min(self.right_element, interval.right_element)
-        )
+from FamilyUnits        import Individual
+from FamilyUnits        import MatingUnit
+from FamilyUnits        import SibshipUnit
+from PedigreeFamily     import PedigreeFamily
+from IntervalSandwich   import Interval
+from IntervalSandwich   import CutRealization
 
 
 class Graph:
@@ -53,15 +22,10 @@ class Graph:
         self.__vertices_mating_units        =   self.build_vertices_mating_units()
         self.__vertices_sibship_units       =   self.build_vertices_sibship_units()
         self.__vertices_pedigree_union      =   self.build_vertices_pedigree_union()
-        self.__vertices_generation_ranks    =   set()
-        self.__graph_instance               =   self.build_pedigree_graph()
 
+        self.__graph_instance               =   self.build_pedigree_graph()
         self.__required_graph               =   self.build_required_graph()
         self.__forbidden_graph              =   self.build_forbidden_graph()
-
-        #self.remove_edges_by_rules()
-
-        #self.__graph_instance = self.graph_instance.to_undirected()
 
 
     @property
@@ -87,11 +51,6 @@ class Graph:
     @property
     def vertices_pedigree_union(self):
         return self.__vertices_pedigree_union
-
-
-    @property
-    def vertices_generation_ranks(self):
-        return self.__vertices_generation_ranks
 
 
     @property
@@ -134,11 +93,6 @@ class Graph:
         self.__vertices_pedigree_union = vertices_pedigree_union
 
 
-    @vertices_generation_ranks.setter
-    def vertices_generation_ranks(self, vertices_generation_ranks):
-        self.__vertices_generation_ranks = vertices_generation_ranks
-
-
     @graph_instance.setter
     def graph_instance(self, graph_instance):
         self.__graph_instance = graph_instance
@@ -179,11 +133,6 @@ class Graph:
         del self.__vertices_pedigree_union
 
 
-    @vertices_generation_ranks.deleter
-    def vertices_generation_ranks(self):
-        del self.__vertices_generation_ranks
-
-
     @graph_instance.deleter
     def graph_instance(self):
         del self.__graph_instance
@@ -205,7 +154,6 @@ class Graph:
         del self.__vertices_mating_units
         del self.__vertices_sibship_units
         del self.__vertices_pedigree_union
-        del self.__vertices_generation_ranks
         del self.__graph_instance
         del self.__required_graph
         del self.__forbidden_graph
@@ -245,10 +193,10 @@ class Graph:
 
 
     def build_vertices_pedigree_union(self):
-        vertices_pedigree_union = list()
-        vertices_pedigree_union += list(self.vertices_individuals)
-        vertices_pedigree_union += list(self.vertices_mating_units)
-        vertices_pedigree_union += list(self.vertices_sibship_units)
+        vertices_pedigree_union = OrderedSet()
+        vertices_pedigree_union |= OrderedSet(self.vertices_individuals)
+        vertices_pedigree_union |= OrderedSet(self.vertices_mating_units)
+        vertices_pedigree_union |= OrderedSet(self.vertices_sibship_units)
         return vertices_pedigree_union
 
 
@@ -284,7 +232,8 @@ class Graph:
 
             for mating_unit in self.vertices_mating_units:
                 assert isinstance(mating_unit, MatingUnit)
-                graph_instance.add_edge(current_mating_unit, mating_unit)
+                if current_mating_unit is not mating_unit:
+                    graph_instance.add_edge(current_mating_unit, mating_unit)
 
             for sibship_unit in self.vertices_sibship_units:
                 assert isinstance(sibship_unit, SibshipUnit)
@@ -303,7 +252,8 @@ class Graph:
 
             for sibship_unit in self.vertices_sibship_units:
                 assert isinstance(sibship_unit, SibshipUnit)
-                graph_instance.add_edge(current_sibship_unit, sibship_unit)
+                if current_sibship_unit is not sibship_unit:
+                    graph_instance.add_edge(current_sibship_unit, sibship_unit)
 
         return graph_instance
 
@@ -311,9 +261,9 @@ class Graph:
     def build_sets_from_individual(self, individual):
         assert isinstance(individual, Individual)
 
-        pedigree_vertices   =   set()
-        generation_vertices =   set()
-        children_vertices   =   set()
+        pedigree_vertices   =   OrderedSet()
+        generation_vertices =   OrderedSet()
+        children_vertices   =   OrderedSet()
 
         pedigree_vertices.add(individual)
         generation_vertices.add(individual.generation_rank)
@@ -336,9 +286,9 @@ class Graph:
     def build_sets_from_mating_unit(self, mating_unit):
         assert isinstance(mating_unit, MatingUnit)
 
-        pedigree_vertices   =   set()
-        generation_vertices =   set()
-        children_vertices   =   set()
+        pedigree_vertices   =   OrderedSet()
+        generation_vertices =   OrderedSet()
+        children_vertices   =   OrderedSet()
 
         pedigree_vertices.add(mating_unit.male_mate_individual)
         pedigree_vertices.add(mating_unit.female_mate_individual)
@@ -357,9 +307,9 @@ class Graph:
     def build_sets_from_sibship_unit(self, sibship_unit):
         assert isinstance(sibship_unit, SibshipUnit)
 
-        pedigree_vertices       =   set()
-        generation_vertices     =   set()
-        children_vertices       =   set()
+        pedigree_vertices   =   OrderedSet()
+        generation_vertices =   OrderedSet()
+        children_vertices   =   OrderedSet()
 
         for sibling in sibship_unit.siblings_individuals:
             assert isinstance(sibling, Individual)
@@ -370,7 +320,7 @@ class Graph:
 
 
     def find_edges_rule_a(self):
-        edges_minus = set()
+        edges_minus = OrderedSet()
 
         start_index = self.pedigree_family.min_generation_rank
         final_index = self.pedigree_family.max_generation_rank
@@ -381,14 +331,25 @@ class Graph:
             for current_individual1 in current_individuals:
                 for current_individual2 in current_individuals:
                     if current_individual1 is not current_individual2:
-                        edges_minus.add(frozenset([current_individual1, current_individual2]))
+                        edges_minus.add((current_individual1, current_individual2))
 
+        unique_edges = OrderedSet()
+
+        for edge in edges_minus:
+            left_vertex = edge[0]
+            right_vertex = edge[1]
+            reversed_edge = (right_vertex, left_vertex)
+
+            if edge not in unique_edges and reversed_edge not in unique_edges:
+                unique_edges.add(edge)
+
+        edges_minus = unique_edges
         return edges_minus
 
 
     def find_edges_rule_b(self):
-        edges_minus     =   set()
-        edges_plus      =   set()
+        edges_minus =   OrderedSet()
+        edges_plus  =   OrderedSet()
 
         for individual in self.vertices_individuals:
             for mating_unit in self.vertices_mating_units:
@@ -403,7 +364,7 @@ class Graph:
                 pedigree_vertices_1 = self.build_sets_from_individual(individual)[0]
                 pedigree_vertices_2 = self.build_sets_from_mating_unit(mating_unit)[0]
 
-                if pedigree_vertices_1.issubset(pedigree_vertices_2):
+                if pedigree_vertices_1 <= pedigree_vertices_2:
                     edges_plus.add((individual, mating_unit))
 
         edges_minus = edges_minus - edges_plus
@@ -411,8 +372,8 @@ class Graph:
 
 
     def find_edges_rule_c(self):
-        edges_minus     =   set()
-        edges_plus      =   set()
+        edges_minus =   OrderedSet()
+        edges_plus  =   OrderedSet()
 
         for individual in self.vertices_individuals:
             for sibship_unit in self.vertices_sibship_units:
@@ -431,7 +392,7 @@ class Graph:
                 pedigree_vertices_1 = self.build_sets_from_individual(individual)[0]
                 pedigree_vertices_2 = self.build_sets_from_sibship_unit(sibship_unit)[0]
 
-                if pedigree_vertices_1.issubset(pedigree_vertices_2):
+                if pedigree_vertices_1 <= pedigree_vertices_2:
                     edges_plus.add((individual, sibship_unit))
 
         edges_minus = edges_minus - edges_plus
@@ -439,7 +400,7 @@ class Graph:
 
 
     def find_edges_rule_d(self):
-        edges_plus      =   set()
+        edges_plus  =   OrderedSet()
 
         for mating_unit in self.vertices_mating_units:
             for sibship_unit in self.vertices_sibship_units:
@@ -453,7 +414,7 @@ class Graph:
 
 
     def find_edges_rule_e(self):
-        edges_minus = set()
+        edges_minus = OrderedSet()
         units_union = self.vertices_mating_units + self.vertices_sibship_units
 
         for mating_unit in self.vertices_mating_units:
@@ -480,57 +441,175 @@ class Graph:
         edges_minus = edges_minus - self.find_edges_rule_d()
         return edges_minus
 
-
-    def remove_edges_by_rules(self):
-        pass
-        #self.__graph_instance.remove_edges_from(self.find_edges_rule_a())
-        #self.__graph_instance.remove_edges_from(self.find_edges_rule_b()[0])
-        #self.__graph_instance.remove_edges_from(self.find_edges_rule_c()[0])
-        #self.__graph_instance.remove_edges_from(self.find_edges_rule_e())
-
-
-    def validate_edges_by_rules(self):
-        for edge in self.find_edges_rule_b()[1]:
-            if edge not in self.graph_instance.edges():
-                return False
-
-        for edge in self.find_edges_rule_c()[1]:
-            if edge not in self.graph_instance.edges():
-                return False
-
-        for edge in self.find_edges_rule_d():
-            if edge not in self.graph_instance.edges():
-                return False
-
-        current = self.vertices_individuals[0]
-        print("Individual", current, "p(v):", self.build_sets_from_individual(current)[0])
-        print("Individual", current, "g(v):", self.build_sets_from_individual(current)[1])
-        print("Individual", current, "c(v):", self.build_sets_from_individual(current)[2])
-
-
-        mating = self.vertices_mating_units[0]
-
-        print("MatingUnit", mating, "p(v):", self.build_sets_from_mating_unit(mating)[0])
-        print("MatingUnit", mating, "g(v):", self.build_sets_from_mating_unit(mating)[1])
-        print("MatingUnit", mating, "c(v):", self.build_sets_from_mating_unit(mating)[2])
-
-        sibship = self.vertices_sibship_units[0]
-
-        print("SibshipUnit", sibship, "p(v):", self.build_sets_from_sibship_unit(sibship)[0])
-        print("SibshipUnit", sibship, "g(v):", self.build_sets_from_sibship_unit(sibship)[1])
-        print("SibshipUnit", sibship, "c(v):", self.build_sets_from_sibship_unit(sibship)[2])
-
-        return True
-
     
     def build_required_graph(self):
-        return  (self.find_edges_rule_b()[1] | \
+        return  self.find_edges_rule_b()[1] | \
                 self.find_edges_rule_c()[1] | \
-                self.find_edges_rule_d())
+                self.find_edges_rule_d()
 
 
     def build_forbidden_graph(self):
-        return  self.find_edges_rule_a() | \
+        return  self.find_edges_rule_a()    | \
                 self.find_edges_rule_b()[0] | \
                 self.find_edges_rule_c()[0] | \
                 self.find_edges_rule_e()
+
+
+class SandwichInstance:
+    def __init__(self, pedigree_vertices, required_graph, forbidden_graph):
+        self.__pedigree_vertices    =   pedigree_vertices
+        self.__required_graph       =   self.build_graph(required_graph)
+        self.__forbidden_graph      =   self.build_graph(forbidden_graph)
+
+
+    @property
+    def pedigree_vertices(self):
+        return self.__pedigree_vertices
+
+
+    @property
+    def required_graph(self):
+        return self.__required_graph
+
+
+    @property
+    def forbidden_graph(self):
+        return self.__forbidden_graph
+
+
+    @pedigree_vertices.setter
+    def pedigree_vertices(self, pedigree_vertices):
+        self.__pedigree_vertices = pedigree_vertices
+
+
+    @required_graph.setter
+    def required_graph(self, required_graph):
+        self.__required_graph = required_graph
+
+
+    @forbidden_graph.setter
+    def forbidden_graph(self, forbidden_graph):
+        self.__forbidden_graph = forbidden_graph
+
+
+    @pedigree_vertices.deleter
+    def pedigree_vertices(self):
+        del self.__pedigree_vertices
+
+
+    @required_graph.deleter
+    def required_graph(self):
+        del self.__required_graph
+
+
+    @forbidden_graph.deleter
+    def forbidden_graph(self):
+        del self.__forbidden_graph
+
+    
+    def __del__(self):
+        del self.__pedigree_vertices
+        del self.__required_graph
+        del self.__forbidden_graph
+
+
+    def build_graph(self, set_edges):
+        graph = nx.Graph()
+        graph.add_nodes_from(self.pedigree_vertices)
+        graph.add_edges_from(set_edges)
+        return graph
+
+
+class SandwichSolver:
+    def __init__(self, sandwich_instance):
+        assert isinstance(sandwich_instance, SandwichInstance)
+        self.__sandwich_instance = sandwich_instance
+        self.solved_intervals = self.solve_interval_sandwich_algorithm()
+
+
+    @property
+    def sandwich_instance(self):
+        return self.__sandwich_instance
+
+
+    @sandwich_instance.setter
+    def sandwich_instance(self, sandwich_instance):
+        self.__sandwich_instance = sandwich_instance
+
+
+    @sandwich_instance.deleter
+    def sandwich_instance(self):
+        del self.__sandwich_instance
+
+
+    def __del__(self):
+        del self.__sandwich_instance
+        del self.solved_intervals
+
+
+    def solve_interval_sandwich_algorithm(self):
+        cut_realizations = list()
+        required_graph_neighbors = dict()
+
+        for vertex in self.sandwich_instance.required_graph.nodes():
+            required_graph_neighbors[vertex] = OrderedSet(self.sandwich_instance.required_graph.neighbors(vertex))
+        
+        for vertex in self.sandwich_instance.pedigree_vertices:
+            current_interval = Interval(vertex)
+            realization_instance = CutRealization(
+                self.sandwich_instance.required_graph,
+                self.sandwich_instance.forbidden_graph,
+                required_graph_neighbors,
+                [current_interval], [vertex]
+            )
+            cut_realizations.append(realization_instance)
+
+        # Initialize an empty queue Q and 
+        # for each v ∈ V, add the cut {v} to Q.
+        cut_realizations = deque(cut_realizations)
+        layouted_realizations = list()
+
+        # Do the whole loop for the only one feasible cut.
+        if len(self.sandwich_instance.pedigree_vertices) == 1:
+            current_realization = cut_realizations.pop()
+            assert isinstance(current_realization, CutRealization)
+            return current_realization.intervals
+        
+        while len(cut_realizations) != 0:
+            # Remove some feasible cut X from Q.
+            feasible_cut = cut_realizations.pop()
+            assert isinstance(feasible_cut, CutRealization)
+
+            # Store every z ∉ X in an OrderedSet.
+            other_vertices = OrderedSet(
+                self.sandwich_instance.pedigree_vertices - \
+                OrderedSet(feasible_cut.domain_vertex)
+            )
+
+            # for every z ∉ X (every element of other_vertices)
+            for vertex in other_vertices:
+                # Try to extend X by z (using Lemma 2.1).
+                condition_extend = feasible_cut.can_extend_vertex(vertex)
+
+                if not condition_extend:
+                    continue
+
+                # Suppose a feasible cut Y is generated.
+                copy_realization = feasible_cut.create_copy_realization()
+                copy_realization.extend_vertex(vertex)
+                
+
+                # if Y has domain V then output "success" and stop.
+                if  len(copy_realization.domain_vertex) == \
+                    len(self.sandwich_instance.pedigree_vertices):
+                    return copy_realization.intervals
+        
+                # Otherwise,...
+                else:
+                    # ...if Y is new, then add it to Q.
+                    if repr(copy_realization) not in layouted_realizations:
+                        layouted_realizations.append(repr(copy_realization))
+                        cut_realizations.append(copy_realization)
+
+        # Output "failure" and stop.
+        return None
