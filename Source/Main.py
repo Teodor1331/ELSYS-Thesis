@@ -1,17 +1,16 @@
+import sys
 import networkx as nx
-import matplotlib.pyplot as plt
 
 
-from Loader     import Loader
-from Builder    import Builder
-from Graph      import Graph, SandwichInstance
-from Graph      import SandwichSolver
+from Loader             import Loader
+from Builder            import Builder
+from Graph              import Graph, SandwichInstance
+from Graph              import SandwichSolver
+from IntervalSandwich   import Interval
+from Drawer             import Drawer
 
 from FamilyUnits    import Individual
 from PedigreeFamily import PedigreeFamily
-
-
-import sys
 
 
 def main(argv = sys.argv[1:]):
@@ -30,7 +29,7 @@ def main(argv = sys.argv[1:]):
         )
 
         solver = SandwichSolver(sandwich)
-        print(solver.solved_intervals)
+        drawer = Drawer(solver.solved_intervals)
 
 
 if __name__ == '__main__':
