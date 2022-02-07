@@ -14,4 +14,10 @@ class Status(Enum):
 
 
 class Role(Enum):
-    PROBAND     =   0
+    PROBAND         =   0
+    FATHER          =   1
+    MOTHER          =   2
+    BROTHER         =   3
+    SISTER          =   4
+    GRANDFATHER     =   5
+    GRANDMOTHER     =   6
