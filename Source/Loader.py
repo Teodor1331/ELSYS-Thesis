@@ -139,32 +139,31 @@ class Loader:
     def read_file_data(self) -> list:
         file_data   =   list()
         buffer_data =   list()
-        file = open(self.file_path)
 
-        if self.file_suffix.lower() in Loader.TAB_SEPARATED_EXTENSIONS:
-            dictionary_order = self.manage_tab_separated(file)
+        with open(self.file_path) as file:
+            if self.file_suffix.lower() in Loader.TAB_SEPARATED_EXTENSIONS:
+                dictionary_order = self.manage_tab_separated(file)
 
-            for file_line in file:
-                file_line = re.sub(' +', '\t', file_line)
-                file_line = re.sub('\t+', '\t', file_line)
-                file_line = file_line.strip('\n').split('\t')
-                buffer_data.append(file_line)
-        elif self.file_suffix.lower() in Loader.COMMA_SEPARATED_EXTENSIONS:
-            dictionary_order = self.manage_comma_separated(file)
-            csv_reader = csv.reader(file)
+                for file_line in file:
+                    file_line = re.sub(' +', '\t', file_line)
+                    file_line = re.sub('\t+', '\t', file_line)
+                    file_line = file_line.strip('\n').split('\t')
+                    buffer_data.append(file_line)
+            elif self.file_suffix.lower() in Loader.COMMA_SEPARATED_EXTENSIONS:
+                dictionary_order = self.manage_comma_separated(file)
+                csv_reader = csv.reader(file)
 
-            for file_line in csv_reader:
-                buffer_data.append(file_line)
-        else:
-            raise ValueError("The format of the file is not recognized!")
+                for file_line in csv_reader:
+                    buffer_data.append(file_line)
+            else:
+                raise ValueError("The format of the file is not recognized!")
 
-        for file_line in buffer_data:
-            ordered_line = list()
+            for file_line in buffer_data:
+                ordered_line = list()
 
-            for column_name in Loader.PEDIGREE_COLUMNS:
-                ordered_line.append(file_line[dictionary_order.get(column_name)])
+                for column_name in Loader.PEDIGREE_COLUMNS:
+                    ordered_line.append(file_line[dictionary_order.get(column_name)])
 
-            file_data.append(ordered_line)
+                file_data.append(ordered_line)
 
-        file.close()
         return file_data

@@ -1,8 +1,4 @@
-import sys
-import pytest
-
-
+import sys, pytest
 sys.path.append('..')
-
 
 from PedigreeFamily import PedigreeFamily

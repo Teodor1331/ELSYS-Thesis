@@ -12,11 +12,15 @@ class Individual:
         self.__individual_identifier    =   individual_data[1]
         self.__individual_father        =   individual_data[2]
         self.__individual_mother        =   individual_data[3]
-        self.__individual_sex           =   individual_data[4]
-        self.__individual_status        =   individual_data[5]
-        self.__individual_role          =   individual_data[6]
+
+        self.__individual_sex           =   self.decide_sex_individual(individual_data[4])
+        self.__individual_status        =   self.decide_status_individual(individual_data[5])
+        self.__individual_role          =   self.decide_role_individual(individual_data[6])
+
+
         self.__mating_unit_relation     =   None
         self.__sibship_unit_relation    =   None
+
         self.__generation_rank          =   None
         self.__number_matings           =   0
 
@@ -42,17 +46,17 @@ class Individual:
 
 
     @property
-    def individual_sex(self):
+    def individual_sex(self) -> Sex:
         return self.__individual_sex
 
 
     @property
-    def individual_status(self):
+    def individual_status(self) -> Status:
         return self.__individual_status
 
 
     @property
-    def individual_role(self):
+    def individual_role(self) -> Role:
         return self.__individual_role
 
 
@@ -74,41 +78,6 @@ class Individual:
     @property
     def number_matings(self):
         return self.__number_matings
-
-
-    @pedigree_identifier.setter
-    def pedigree_identifier(self, pedigree_identifier):
-        self.__pedigree_identifier = pedigree_identifier
-
-
-    @individual_identifier.setter
-    def individual_identifier(self, individual_identifier):
-        self.__individual_identifier = individual_identifier
-
-
-    @individual_father.setter
-    def individual_father(self, individual_father):
-        self.__individual_father = individual_father
-
-
-    @individual_mother.setter
-    def individual_mother(self, individual_mother):
-        self.__individual_mother = individual_mother
-
-
-    @individual_sex.setter
-    def individual_sex(self, individual_sex):
-        self.__individual_sex = individual_sex
-
-
-    @individual_status.setter
-    def individual_status(self, individual_status):
-        self.__individual_status = individual_status
-
-
-    @individual_role.setter
-    def individual_role(self, individual_role):
-        self.__individual_role = individual_role
 
 
     @mating_unit_relation.setter
@@ -209,21 +178,65 @@ class Individual:
         del self.__individual_identifier
         del self.__individual_father
         del self.__individual_mother
+
         del self.__individual_sex
         del self.__individual_status
         del self.__individual_role
+
         del self.__mating_unit_relation
         del self.__sibship_unit_relation
+
         del self.__generation_rank
         del self.__number_matings
 
 
+    def decide_sex_individual(self, string):
+        if string == '0':
+            return Sex.UNKNOWN
+        elif string == '1':
+            return Sex.MALE
+        elif string == '2':
+            return Sex.FEMALE
+        else:
+            return None
+
+
+    def decide_status_individual(self, string):
+        if string == '0':
+            return Status.UNKNOWN
+        elif string == '1':
+            return Status.UNAFFECTED
+        elif string == '2':
+            return Status.AFFECTED
+        else:
+            return None
+
+
+    def decide_role_individual(self, string):
+        if string == 'prb':
+            return Role.PROBAND
+        elif string == 'father':
+            return Role.FATHER
+        elif string == 'mother':
+            return Role.MOTHER
+        elif string == 'brother':
+            return Role.BROTHER
+        elif string == 'sister':
+            return Role.SISTER
+        elif string == 'grandfather':
+            return Role.GRANDFATHER
+        elif string == 'grandmother':
+            return Role.GRANDMOTHER
+        else:
+            return None
+
+
 class MatingUnit:
-    def __init__(self, pedigree_identifier, male_mate_individual, female_mate_individual, sibship_unit_relation):
-        assert isinstance(pedigree_identifier,      str)
-        assert isinstance(male_mate_individual,     Individual)
-        assert isinstance(female_mate_individual,   Individual)
-        assert isinstance(sibship_unit_relation,    (SibshipUnit, type(None)))
+    def __init__(self, pedigree_identifier, male_mate_individual, female_mate_individual, sibship_unit_relation) -> None:
+        assert isinstance(pedigree_identifier, str)
+        assert isinstance(male_mate_individual, Individual)
+        assert isinstance(female_mate_individual, Individual)
+        assert isinstance(sibship_unit_relation, (SibshipUnit, type(None)))
         
         self.__pedigree_identifier      =   pedigree_identifier
         self.__male_mate_individual     =   male_mate_individual

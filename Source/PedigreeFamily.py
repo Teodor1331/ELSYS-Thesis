@@ -2,6 +2,8 @@ from FamilyUnits import Individual
 from FamilyUnits import MatingUnit
 from FamilyUnits import SibshipUnit
 
+from Fields import Role
+
 
 class PedigreeFamily:
     def __init__(self, pedigree_identifier):
@@ -195,7 +197,7 @@ class PedigreeFamily:
             current_individual = self.pedigree_individuals[individual]
             assert isinstance(current_individual, Individual)
 
-            if current_individual.individual_role == 'prb':
+            if current_individual.individual_role == Role.PROBAND:
                 current_individual.generation_rank = 0
                 return current_individual
 
