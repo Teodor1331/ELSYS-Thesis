@@ -1,13 +1,14 @@
 import sys
-import networkx as nx
 
 
-from Loader             import Loader
-from Builder            import Builder
+from Loader import Loader
+from Builder import Builder
+
 from Graph              import Graph, SandwichInstance
 from Graph              import SandwichSolver
 from IntervalSandwich   import Interval
 from Drawer             import Drawer
+from Drawer             import PDFCreator
 
 from FamilyUnits    import Individual
 from PedigreeFamily import PedigreeFamily
@@ -30,6 +31,7 @@ def main(argv = sys.argv[1:]):
 
         solver = SandwichSolver(sandwich)
         drawer = Drawer(solver.solved_intervals)
+        pdf = PDFCreator(pedigree.pedigree_identifier)
 
 
 if __name__ == '__main__':

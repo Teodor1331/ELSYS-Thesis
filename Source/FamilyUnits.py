@@ -1,6 +1,12 @@
+from Fields import Sex, Status, Role
+
+
 class Individual:
-    def __init__(self, individual_data):
-        assert isinstance(individual_data, list)
+    def __init__(self, individual_data) -> None:
+        try:
+            assert isinstance(individual_data, list)
+        except AssertionError:
+            raise AssertionError('The individual data is not valid!')
 
         self.__pedigree_identifier      =   individual_data[0]
         self.__individual_identifier    =   individual_data[1]
@@ -16,22 +22,22 @@ class Individual:
 
 
     @property
-    def pedigree_identifier(self):
+    def pedigree_identifier(self) -> str:
         return self.__pedigree_identifier
 
 
     @property
-    def individual_identifier(self):
+    def individual_identifier(self) -> str:
         return self.__individual_identifier
 
 
     @property
-    def individual_father(self):
+    def individual_father(self) -> str:
         return self.__individual_father
 
 
     @property
-    def individual_mother(self):
+    def individual_mother(self) -> str:
         return self.__individual_mother
 
 

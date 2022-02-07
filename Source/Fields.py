@@ -14,4 +14,4 @@ class Status(Enum):
 
 
 class Role(Enum):
-    PROBAND     =   1
+    PROBAND     =   0

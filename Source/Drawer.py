@@ -1,11 +1,10 @@
 from re import I
 import matplotlib.pyplot as plt
 
+from matplotlib.backends.backend_pdf import PdfPages
+
 
 from collections import defaultdict
-from collections import namedtuple
-from ordered_set import OrderedSet
-from functools import reduce
 
 
 from FamilyUnits import Individual
@@ -318,3 +317,22 @@ class IndividualDrawer:
         del self.__scale_shape
         del self.__x_center_shape
         del self.__y_center_shape
+
+
+class PDFCreator:
+    def __init__(self, filename):
+        self.__filename     =   filename
+
+
+    @property
+    def filename(self):
+        return self.__filename
+
+
+    @filename.deleter
+    def filename(self):
+        del self.__filename
+
+
+    def __del__(self):
+        del self.__filename

@@ -1,16 +1,13 @@
 import sys
-
 sys.path.append('..')
 
-
-from FamilyUnits    import Individual
+from FamilyUnits import Individual
 from PedigreeFamily import PedigreeFamily
 
 
 class Builder:
     def __init__(self, file_data) -> None:
         assert isinstance(file_data, list)
-        assert self.validate_file_data(file_data)
 
         self.__file_data        =   file_data
         self.__file_pedigrees   =   self.build_file_units()[0]
@@ -20,69 +17,42 @@ class Builder:
 
 
     @property
-    def file_data(self):
+    def file_data(self) -> list:
         return self.__file_data
 
 
     @property
-    def file_pedigrees(self):
+    def file_pedigrees(self) -> list:
         return self.__file_pedigrees
 
 
     @property
-    def file_individuals(self):
+    def file_individuals(self) -> list:
         return self.__file_individuals
 
 
-    @file_data.setter
-    def file_data(self, file_data):
-        self.__file_data = file_data
-
-
-    @file_pedigrees.setter
-    def file_pedigrees(self, file_pedigrees):
-        self.__file_pedigrees = file_pedigrees
-
-
-    @file_individuals.setter
-    def file_individuals(self, file_individuals):
-        self.__file_individuals = file_individuals
-
-
     @file_data.deleter
-    def file_data(self):
+    def file_data(self) -> None:
         del self.__file_data
 
 
     @file_pedigrees.deleter
-    def file_pedigrees(self):
+    def file_pedigrees(self) -> None:
         del self.__file_pedigrees
 
 
     @file_individuals.deleter
-    def file_individuals(self):
+    def file_individuals(self) -> None:
         del self.__file_individuals
 
 
-    def __del__(self):
+    def __del__(self) -> None:
         del self.__file_data
         del self.__file_pedigrees
         del self.__file_individuals
 
 
-    def validate_file_data(self, file_data):
-        for file_line in file_data:
-            if not isinstance(file_line, list):
-                return False
-            else:
-                for file_unit in file_line:
-                    if not isinstance(file_unit, str):
-                        return False
-
-        return True
-
-
-    def build_file_units(self):
+    def build_file_units(self) -> tuple:
         file_pedigrees      = list()
         file_individuals    = list()
 
@@ -95,7 +65,7 @@ class Builder:
         return (file_pedigrees, file_individuals)
 
 
-    def build_inner_units(self):
+    def build_inner_units(self) -> None:
         for file_individual in self.file_individuals:
             assert isinstance(file_individual, Individual)
 
