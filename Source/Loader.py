@@ -22,17 +22,16 @@ class Loader:
     def __init__(self, file_path) -> None:
         try:
             assert isinstance(file_path, str)
-        except AssertionError:
-            raise AssertionError("The file path is not a correct name!")
-        
-        try:
+
             self.__file_path    =   file_path
             self.__file_name    =   Path(file_path).name
             self.__file_stem    =   Path(file_path).stem
             self.__file_suffix  =   Path(file_path).suffix
             self.__file_data    =   self.read_file_data()
+        except AssertionError:
+            raise AssertionError("The file path is not a correct name!")            
         except FileNotFoundError:
-            raise Exception("The file was not found!")
+            raise FileNotFoundError("The file was not found!")
 
     @property
     def file_path(self) -> str:
@@ -57,36 +56,6 @@ class Loader:
     @property
     def file_data(self) -> list:
         return self.__file_data
-
-
-    @file_path.setter
-    def file_path(self, file_path) -> None:
-        assert isinstance(file_path, str)
-        self.__file_path = file_path
-
-
-    @file_name.setter
-    def file_name(self, file_name) -> None:
-        assert isinstance(file_name, str)
-        self.__file_name = file_name
-
-
-    @file_stem.setter
-    def file_stem(self, file_stem) -> None:
-        assert isinstance(file_stem)
-        self.__file_stem = file_stem
-
-
-    @file_suffix.setter
-    def file_suffix(self, file_suffix) -> None:
-        assert isinstance(file_suffix, str)
-        self.__file_suffix = file_suffix
-
-
-    @file_data.setter
-    def file_data(self, file_data) -> None:
-        assert isinstance(file_data, list)
-        self.__file_data = file_data
 
 
     @file_path.deleter
@@ -122,9 +91,13 @@ class Loader:
         del self.__file_data
 
 
-    def manage_tab_separated(self, file_object):
-        assert isinstance(file_object, TextIOWrapper)
-        dictionary_order    =   dict()
+    def manage_tab_separated(self, file_object) -> dict:
+        try:
+            assert isinstance(file_object, TextIOWrapper)
+        except AssertionError:
+            raise AssertionError('The file object is not valid!')
+
+        dictionary_order = {}
 
         header_line = file_object.readline()
         header_line = re.sub(' +', '\t', header_line)
@@ -135,31 +108,37 @@ class Loader:
             if column_name[1:] in Loader.PEDIGREE_COLUMNS:
                 dictionary_order[column_name[1:]] = header_line.index(column_name)
             else:
-                raise ValueError("The column name", column_name[1:], "is not recognized!")
+                raise ValueError('The column name", column_name[1:], "is not recognized!')
 
         return dictionary_order
 
 
-    def manage_comma_separated(self, file_object):
-        assert isinstance(file_object, TextIOWrapper)
-        dictionary_order    =   dict()
+    def manage_comma_separated(self, file_object) -> dict:
+        try:
+            assert isinstance(file_object, TextIOWrapper)
+        except AssertionError:
+            raise AssertionError('The file object is not valid!')
 
+        dictionary_order = {}
         csv_reader = csv.reader(file_object)
 
-        header_line = [column for column in next(csv_reader) if column != '']
+        try:
+            header_line = [column for column in next(csv_reader) if column != '']
+        except StopIteration:
+            raise StopIteration('The column iteration stopped!')
 
         for column_name in header_line:
             if column_name in Loader.PEDIGREE_COLUMNS:
                 dictionary_order[column_name] = header_line.index(column_name)
             else:
-                raise ValueError("The column name", column_name, "is not recognized!")
+                raise ValueError('The column name", column_name, "is not recognized!')
 
         return dictionary_order
 
 
-    def read_file_data(self):
-        buffer_data =   list()
+    def read_file_data(self) -> list:
         file_data   =   list()
+        buffer_data =   list()
         file = open(self.file_path)
 
         if self.file_suffix.lower() in Loader.TAB_SEPARATED_EXTENSIONS:

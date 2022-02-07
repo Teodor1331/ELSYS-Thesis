@@ -1,7 +1,11 @@
+from re import I
 import matplotlib.pyplot as plt
 
 
 from collections import defaultdict
+from collections import namedtuple
+from ordered_set import OrderedSet
+from functools import reduce
 
 
 from FamilyUnits import Individual
@@ -13,13 +17,19 @@ from IntervalSandwich import Interval
 class Drawer:
     def __init__(self, intervals):
         self.__pedigree_intervals       =   intervals
+
         self.__individuals_intervals    =   self.find_individuals_intervals()
         self.__mating_units_intervals   =   self.find_mating_units_intervals()
         self.__sibship_units_intervals  =   self.find_sibship_units_intervals()
 
-        self.split_individuals_by_generation_ranks()
-        self.split_mating_units_by_generation_ranks()
-        self.split_sibship_units_by_generation_ranks()
+        self.__lines                    =   list()
+        self.__positions                =   list()
+
+        self.__splitted_individuals_by_ranks        =   self.split_individuals_by_generation_ranks()
+        self.__splitted_mating_units_by_ranks       =   self.split_mating_units_by_generation_ranks()
+        self.__splitted_sibship_units_by_ranks      =   self.split_sibship_units_by_generation_ranks()
+
+        self.__pedigree_positions                   =   self.draw_pedigree_positions()
 
 
     @property
@@ -135,7 +145,7 @@ class Drawer:
             generation_rank = individual_interval.vertex.generation_rank
             splitted_intervals_by_ranks[generation_rank].append(individual_interval)
 
-        dictionary_keys = sorted(splitted_intervals_by_ranks)
+        dictionary_keys = sorted(splitted_intervals_by_ranks.keys())
 
         for key in dictionary_keys:
             sorted_intervals = sorted(
@@ -154,7 +164,6 @@ class Drawer:
 
             splitted_individuals_intervals.append(interval_vertices)
 
-        print(splitted_individuals_intervals)
         return splitted_individuals_intervals
 
 
@@ -168,7 +177,7 @@ class Drawer:
             generation_rank = mating_unit_interval.vertex.generation_rank
             splitted_intervals_by_ranks[generation_rank].append(mating_unit_interval)
 
-        dictionary_keys = sorted(splitted_intervals_by_ranks)
+        dictionary_keys = sorted(splitted_intervals_by_ranks.keys())
 
         for key in dictionary_keys:
             sorted_intervals = sorted(
@@ -187,7 +196,6 @@ class Drawer:
 
             splitted_mating_units_intervals.append(interval_vertices)
 
-        print(splitted_mating_units_intervals)
         return splitted_mating_units_intervals
 
 
@@ -201,7 +209,7 @@ class Drawer:
             generation_rank = sibship_unit_interval.vertex.generation_rank
             splitted_intervals_by_ranks[generation_rank].append(sibship_unit_interval)
 
-        dictionary_keys = sorted(splitted_intervals_by_ranks)
+        dictionary_keys = sorted(splitted_intervals_by_ranks.keys())
 
         for key in dictionary_keys:
             sorted_intervals = sorted(
@@ -220,5 +228,96 @@ class Drawer:
 
             splitted_sibship_units_intervals.append(interval_vertices)
 
-        print(splitted_sibship_units_intervals)
         return splitted_sibship_units_intervals
+
+
+    def draw_pedigree_positions(self):
+        pedigree_positions = dict()
+
+        x_axis_offset   =   20.0
+        y_axis_offset   =   20.0
+        distance_offset =    8.0
+        height_distance =   30.0
+        original_offset =   x_axis_offset
+
+        for i in range(len(self.__splitted_individuals_by_ranks)):
+            generation_rank = i + 1
+            x_axis_offset = original_offset
+
+            for individual in self.__splitted_individuals_by_ranks[i]:
+                pedigree_positions[individual] = IndividualDrawer(
+                    individual, x_axis_offset,
+                    generation_rank * height_distance + y_axis_offset
+                )
+                x_axis_offset = x_axis_offset + 21.0 + distance_offset
+
+        return pedigree_positions
+
+
+class IndividualDrawer:
+    def __init__(self, individual, x__coordinate, y__coordinate, size_shape = 21.0, scale_shape = 1.0):
+        self.__individual       =   individual
+        self.__x_coordinate     =   x__coordinate
+        self.__y_coordinate     =   y__coordinate
+        self.__size_shape       =   size_shape
+        self.__scale_shape      =   scale_shape
+        self.__x_center_shape   =   self.calculate_x_center()
+        self.__y_center_shape   =   self.calculate_y_center()
+
+
+    @property
+    def individual(self):
+        return self.__individual
+
+
+    @property
+    def x_coordinate(self):
+        return self.__x_coordinate
+
+
+    @property
+    def y_coordinate(self):
+        return self.__y_coordinate
+
+
+    @property
+    def size_shape(self):
+        return self.__size_shape
+
+
+    @property
+    def scale_shape(self):
+        return self.__scale_shape
+
+
+    @property
+    def x_center_shape(self):
+        return self.__x_center_shape
+
+
+    @property
+    def y_center_shape(self):
+        return self.__y_center_shape
+
+
+    def calculate_x_center(self):
+        return self.x_coordinate + self.size_shape / 2.0
+
+
+    def calculate_y_center(self):
+        return self.y_coordinate + self.size_shape / 2.0
+
+
+    def __repr__(self):
+        return  '(' + str(self.x_coordinate) + \
+                ', ' + str(self.y_coordinate) + ')'
+
+
+    def __del__(self):
+        del self.__individual
+        del self.__x_coordinate
+        del self.__y_coordinate
+        del self.__size_shape
+        del self.__scale_shape
+        del self.__x_center_shape
+        del self.__y_center_shape
