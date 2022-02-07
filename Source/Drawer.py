@@ -22,9 +22,6 @@ class Drawer:
         self.__mating_units_intervals   =   self.find_mating_units_intervals()
         self.__sibship_units_intervals  =   self.find_sibship_units_intervals()
 
-        self.__lines                    =   list()
-        self.__positions                =   list()
-
         self.__splitted_individuals_by_ranks        =   self.split_individuals_by_generation_ranks()
         self.__splitted_mating_units_by_ranks       =   self.split_mating_units_by_generation_ranks()
         self.__splitted_sibship_units_by_ranks      =   self.split_sibship_units_by_generation_ranks()
