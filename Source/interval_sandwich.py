@@ -41,6 +41,21 @@ class Interval:
         self.__right_element = right_element
 
 
+    @vertex.deleter
+    def vertex(self):
+        del self.__vertex
+
+
+    @left_element.deleter
+    def left_element(self):
+        del self.__left_element
+
+
+    @right_element.deleter
+    def right_element(self):
+        del self.__right_element
+
+
     def __repr__(self):
         return  "Interval(" + str(self.vertex) + ", " + \
                 str(self.left_element) + ", " + \

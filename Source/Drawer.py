@@ -8,7 +8,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 from family_units import Individual
 from family_units import MatingUnit
 from family_units import SibshipUnit
-from IntervalSandwich import Interval
+from interval_sandwich import Interval
 
 
 class Drawer:

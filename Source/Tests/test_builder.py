@@ -2,12 +2,12 @@ import sys, pytest
 sys.path.append('..')
 
 from loader import Loader
-from Builder import Builder
+from builder import Builder
 from family_units import Individual
 from pedigree_family import PedigreeFamily
 
 
-def test_builder_instances():
+def test_builder_constructor():
     loader1 = Loader('../../Examples/TXT Examples/Pedigree1.txt')
     loader2 = Loader('../../Examples/TXT Examples/Pedigree2.txt')
     loader3 = Loader('../../Examples/TXT Examples/Pedigree3.txt')
@@ -20,8 +20,10 @@ def test_builder_instances():
     assert isinstance(builder2, Builder)
     assert isinstance(builder3, Builder)
 
+    assert 'builder1' in locals()
+    assert 'builder2' in locals()
+    assert 'builder3' in locals()
 
-def test_builder_constructor():
     with pytest.raises(AssertionError):
         Builder(None)
         Builder(bool)
@@ -44,10 +46,9 @@ def test_builder_destructor():
     del builder2
     del builder3
 
-    with pytest.raises(NameError):
-        print(builder1)
-        print(builder2)
-        print(builder3)
+    assert 'builder1' not in locals()
+    assert 'builder2' not in locals()
+    assert 'builder3' not in locals()
 
 
 def test_builder_properties():
@@ -86,6 +87,53 @@ def test_builder_properties():
     assert len(builder1.file_individuals) == 6
     assert len(builder2.file_individuals) == 6
     assert len(builder3.file_individuals) == 6
+
+
+def test_builder_deleters():
+    loader1 = Loader('../../Examples/CSV Examples/Pedigree1.csv')
+    loader2 = Loader('../../Examples/PED Examples/Pedigree1.ped')
+    loader3 = Loader('../../Examples/TXT Examples/Pedigree1.txt')
+
+    builder1 = Builder(loader1.file_data)
+    builder2 = Builder(loader2.file_data)
+    builder3 = Builder(loader3.file_data)
+
+    del builder1.file_data
+    del builder2.file_data
+    del builder3.file_data
+
+    del builder1.file_pedigrees
+    del builder2.file_pedigrees
+    del builder3.file_pedigrees
+
+    del builder1.file_individuals
+    del builder2.file_individuals
+    del builder3.file_individuals
+
+    assert not hasattr(builder1, 'file_data')
+    assert not hasattr(builder2, 'file_data')
+    assert not hasattr(builder3, 'file_data')
+
+    assert not hasattr(builder1, 'file_pedigrees')
+    assert not hasattr(builder2, 'file_pedigrees')
+    assert not hasattr(builder3, 'file_pedigrees')
+
+    assert not hasattr(builder1, 'file_individuals')
+    assert not hasattr(builder2, 'file_individuals')
+    assert not hasattr(builder3, 'file_individuals')
+
+    with pytest.raises(AttributeError):
+        print(builder1.file_data)
+        print(builder2.file_data)
+        print(builder3.file_data)
+
+        print(builder1.file_pedigrees)
+        print(builder2.file_pedigrees)
+        print(builder3.file_pedigrees)
+
+        print(builder1.file_individuals)
+        print(builder2.file_individuals)
+        print(builder3.file_individuals)
 
 
 def test_builder_build_file_units_method():

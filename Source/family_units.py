@@ -22,7 +22,7 @@ class Individual:
         self.__sibship_unit_relation    =   None
 
         self.__generation_rank          =   None
-        self.__number_matings           =   0
+        self.__mating_instances         =   list()
 
 
     @property
@@ -76,8 +76,8 @@ class Individual:
 
 
     @property
-    def number_matings(self):
-        return self.__number_matings
+    def mating_instances(self):
+        return self.__mating_instances
 
 
     @mating_unit_relation.setter
@@ -98,64 +98,64 @@ class Individual:
         self.__generation_rank = generation_rank
 
 
-    @number_matings.setter
-    def number_matings(self, number_matings):
-        self.__number_matings = number_matings
+    @mating_instances.setter
+    def mating_instances(self, mating_instances):
+        self.__mating_instances = mating_instances
 
 
     @pedigree_identifier.deleter
-    def pedigree_identifier(self):
+    def pedigree_identifier(self) -> None:
         del self.__pedigree_identifier
 
 
     @individual_identifier.deleter
-    def individual_identifier(self):
+    def individual_identifier(self) -> None:
         del self.__individual_identifier
 
 
     @individual_father.deleter
-    def individual_father(self):
+    def individual_father(self) -> None:
         del self.__individual_father
 
 
     @individual_mother.deleter
-    def individual_mother(self):
+    def individual_mother(self) -> None:
         del self.__individual_mother
 
 
     @individual_sex.deleter
-    def individual_sex(self):
+    def individual_sex(self) -> None:
         del self.__individual_sex
 
 
     @individual_status.deleter
-    def individual_status(self):
+    def individual_status(self) -> None:
         del self.__individual_status
 
 
     @individual_role.deleter
-    def individual_role(self):
+    def individual_role(self) -> None:
         del self.__individual_role
 
 
     @mating_unit_relation.deleter
-    def mating_unit_relation(self):
+    def mating_unit_relation(self) -> None:
         del self.__mating_unit_relation
 
 
     @sibship_unit_relation.deleter
-    def sibship_unit_relation(self):
+    def sibship_unit_relation(self) -> None:
         del self.__sibship_unit_relation
 
 
     @generation_rank.deleter
-    def generation_rank(self):
+    def generation_rank(self) -> None:
         del self.__generation_rank
 
 
-    @number_matings.deleter
-    def number_matings(self):
-        del self.__number_matings
+    @mating_instances.deleter
+    def mating_instances(self) -> None:
+        del self.__mating_instances
 
 
     def __hash__(self) -> int:
@@ -173,7 +173,7 @@ class Individual:
         return self.individual_identifier
 
 
-    def __del__(self):
+    def __del__(self) -> None:
         del self.__pedigree_identifier
         del self.__individual_identifier
         del self.__individual_father
@@ -187,7 +187,7 @@ class Individual:
         del self.__sibship_unit_relation
 
         del self.__generation_rank
-        del self.__number_matings
+        del self.__mating_instances
 
 
     @staticmethod
@@ -325,18 +325,18 @@ class MatingUnit:
         del self.__generation_rank
 
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return  hash(self.male_mate_individual) + \
                 hash(self.female_mate_individual)
 
 
-    def __eq__(self, mating_unit):
+    def __eq__(self, mating_unit) -> bool:
         if not isinstance(mating_unit, MatingUnit):
             return False
         return self.__hash__() == mating_unit.__hash__()
 
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "MU" + self.mating_string()
 
 
@@ -350,7 +350,7 @@ class MatingUnit:
         del self.__generation_rank
 
 
-    def mating_string(self):
+    def mating_string(self) -> str:
         return  '(' + str(self.male_mate_individual) + \
                 ', ' + str(self.female_mate_individual) + ')'
 
@@ -419,17 +419,17 @@ class SibshipUnit:
 
 
     @pedigree_identifier.deleter
-    def pedigree_identifier(self):
+    def pedigree_identifier(self) -> None:
         del self.__pedigree_identifier
 
 
     @siblings_individuals.deleter
-    def siblings_individuals(self):
+    def siblings_individuals(self) -> None:
         del self.__siblings_individuals
 
 
     @siblings_extended.deleter
-    def siblings_extended(self):
+    def siblings_extended(self) -> None:
         del self.__siblings_extended
 
 
@@ -457,7 +457,7 @@ class SibshipUnit:
         return "SU" + self.mating_unit_relation.mating_string()
 
 
-    def __del__(self):
+    def __del__(self) -> None:
         del self.__pedigree_identifier
         del self.__siblings_individuals
         del self.__siblings_extended

@@ -2,11 +2,11 @@ import sys
 
 
 from loader import Loader
-from Builder import Builder
+from builder import Builder
 
-from Graph              import Graph, SandwichInstance
-from Graph              import SandwichSolver
-from IntervalSandwich   import Interval
+from graph import Graph, SandwichInstance
+from graph import SandwichSolver
+from interval_sandwich import Interval
 from Drawer             import Drawer
 from Drawer             import PDFCreator
 

@@ -9,13 +9,16 @@ from family_units import Individual
 from family_units import MatingUnit
 from family_units import SibshipUnit
 from pedigree_family import PedigreeFamily
-from IntervalSandwich   import Interval
-from IntervalSandwich   import CutRealization
+from interval_sandwich import Interval
+from interval_sandwich import CutRealization
 
 
 class Graph:
     def __init__(self, pedigree_family):
-        assert isinstance(pedigree_family, PedigreeFamily)
+        try:
+            assert isinstance(pedigree_family, PedigreeFamily)
+        except AssertionError:
+            raise AssertionError('The graph constructor arguments are not correct!')
         
         self.__pedigree_family              =   pedigree_family
         self.__vertices_individuals         =   self.build_vertices_individuals()
@@ -71,11 +74,6 @@ class Graph:
     @pedigree_family.setter
     def pedigree_family(self, pedigree_family):
         self.__pedigree_family = pedigree_family
-
-
-    @vertices_individuals.setter
-    def vertices_individuals(self, vertices_individuals):
-        self.__vertices_individuals = vertices_individuals
 
 
     @vertices_mating_units.setter

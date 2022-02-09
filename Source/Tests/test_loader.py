@@ -4,7 +4,7 @@ sys.path.append('..')
 from Source.loader import Loader
 
 
-def test_loader_instances():
+def test_loader_constructor():
     loader1 = Loader('../../Examples/TXT Examples/Pedigree1.txt')
     loader2 = Loader('../../Examples/TXT Examples/Pedigree2.txt')
     loader3 = Loader('../../Examples/TXT Examples/Pedigree3.txt')
@@ -12,6 +12,23 @@ def test_loader_instances():
     assert isinstance(loader1, Loader)
     assert isinstance(loader2, Loader)
     assert isinstance(loader3, Loader)
+
+    assert 'loader1' in locals()
+    assert 'loader2' in locals()
+    assert 'loader3' in locals()
+
+    with pytest.raises(AssertionError):
+        Loader(None)
+        Loader(bool)
+        Loader(int)
+        Loader(float)
+        Loader(complex)
+
+    with pytest.raises(AssertionError):
+        Loader(str)
+
+    with pytest.raises(FileNotFoundError):
+        Loader('Hello, World!')
 
 
 def test_loader_constants():
@@ -29,21 +46,6 @@ def test_loader_constants():
     assert Loader.COMMA_SEPARATED_EXTENSIONS    == ['.csv']
 
 
-def test_loader_constructor():
-    with pytest.raises(AssertionError):
-        Loader(None)
-        Loader(bool)
-        Loader(int)
-        Loader(float)
-        Loader(complex)
-
-    with pytest.raises(AssertionError):
-        Loader(str)
-
-    with pytest.raises(FileNotFoundError):
-        Loader('Hello, World!')
-
-
 def test_loader_destructor():
     loader1 = Loader('../../Examples/CSV Examples/Pedigree1.csv')
     loader2 = Loader('../../Examples/PED Examples/Pedigree1.ped')
@@ -53,10 +55,9 @@ def test_loader_destructor():
     del loader2
     del loader3
 
-    with pytest.raises(NameError):
-        print(loader1)
-        print(loader2)
-        print(loader3)
+    assert 'loader1' not in locals()
+    assert 'loader2' not in locals()
+    assert 'loader3' not in locals()
 
 
 def test_loader_properties():
@@ -159,26 +160,25 @@ def test_loader_deleters():
     del loader2.file_data
     del loader3.file_data
 
-    with pytest.raises(AttributeError):
-        print(loader1.file_path)
-        print(loader2.file_path)
-        print(loader3.file_path)
+    assert not hasattr(loader1, 'file_path')
+    assert not hasattr(loader2, 'file_path')
+    assert not hasattr(loader3, 'file_path')
 
-        print(loader1.file_name)
-        print(loader2.file_name)
-        print(loader3.file_name)
+    assert not hasattr(loader1, 'file_name')
+    assert not hasattr(loader2, 'file_name')
+    assert not hasattr(loader3, 'file_name')
 
-        print(loader1.file_stem)
-        print(loader2.file_stem)
-        print(loader3.file_stem)
+    assert not hasattr(loader1, 'file_stem')
+    assert not hasattr(loader2, 'file_stem')
+    assert not hasattr(loader3, 'file_stem')
+    
+    assert not hasattr(loader1, 'file_suffix')
+    assert not hasattr(loader2, 'file_suffix')
+    assert not hasattr(loader3, 'file_suffix')
 
-        print(loader1.file_suffix)
-        print(loader2.file_suffix)
-        print(loader3.file_suffix)
-
-        print(loader1.file_data)
-        print(loader2.file_data)
-        print(loader3.file_data)
+    assert not hasattr(loader1, 'file_data')
+    assert not hasattr(loader2, 'file_data')
+    assert not hasattr(loader3, 'file_data')
 
 
 def test_managing_tab_separated_file():
@@ -190,7 +190,7 @@ def test_managing_tab_separated_file():
         result = loader.manage_tab_separated('Hello, World!')
 
     with pytest.raises(ValueError):
-        exception_loader = Loader('../../Examples/PED Examples/Pedigree7.ped')
+        Loader('../../Examples/PED Examples/Pedigree7.ped')
 
     file_descriptor = open(loader.file_path)
     result = loader.manage_tab_separated(file_descriptor)
@@ -220,10 +220,10 @@ def test_manage_comma_separated_file():
         result = loader.manage_comma_separated('Hello, World!')
 
     with pytest.raises(StopIteration):
-        exception_loader = Loader('../../Examples/CSV Examples/Pedigree7.csv')
+        Loader('../../Examples/CSV Examples/Pedigree7.csv')
 
     with pytest.raises(ValueError):
-        exception_loader = Loader('../../Examples/CSV Examples/Pedigree2.csv')
+        Loader('../../Examples/CSV Examples/Pedigree2.csv')
 
     file_descriptor = open(loader.file_path)
     result = loader.manage_comma_separated(file_descriptor)

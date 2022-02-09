@@ -153,7 +153,7 @@ class PedigreeFamily:
 
                 if  current_individual == current_mating_unit.male_mate_individual or \
                     current_individual == current_mating_unit.female_mate_individual:
-                    current_individual.number_matings += 1
+                    current_individual.mating_instances.append(current_mating_unit)
 
 
     def build_sibship_units(self):

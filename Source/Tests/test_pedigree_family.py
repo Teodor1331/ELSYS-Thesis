@@ -23,6 +23,20 @@ def test_pedigree_family_constructor():
         PedigreeFamily(complex)
 
 
+def test_pedigree_family_destructor():
+    pedigree_family1 = PedigreeFamily('pedigree_family1')
+    pedigree_family2 = PedigreeFamily('pedigree_family2')
+    pedigree_family3 = PedigreeFamily('pedigree_family3')
+
+    del pedigree_family1
+    del pedigree_family2
+    del pedigree_family3
+
+    assert 'pedigree_family1' not in locals()
+    assert 'pedigree_family2' not in locals()
+    assert 'pedigree_family3' not in locals()
+
+
 def test_pedigree_family_properties():
     pedigree_family1 = PedigreeFamily('pedigree_family1')
     pedigree_family2 = PedigreeFamily('pedigree_family2')
@@ -111,6 +125,20 @@ def test_pedigree_family_properties():
     assert pedigree_family1.max_generation_rank is None
     assert pedigree_family2.max_generation_rank is None
     assert pedigree_family3.max_generation_rank is None
+
+
+def test_pedigree_family_deleters():
+    pedigree_family1 = PedigreeFamily('pedigree_family1')
+    pedigree_family2 = PedigreeFamily('pedigree_family2')
+    pedigree_family3 = PedigreeFamily('pedigree_family3')
+
+    del pedigree_family1.pedigree_identifier
+    del pedigree_family2.pedigree_identifier
+    del pedigree_family3.pedigree_identifier
+
+    assert not hasattr(pedigree_family1, 'pedigree_identifier')
+    assert not hasattr(pedigree_family2, 'pedigree_identifier')
+    assert not hasattr(pedigree_family3, 'pedigree_identifier')
 
 
 def test_pedigree_family_string_representation_method():
