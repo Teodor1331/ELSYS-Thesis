@@ -1,8 +1,7 @@
-import re
-import csv
+import re, csv
 
-from pathlib    import Path
-from io         import TextIOWrapper
+from pathlib import Path
+from io import TextIOWrapper
 
 
 class Loader:

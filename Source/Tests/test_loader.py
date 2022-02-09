@@ -1,7 +1,7 @@
 import sys, pytest
 sys.path.append('..')
 
-from Loader import Loader
+from Source.loader import Loader
 
 
 def test_loader_instances():
@@ -31,8 +31,14 @@ def test_loader_constants():
 
 def test_loader_constructor():
     with pytest.raises(AssertionError):
-        Loader(0)
-        Loader(0.0)
+        Loader(None)
+        Loader(bool)
+        Loader(int)
+        Loader(float)
+        Loader(complex)
+
+    with pytest.raises(AssertionError):
+        Loader(str)
 
     with pytest.raises(FileNotFoundError):
         Loader('Hello, World!')
@@ -58,6 +64,26 @@ def test_loader_properties():
     loader2 = Loader('../../Examples/PED Examples/Pedigree1.ped')
     loader3 = Loader('../../Examples/TXT Examples/Pedigree1.txt')
 
+    assert hasattr(loader1, 'file_path')
+    assert hasattr(loader2, 'file_path')
+    assert hasattr(loader3, 'file_path')
+
+    assert hasattr(loader1, 'file_name')
+    assert hasattr(loader2, 'file_name')
+    assert hasattr(loader3, 'file_name')
+
+    assert hasattr(loader1, 'file_stem')
+    assert hasattr(loader2, 'file_stem')
+    assert hasattr(loader3, 'file_stem')
+
+    assert hasattr(loader1, 'file_suffix')
+    assert hasattr(loader2, 'file_suffix')
+    assert hasattr(loader3, 'file_suffix')
+
+    assert hasattr(loader1, 'file_data')
+    assert hasattr(loader2, 'file_data')
+    assert hasattr(loader3, 'file_data')
+
     assert isinstance(loader1.file_path, str)
     assert isinstance(loader2.file_path, str)
     assert isinstance(loader3.file_path, str)
@@ -73,6 +99,10 @@ def test_loader_properties():
     assert isinstance(loader1.file_suffix, str)
     assert isinstance(loader2.file_suffix, str)
     assert isinstance(loader3.file_suffix, str)
+
+    assert isinstance(loader1.file_data, list)
+    assert isinstance(loader2.file_data, list)
+    assert isinstance(loader3.file_data, list)
 
     assert loader1.file_path == '../../Examples/CSV Examples/Pedigree1.csv'
     assert loader2.file_path == '../../Examples/PED Examples/Pedigree1.ped'

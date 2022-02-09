@@ -1,7 +1,7 @@
 import sys, pytest
 sys.path.append('..')
 
-from Fields import Sex, Status, Role
+from fields import Sex, Status, Role
 
 
 def test_sex_enumeration():

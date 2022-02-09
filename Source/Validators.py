@@ -1,5 +1,5 @@
-from FamilyUnits    import Individual
-from PedigreeFamily import PedigreeFamily
+from family_units import Individual
+from pedigree_family import PedigreeFamily
 
 
 class Validator:

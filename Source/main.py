@@ -1,7 +1,7 @@
 import sys
 
 
-from Loader import Loader
+from loader import Loader
 from Builder import Builder
 
 from Graph              import Graph, SandwichInstance
@@ -10,8 +10,8 @@ from IntervalSandwich   import Interval
 from Drawer             import Drawer
 from Drawer             import PDFCreator
 
-from FamilyUnits    import Individual
-from PedigreeFamily import PedigreeFamily
+from family_units import Individual
+from pedigree_family import PedigreeFamily
 
 
 def main(argv = sys.argv[1:]):
@@ -30,6 +30,7 @@ def main(argv = sys.argv[1:]):
         )
 
         solver = SandwichSolver(sandwich)
+        print(solver.solved_intervals)
         drawer = Drawer(solver.solved_intervals)
         pdf = PDFCreator(pedigree.pedigree_identifier)
 

@@ -1,15 +1,13 @@
 from re import I
 import matplotlib.pyplot as plt
 
+from collections import defaultdict
 from matplotlib.backends.backend_pdf import PdfPages
 
 
-from collections import defaultdict
-
-
-from FamilyUnits import Individual
-from FamilyUnits import MatingUnit
-from FamilyUnits import SibshipUnit
+from family_units import Individual
+from family_units import MatingUnit
+from family_units import SibshipUnit
 from IntervalSandwich import Interval
 
 

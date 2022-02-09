@@ -1,43 +1,44 @@
-from FamilyUnits import Individual
-from FamilyUnits import MatingUnit
-from FamilyUnits import SibshipUnit
-
-from Fields import Role
+from family_units import Individual
+from family_units import MatingUnit
+from family_units import SibshipUnit
+from fields import Role
 
 
 class PedigreeFamily:
-    def __init__(self, pedigree_identifier):
+    def __init__(self, pedigree_identifier) -> None:
+        try:
+            assert isinstance(pedigree_identifier, str)
+        except AssertionError:
+            raise AssertionError('The pedigree identifier is invalid!')
+
         self.__pedigree_identifier      =   pedigree_identifier
+
         self.__pedigree_individuals     =   dict()
         self.__pedigree_mating_units    =   dict()
         self.__pedigree_sibship_units   =   dict()
-        self.__max_generation_rank      =   None
+
         self.__min_generation_rank      =   None
+        self.__max_generation_rank      =   None
 
 
     @property
-    def pedigree_identifier(self):
+    def pedigree_identifier(self) -> str:
         return self.__pedigree_identifier
 
 
     @property
-    def pedigree_individuals(self):
+    def pedigree_individuals(self) -> dict:
         return self.__pedigree_individuals
 
 
     @property
-    def pedigree_mating_units(self):
+    def pedigree_mating_units(self) -> dict:
         return self.__pedigree_mating_units
 
 
     @property
-    def pedigree_sibship_units(self):
+    def pedigree_sibship_units(self) -> dict:
         return self.__pedigree_sibship_units
-
-
-    @property
-    def max_generation_rank(self):
-        return self.__max_generation_rank
 
 
     @property
@@ -45,64 +46,39 @@ class PedigreeFamily:
         return self.__min_generation_rank
 
 
-    @pedigree_identifier.setter
-    def pedigree_identifier(self, pedigree_identifier):
-        self.__pedigree_identifier = pedigree_identifier
-
-
-    @pedigree_individuals.setter
-    def pedigree_individuals(self, pedigree_individuals):
-        self.__pedigree_individuals = pedigree_individuals
-
-
-    @pedigree_mating_units.setter
-    def pedigree_mating_units(self, pedigree_mating_units):
-        self.__pedigree_mating_units = pedigree_mating_units
-
-
-    @pedigree_sibship_units.setter
-    def pedigree_sibship_units(self, pedigree_sibship_units):
-        self.__pedigree_sibship_units = pedigree_sibship_units
-
-
-    @max_generation_rank.setter
-    def max_gneration_rank(self, max_generation_rank):
-        self.__max_generation_rank = max_generation_rank
-
-
-    @min_generation_rank.setter
-    def min_generation_rank(self, min_generation_rank):
-        self.__min_generation_rank = min_generation_rank
+    @property
+    def max_generation_rank(self):
+        return self.__max_generation_rank
 
 
     @pedigree_identifier.deleter
-    def pedigree_identifier(self):
+    def pedigree_identifier(self) -> None:
         del self.__pedigree_identifier
 
 
     @pedigree_individuals.deleter
-    def pedigree_individuals(self):
+    def pedigree_individuals(self) -> None:
         del self.__pedigree_individuals
 
     
     @pedigree_mating_units.deleter
-    def pedigree_mating_units(self):
+    def pedigree_mating_units(self) -> None:
         del self.__pedigree_mating_units
 
 
     @pedigree_sibship_units.deleter
-    def pedigree_sibship_units(self):
+    def pedigree_sibship_units(self) -> None:
         del self.__pedigree_sibship_units
 
 
-    @max_generation_rank.deleter
-    def max_generation_rank(self):
-        del self.__max_generation_rank
-
-
     @min_generation_rank.deleter
-    def min_generation_rank(self):
+    def min_generation_rank(self) -> None:
         del self.__min_generation_rank
+
+
+    @max_generation_rank.deleter
+    def max_generation_rank(self) -> None:
+        del self.__max_generation_rank
 
 
     def __hash__(self):
@@ -110,21 +86,24 @@ class PedigreeFamily:
 
 
     def __eq__(self, pedigree_family):
-        assert isinstance(pedigree_family, PedigreeFamily)
+        if not isinstance(pedigree_family, PedigreeFamily):
+            return False
         return self.__hash__() == pedigree_family.__hash__()
 
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.pedigree_identifier
 
 
-    def __del__(self):
+    def __del__(self) -> None:
         del self.__pedigree_identifier
+
         del self.__pedigree_individuals
         del self.__pedigree_mating_units
         del self.__pedigree_sibship_units
-        del self.__max_generation_rank
+        
         del self.__min_generation_rank
+        del self.__max_generation_rank
 
 
     def add_individual(self, individual):
@@ -351,9 +330,6 @@ class PedigreeFamily:
 
     def get_individuals_by_generation(self, generation_rank):
         generation_individuals = list()
-        
-        if self.min_generation_rank < generation_rank < self.max_generation_rank:
-            pass
 
         for key in self.pedigree_individuals:
             individual = self.pedigree_individuals[key]

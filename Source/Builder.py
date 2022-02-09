@@ -1,13 +1,16 @@
 import sys
 sys.path.append('..')
 
-from FamilyUnits import Individual
-from PedigreeFamily import PedigreeFamily
+from family_units import Individual
+from pedigree_family import PedigreeFamily
 
 
 class Builder:
     def __init__(self, file_data) -> None:
-        assert isinstance(file_data, list)
+        try:
+            assert isinstance(file_data, list)
+        except AssertionError:
+            raise AssertionError('The builder constructor arguments are not correct!')
 
         self.__file_data        =   file_data
         self.__file_pedigrees   =   self.build_file_units()[0]
@@ -53,8 +56,8 @@ class Builder:
 
 
     def build_file_units(self) -> tuple:
-        file_pedigrees      = list()
-        file_individuals    = list()
+        file_pedigrees = list()
+        file_individuals = list()
 
         for file_unit in self.file_data:
             if PedigreeFamily(file_unit[0]) not in file_pedigrees:

@@ -1,4 +1,4 @@
-from Fields import Sex, Status, Role
+from fields import Sex, Status, Role
 
 
 class Individual:
@@ -6,16 +6,16 @@ class Individual:
         try:
             assert isinstance(individual_data, list)
         except AssertionError:
-            raise AssertionError('The individual data is not valid!')
+            raise AssertionError('The individual constructor arguments are not correct!')
 
         self.__pedigree_identifier      =   individual_data[0]
         self.__individual_identifier    =   individual_data[1]
         self.__individual_father        =   individual_data[2]
         self.__individual_mother        =   individual_data[3]
 
-        self.__individual_sex           =   self.decide_sex_individual(individual_data[4])
-        self.__individual_status        =   self.decide_status_individual(individual_data[5])
-        self.__individual_role          =   self.decide_role_individual(individual_data[6])
+        self.__individual_sex           =   Individual.decide_sex_individual(individual_data[4])
+        self.__individual_status        =   Individual.decide_status_individual(individual_data[5])
+        self.__individual_role          =   Individual.decide_role_individual(individual_data[6])
 
 
         self.__mating_unit_relation     =   None
@@ -158,18 +158,18 @@ class Individual:
         del self.__number_matings
 
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return  hash(self.pedigree_identifier) + \
                 hash(self.individual_identifier)
 
 
-    def __eq__(self, individual):
-        if not isinstance(individual, (Individual, type(None))):
+    def __eq__(self, individual) -> bool:
+        if not isinstance(individual, Individual):
             return False
-        return self.__hash__() == individual.__hash__()
+        return  self.__hash__() == individual.__hash__()
 
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.individual_identifier
 
 
@@ -190,29 +190,43 @@ class Individual:
         del self.__number_matings
 
 
-    def decide_sex_individual(self, string):
-        if string == '0':
-            return Sex.UNKNOWN
-        elif string == '1':
+    @staticmethod
+    def decide_sex_individual(string) -> Sex:
+        try:
+            assert isinstance(string, str)
+        except AssertionError:
+            raise AssertionError('The given argument is not a string!')
+
+        if string == '1':
             return Sex.MALE
         elif string == '2':
             return Sex.FEMALE
         else:
-            return None
+            return Sex.UNKNOWN
 
 
-    def decide_status_individual(self, string):
-        if string == '0':
-            return Status.UNKNOWN
-        elif string == '1':
+    @staticmethod
+    def decide_status_individual(string) -> Status:
+        try:
+            assert isinstance(string, str)
+        except AssertionError:
+            raise AssertionError('The given argument is not a string!')
+
+        if string == '1':
             return Status.UNAFFECTED
         elif string == '2':
             return Status.AFFECTED
         else:
-            return None
+            return Status.UNKNOWN
 
 
-    def decide_role_individual(self, string):
+    @staticmethod
+    def decide_role_individual(string) -> Role:
+        try:
+            assert isinstance(string, str)
+        except AssertionError:
+            raise AssertionError('The given argument is not a string!')
+
         if string == 'prb':
             return Role.PROBAND
         elif string == 'father':
@@ -228,35 +242,40 @@ class Individual:
         elif string == 'grandmother':
             return Role.GRANDMOTHER
         else:
-            return None
+            return Role.UNKNOWN
 
 
 class MatingUnit:
-    def __init__(self, pedigree_identifier, male_mate_individual, female_mate_individual, sibship_unit_relation) -> None:
-        assert isinstance(pedigree_identifier, str)
-        assert isinstance(male_mate_individual, Individual)
-        assert isinstance(female_mate_individual, Individual)
-        assert isinstance(sibship_unit_relation, (SibshipUnit, type(None)))
+    def __init__(self, pedigree_identifier, male_mate_individual, female_mate_individual, sibship_unit_relation = None) -> None:
+        try:
+            assert isinstance(pedigree_identifier, str)
+            assert isinstance(male_mate_individual, Individual)
+            assert isinstance(female_mate_individual, Individual)
+            assert isinstance(sibship_unit_relation, (SibshipUnit, type(None)))
+        except AssertionError:
+            raise AssertionError('The mating unit constructor arguments are not correct!')
         
         self.__pedigree_identifier      =   pedigree_identifier
+
         self.__male_mate_individual     =   male_mate_individual
         self.__female_mate_individual   =   female_mate_individual
+
         self.__sibship_unit_relation    =   sibship_unit_relation
         self.__generation_rank          =   None
 
 
     @property
-    def pedigree_identifier(self):
+    def pedigree_identifier(self) -> str:
         return self.__pedigree_identifier
 
 
     @property
-    def male_mate_individual(self):
+    def male_mate_individual(self) -> Individual:
         return self.__male_mate_individual
 
 
     @property
-    def female_mate_individual(self):
+    def female_mate_individual(self) -> Individual:
         return self.__female_mate_individual
 
 
@@ -268,21 +287,6 @@ class MatingUnit:
     @property
     def generation_rank(self):
         return self.__generation_rank
-
-
-    @pedigree_identifier.setter
-    def pedigree_identifier(self, pedigree_identifier):
-        self.__pedigree_identifier = pedigree_identifier
-
-
-    @male_mate_individual.setter
-    def male_mate_individual(self, male_mate_individual):
-        self.__male_mate_individual = male_mate_individual
-
-
-    @female_mate_individual.setter
-    def female_mate_individual(self, female_mate_individual):
-        self.__female_mate_individual = female_mate_individual
 
 
     @sibship_unit_relation.setter
@@ -338,8 +342,10 @@ class MatingUnit:
 
     def __del__(self):
         del self.__pedigree_identifier
+
         del self.__male_mate_individual
         del self.__female_mate_individual
+
         del self.__sibship_unit_relation
         del self.__generation_rank
 
@@ -350,29 +356,34 @@ class MatingUnit:
 
 
 class SibshipUnit:
-    def __init__(self, pedigree_identifier, mating_unit_relation):
-        assert isinstance(pedigree_identifier,  str)
-        assert isinstance(mating_unit_relation, (MatingUnit, type(None)))
+    def __init__(self, pedigree_identifier, mating_unit_relation = None) -> None:
+        try:
+            assert isinstance(pedigree_identifier,  str)
+            assert isinstance(mating_unit_relation, (MatingUnit, type(None)))
+        except AssertionError:
+            raise AssertionError('The sibship unit constructor arguments are not correct!')
 
         self.__pedigree_identifier      =   pedigree_identifier
+
         self.__siblings_individuals     =   list()
         self.__siblings_extended        =   list()
+
         self.__mating_unit_relation     =   mating_unit_relation
         self.__generation_rank          =   None
 
 
     @property
-    def pedigree_identifier(self):
+    def pedigree_identifier(self) -> str:
         return self.__pedigree_identifier
 
 
     @property
-    def siblings_individuals(self):
+    def siblings_individuals(self) -> list:
         return self.__siblings_individuals
 
 
     @property
-    def siblings_extended(self):
+    def siblings_extended(self) -> list:
         return self.__siblings_extended
 
 
@@ -384,11 +395,6 @@ class SibshipUnit:
     @property
     def generation_rank(self):
         return self.__generation_rank
-
-
-    @pedigree_identifier.setter
-    def pedigree_identifier(self, pedigree_identifier):
-        self.__pedigree_identifier = pedigree_identifier
 
 
     @siblings_individuals.setter

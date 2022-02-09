@@ -5,10 +5,10 @@ from ordered_set import OrderedSet
 from collections import deque
 
 
-from FamilyUnits        import Individual
-from FamilyUnits        import MatingUnit
-from FamilyUnits        import SibshipUnit
-from PedigreeFamily     import PedigreeFamily
+from family_units import Individual
+from family_units import MatingUnit
+from family_units import SibshipUnit
+from pedigree_family import PedigreeFamily
 from IntervalSandwich   import Interval
 from IntervalSandwich   import CutRealization
 
