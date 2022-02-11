@@ -141,6 +141,14 @@ def test_graph_instances():
     assert graph2.vertices_pedigree_union != ordered_set.OrderedSet()
     assert graph3.vertices_pedigree_union != ordered_set.OrderedSet()
 
+    assert graph1.mandatory_graph != ordered_set.OrderedSet()
+    assert graph2.mandatory_graph != ordered_set.OrderedSet()
+    assert graph3.mandatory_graph != ordered_set.OrderedSet()
+
+    assert graph1.forbidden_graph != ordered_set.OrderedSet()
+    assert graph2.forbidden_graph != ordered_set.OrderedSet()
+    assert graph3.forbidden_graph != ordered_set.OrderedSet()
+
     assert len(graph1.vertices_individuals) == 6
     assert len(graph2.vertices_individuals) == 6
     assert len(graph3.vertices_individuals) == 6
@@ -157,5 +165,76 @@ def test_graph_instances():
     assert len(graph2.vertices_pedigree_union) == 8
     assert len(graph3.vertices_pedigree_union) == 8
 
-    assert graph1.vertices_individuals[0] == Individual(['ped', 'father', '0', '0', '1', '2', 'prb'])
-    assert graph1.vertices_individuals[1] == Individual(['ped', 'mother', '0', '0', '2', '1', 'prb'])
+    individual1 = Individual(['ped', 'father', '0', '0', '1', '2', 'prb'])
+    individual2 = Individual(['ped', 'mother', '0', '0', '2', '1', 'null'])
+    individual3 = Individual(['ped', 'son1', 'father', 'mother', '1', '2', 'null'])
+    individual4 = Individual(['ped', 'son2', 'father', 'mother', '1', '1', 'null'])
+    individual5 = Individual(['ped', 'dau1', 'father', 'mother', '2', '2', 'null'])
+    individual6 = Individual(['ped', 'dau2', 'father', 'mother', '2', '1', 'null'])
+
+    mating_unit = MatingUnit('ped', individual1, individual2)
+
+    sibship_unit = SibshipUnit('ped')
+    sibship_unit.add_sibling_individual(individual3)
+    sibship_unit.add_sibling_individual(individual4)
+    sibship_unit.add_sibling_individual(individual5)
+    sibship_unit.add_sibling_individual(individual6)
+
+    mating_unit.sibship_unit_relation = sibship_unit
+    sibship_unit.mating_unit_relation = mating_unit
+
+    assert graph1.vertices_individuals[0] == individual1
+    assert graph1.vertices_individuals[1] == individual2
+    assert graph1.vertices_individuals[2] == individual3
+    assert graph1.vertices_individuals[3] == individual4
+    assert graph1.vertices_individuals[4] == individual5
+    assert graph1.vertices_individuals[5] == individual6
+
+    assert graph2.vertices_individuals[0] == individual1
+    assert graph2.vertices_individuals[1] == individual2
+    assert graph2.vertices_individuals[2] == individual3
+    assert graph2.vertices_individuals[3] == individual4
+    assert graph2.vertices_individuals[4] == individual5
+    assert graph2.vertices_individuals[5] == individual6
+
+    assert graph3.vertices_individuals[0] == individual1
+    assert graph3.vertices_individuals[1] == individual2
+    assert graph3.vertices_individuals[2] == individual3
+    assert graph3.vertices_individuals[3] == individual4
+    assert graph3.vertices_individuals[4] == individual5
+    assert graph3.vertices_individuals[5] == individual6
+
+    assert graph1.vertices_mating_units[0] == mating_unit
+    assert graph2.vertices_mating_units[0] == mating_unit
+    assert graph3.vertices_mating_units[0] == mating_unit
+
+    assert graph1.vertices_sibship_units[0] == sibship_unit
+    assert graph2.vertices_sibship_units[0] == sibship_unit
+    assert graph3.vertices_sibship_units[0] == sibship_unit
+
+    assert graph1.vertices_pedigree_union[0] == individual1
+    assert graph1.vertices_pedigree_union[1] == individual2
+    assert graph1.vertices_pedigree_union[2] == individual3
+    assert graph1.vertices_pedigree_union[3] == individual4
+    assert graph1.vertices_pedigree_union[4] == individual5
+    assert graph1.vertices_pedigree_union[5] == individual6
+    assert graph1.vertices_pedigree_union[6] == mating_unit
+    assert graph1.vertices_pedigree_union[7] == sibship_unit
+
+    assert graph2.vertices_pedigree_union[0] == individual1
+    assert graph2.vertices_pedigree_union[1] == individual2
+    assert graph2.vertices_pedigree_union[2] == individual3
+    assert graph2.vertices_pedigree_union[3] == individual4
+    assert graph2.vertices_pedigree_union[4] == individual5
+    assert graph2.vertices_pedigree_union[5] == individual6
+    assert graph2.vertices_pedigree_union[6] == mating_unit
+    assert graph2.vertices_pedigree_union[7] == sibship_unit
+
+    assert graph3.vertices_pedigree_union[0] == individual1
+    assert graph3.vertices_pedigree_union[1] == individual2
+    assert graph3.vertices_pedigree_union[2] == individual3
+    assert graph3.vertices_pedigree_union[3] == individual4
+    assert graph3.vertices_pedigree_union[4] == individual5
+    assert graph3.vertices_pedigree_union[5] == individual6
+    assert graph3.vertices_pedigree_union[6] == mating_unit
+    assert graph3.vertices_pedigree_union[7] == sibship_unit

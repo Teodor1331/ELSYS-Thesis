@@ -90,7 +90,7 @@ class CutRealization:
         assert isinstance(domain_vertex, (list, None))
         assert isinstance(max_width, int)
 
-        self.__mandatory_graph       =   mandatory_graph
+        self.__mandatory_graph      =   mandatory_graph
         self.__forbidden_graph      =   forbidden_graph
         self.__graph_neighbors      =   graph_neighbors
         self.__intervals            =   intervals if intervals != None else []

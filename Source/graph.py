@@ -71,26 +71,6 @@ class Graph:
         return self.__forbidden_graph
 
 
-    @vertices_pedigree_union.setter
-    def vertices_pedigree_union(self, vertices_pedigree_union):
-        self.__vertices_pedigree_union = vertices_pedigree_union
-
-
-    @graph_instance.setter
-    def graph_instance(self, graph_instance):
-        self.__graph_instance = graph_instance
-
-
-    @mandatory_graph.setter
-    def mandatory_graph(self, mandatory_graph):
-        self.__mandatory_graph = mandatory_graph
-
-
-    @forbidden_graph.setter
-    def forbidden_graph(self, forbidden_graph):
-        self.__forbidden_graph = forbidden_graph
-
-
     @pedigree_family.deleter
     def pedigree_family(self):
         del self.__pedigree_family
@@ -313,6 +293,9 @@ class Graph:
 
             for current_individual1 in current_individuals:
                 for current_individual2 in current_individuals:
+                    assert isinstance(current_individual1, Individual)
+                    assert isinstance(current_individual2, Individual)
+
                     if current_individual1 is not current_individual2:
                         edges_minus.add((current_individual1, current_individual2))
 
@@ -336,6 +319,9 @@ class Graph:
 
         for individual in self.vertices_individuals:
             for mating_unit in self.vertices_mating_units:
+                assert isinstance(individual, Individual)
+                assert isinstance(mating_unit, MatingUnit)
+
                 generation_vertices_1 = self.build_sets_from_individual(individual)[1]
                 generation_vertices_2 = self.build_sets_from_mating_unit(mating_unit)[1]
 
@@ -344,6 +330,9 @@ class Graph:
 
         for individual in self.vertices_individuals:
             for mating_unit in self.vertices_mating_units:
+                assert isinstance(individual, Individual)
+                assert isinstance(mating_unit, MatingUnit)
+
                 pedigree_vertices_1 = self.build_sets_from_individual(individual)[0]
                 pedigree_vertices_2 = self.build_sets_from_mating_unit(mating_unit)[0]
 
@@ -360,6 +349,9 @@ class Graph:
 
         for individual in self.vertices_individuals:
             for sibship_unit in self.vertices_sibship_units:
+                assert isinstance(individual, Individual)
+                assert isinstance(sibship_unit, SibshipUnit)
+
                 generation_vertices_1 = self.build_sets_from_individual(individual)[1]
                 generation_vertices_2 = self.build_sets_from_sibship_unit(sibship_unit)[1]
                 
@@ -372,6 +364,9 @@ class Graph:
 
         for individual in self.vertices_individuals:
             for sibship_unit in self.vertices_sibship_units:
+                assert isinstance(individual, Individual)
+                assert isinstance(sibship_unit, SibshipUnit)
+
                 pedigree_vertices_1 = self.build_sets_from_individual(individual)[0]
                 pedigree_vertices_2 = self.build_sets_from_sibship_unit(sibship_unit)[0]
 
@@ -387,6 +382,9 @@ class Graph:
 
         for mating_unit in self.vertices_mating_units:
             for sibship_unit in self.vertices_sibship_units:
+                assert isinstance(mating_unit, MatingUnit)
+                assert isinstance(sibship_unit, SibshipUnit)
+
                 children_set = self.build_sets_from_mating_unit(mating_unit)[2]
                 pedigree_set = self.build_sets_from_sibship_unit(sibship_unit)[0]
 
@@ -401,6 +399,8 @@ class Graph:
         units_union = self.vertices_mating_units + self.vertices_sibship_units
 
         for mating_unit in self.vertices_mating_units:
+            assert isinstance(mating_unit, MatingUnit)
+
             for vertex in units_union:
                 pedigree_vertices_1 = self.build_sets_from_mating_unit(mating_unit)[0]
                 generation_vertices_1 = self.build_sets_from_mating_unit(mating_unit)[1]

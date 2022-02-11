@@ -1,8 +1,6 @@
-from re import I
 from matplotlib import pyplot as plt
 from matplotlib.patches import Rectangle
 from matplotlib.patches import Circle
-from matplotlib.lines import Line2D
 
 from collections import defaultdict
 from matplotlib.backends.backend_pdf import PdfPages
