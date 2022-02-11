@@ -1,19 +1,23 @@
 from re import I
-import matplotlib.pyplot as plt
+from matplotlib import pyplot as plt
+from matplotlib.patches import Rectangle
+from matplotlib.patches import Circle
+from matplotlib.lines import Line2D
 
 from collections import defaultdict
 from matplotlib.backends.backend_pdf import PdfPages
-
 
 from family_units import Individual
 from family_units import MatingUnit
 from family_units import SibshipUnit
 from interval_sandwich import Interval
+from fields import Sex, Status
 
 
 class Drawer:
-    def __init__(self, intervals):
-        self.__pedigree_intervals       =   intervals
+    def __init__(self, pedigree_identifier, pedigree_intervals):
+        self.__pedigree_identifier      =   pedigree_identifier
+        self.__pedigree_intervals       =   pedigree_intervals
 
         self.__individuals_intervals    =   self.find_individuals_intervals()
         self.__mating_units_intervals   =   self.find_mating_units_intervals()
@@ -24,8 +28,15 @@ class Drawer:
         self.__splitted_sibship_units_by_ranks      =   self.split_sibship_units_by_generation_ranks()
 
         self.__pedigree_positions                   =   self.draw_pedigree_positions()
+        print(self.__pedigree_positions)
+        self.draw_file()
 
 
+    @property
+    def pedigree_identifier(self):
+        return self.__pedigree_identifier
+
+    
     @property
     def pedigree_intervals(self):
         return self.__pedigree_intervals
@@ -44,6 +55,21 @@ class Drawer:
     @property
     def sibship_units_intervals(self):
         return self.__sibship_units_intervals
+
+
+    @property
+    def splitted_individuals_by_ranks(self):
+        return self.__splitted_individuals_by_ranks
+
+
+    @property
+    def splitted_mating_units_by_ranks(self):
+        return self.__splitted_mating_units_by_ranks
+
+
+    @property
+    def splitted_sibship_units_by_ranks(self):
+        return self.__splitted_sibship_units_by_ranks
 
 
     @pedigree_intervals.setter
@@ -66,6 +92,11 @@ class Drawer:
         self.__sibship_units_intervals = sibship_units_intervals
 
 
+    @pedigree_identifier.deleter
+    def pedigree_idengifier(self):
+        del self.__pedigree_identifier
+
+
     @pedigree_intervals.deleter
     def intervals(self):
         del self.__pedigree_intervals
@@ -86,11 +117,30 @@ class Drawer:
         del self.__sibship_units_intervals
 
 
+    @splitted_individuals_by_ranks.deleter
+    def splitted_individuals_by_ranks(self):
+        del self.__splitted_individuals_by_ranks
+
+
+    @splitted_mating_units_by_ranks.deleter
+    def splitted_mating_units_by_ranks(self):
+        del self.__splitted_mating_units_by_ranks
+
+
+    @splitted_sibship_units_by_ranks.deleter
+    def splitted_sibship_units_by_ranks(self):
+        del self.__splitted_sibship_units_by_ranks
+
+
     def __del__(self):
+        del self.__pedigree_identifier
         del self.__pedigree_intervals
         del self.__individuals_intervals
         del self.__mating_units_intervals
         del self.__sibship_units_intervals
+        del self.__splitted_individuals_by_ranks
+        del self.__splitted_mating_units_by_ranks
+        del self.__splitted_sibship_units_by_ranks
 
 
     def find_individuals_intervals(self):
@@ -248,6 +298,110 @@ class Drawer:
         return pedigree_positions
 
 
+    def draw_file(self):
+        axes = plt.figure().add_subplot(111)
+
+        for individual in self.__pedigree_positions:
+            print(individual)
+            position = self.__pedigree_positions[individual]
+            assert isinstance(position, IndividualDrawer)
+            assert isinstance(position.individual, Individual)
+
+            x_position = position.x_coordinate
+            y_position = position.y_coordinate
+
+            if position.individual.individual_sex is Sex.MALE:
+                if position.individual.individual_status is Status.AFFECTED:
+                    axes.add_patch(Rectangle((x_position, y_position), 10, 10, edgecolor='black', facecolor='red'))
+                    plt.text(x_position - 5, y_position + 5, str(position.individual.individual_identifier))
+                elif position.individual.individual_status is Status.UNAFFECTED:
+                    axes.add_patch(Rectangle((x_position, y_position), 10, 10, edgecolor='black', facecolor='white'))
+                    plt.text(x_position - 5, y_position + 5, str(position.individual.individual_identifier))
+                else:
+                    axes.add_patch(Rectangle((x_position, y_position), 10, 10, edgecolor='black', facecolor='gray'))
+                    plt.text(x_position - 5, y_position + 5, str(position.individual.individual_identifier))
+            elif position.individual.individual_sex is Sex.FEMALE:
+                if position.individual.individual_status is Status.AFFECTED:
+                    axes.add_patch(Circle((x_position + 5, y_position + 5), 5, edgecolor='black', facecolor='red'))
+                    plt.text(x_position - 5, y_position + 5, str(position.individual.individual_identifier))
+                elif position.individual.individual_status is Status.UNAFFECTED:
+                    axes.add_patch(Circle((x_position + 5, y_position + 5), 5, edgecolor='black', facecolor='white'))
+                    plt.text(x_position - 2.5, y_position + 5, str(position.individual.individual_identifier))
+                else:
+                    axes.add_patch(Circle((x_position + 5, y_position + 5), 5, edgecolor='black', facecolor='gray'))
+                    plt.text(x_position - 2.5, y_position + 5, str(position.individual.individual_identifier))
+
+        for mating_unit_level in self.splitted_mating_units_by_ranks:
+            for mating_unit in mating_unit_level:
+                assert isinstance(mating_unit, MatingUnit)
+                
+                father = mating_unit.male_mate_individual
+                mother = mating_unit.female_mate_individual
+
+                if father and mother in self.__pedigree_positions.keys():
+                    father_position = self.__pedigree_positions[father]
+                    mother_position = self.__pedigree_positions[mother]
+
+                    assert isinstance(father_position, IndividualDrawer)
+                    assert isinstance(mother_position, IndividualDrawer)
+
+                    father_interval = None
+                    mother_interval = None
+
+                    for interval in self.__individuals_intervals:
+                        assert isinstance(interval, Interval)
+                        assert isinstance(interval.vertex, Individual)
+
+                        if interval.vertex is father:
+                            father_interval = [interval.left_element, interval.right_element]
+                        elif interval.vertex is mother:
+                            mother_interval = [interval.left_element, interval.right_element]
+
+                        if father_interval is not None and mother_interval is not None:
+                            break
+
+                    x_values_horizontal_line = list()
+                    y_values_horizontal_line = list()
+                    x_values_vertical_line = list()
+                    y_values_vertical_line = list()
+
+                    if father_interval[1] < mother_interval[0]:    
+                        x_values_horizontal_line = [father_position.x_coordinate + 10, mother_position.x_coordinate]
+                        y_values_horizontal_line = [father_position.y_coordinate + 5, mother_position.y_coordinate + 5]
+                    else:
+                        x_values_horizontal_line = [mother_position.x_coordinate + 10, father_position.x_coordinate]
+                        y_values_horizontal_line = [mother_position.y_coordinate + 5, father_position.y_coordinate + 5]
+
+                    x_middle = (x_values_horizontal_line[1] - x_values_horizontal_line[0]) / 2.0 + x_values_horizontal_line[0]
+                    
+                    x_values_vertical_line = [x_middle, x_middle]
+                    y_values_vertical_line = [y_values_horizontal_line[0], y_values_horizontal_line[0] + 20]
+
+                    sibship_unit = mating_unit.sibship_unit_relation
+
+                    if len(sibship_unit.siblings_individuals) > 1:
+                        sibship_unit_span_x_vertical_line = [
+                            x_values_vertical_line[1] - (len(sibship_unit.siblings_individuals) / 2.0) * 15,
+                            x_values_vertical_line[1] + (len(sibship_unit.siblings_individuals) / 2.0) * 15
+                        ]
+                        sibship_unit_span_y_vertical_line = [y_values_vertical_line[1], y_values_vertical_line[1]]
+
+                    plt.plot(x_values_horizontal_line, y_values_horizontal_line, color='black')
+                    plt.plot(x_values_vertical_line, y_values_vertical_line, color='black')
+                    plt.plot(sibship_unit_span_x_vertical_line, sibship_unit_span_y_vertical_line, color='black')
+
+        plt.xlim([10, 150])
+        plt.ylim([150, 0])
+
+        plt.title(str(self.pedigree_identifier))
+        plt.savefig(str(self.pedigree_identifier) + '.pdf')
+        plt.show()
+
+    
+    def move_individual(self, individual):
+        pass
+
+
 class IndividualDrawer:
     def __init__(self, individual, x__coordinate, y__coordinate, size_shape = 21.0, scale_shape = 1.0):
         self.__individual       =   individual
@@ -317,20 +471,33 @@ class IndividualDrawer:
         del self.__y_center_shape
 
 
-class PDFCreator:
-    def __init__(self, filename):
-        self.__filename     =   filename
+    def move_individual(self):
+        pass
 
 
-    @property
-    def filename(self):
-        return self.__filename
+class MatingUnitDrawer:
+    def __init__(self, male_mate_drawer, female_mate_drawer, mating_unit_span, connection_line):
+        self.__male_mate_drawer     =   male_mate_drawer
+        self.__female_mate_drawer   =   female_mate_drawer
+        self.__mating_unit_span     =   mating_unit_span
+        self.__connection_line      =   connection_line
+
+    
+    def __del__(self):
+        del self.__male_mate_drawer
+        del self.__female_mate_drawer
+        del self.__mating_unit_span
+        del self.__connection_line
 
 
-    @filename.deleter
-    def filename(self):
-        del self.__filename
+class SibshipUnitDrawer:
+    def __init__(self, siblings_drawers, sibship_unit_span, connection_line):
+        self.__siblings_drawers     =   siblings_drawers
+        self.__sibship_unit_span    =   sibship_unit_span
+        self.__connection_line      =   connection_line
 
 
     def __del__(self):
-        del self.__filename
+        del self.__siblings_drawers
+        del self.__sibship_unit_span
+        del self.__connection_line

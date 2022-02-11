@@ -81,16 +81,16 @@ class Interval:
 
 
 class CutRealization:
-    def __init__(self, required_graph, forbidden_graph, graph_neighbors = None, intervals = None, domain_vertex = None, max_width = 3,
+    def __init__(self, mandatory_graph, forbidden_graph, graph_neighbors = None, intervals = None, domain_vertex = None, max_width = 3,
     cached_active_vertices = None, cached_maximal_set = None, cached_dangling_set = None, cached_vertex_degree = None):
-        assert isinstance(required_graph, nx.Graph)
+        assert isinstance(mandatory_graph, nx.Graph)
         assert isinstance(forbidden_graph, nx.Graph)
         assert isinstance(graph_neighbors, (dict, None))
         assert isinstance(intervals, (list, None))
         assert isinstance(domain_vertex, (list, None))
         assert isinstance(max_width, int)
 
-        self.__required_graph       =   required_graph
+        self.__mandatory_graph       =   mandatory_graph
         self.__forbidden_graph      =   forbidden_graph
         self.__graph_neighbors      =   graph_neighbors
         self.__intervals            =   intervals if intervals != None else []
@@ -106,8 +106,8 @@ class CutRealization:
 
 
     @property
-    def required_graph(self):
-        return self.__required_graph
+    def mandatory_graph(self):
+        return self.__mandatory_graph
 
 
     @property
@@ -144,9 +144,9 @@ class CutRealization:
         return self.__graph_neighbors_cache
 
 
-    @required_graph.setter
-    def required_graph(self, required_graph):
-        self.__required_graph = required_graph
+    @mandatory_graph.setter
+    def mandatory_graph(self, mandatory_graph):
+        self.__mandatory_graph = mandatory_graph
 
 
     @forbidden_graph.setter
@@ -174,9 +174,9 @@ class CutRealization:
         self.__graph_neighbors_cache = graph_neighbors_cache
 
 
-    @required_graph.deleter
-    def required_graph(self):
-        del self.__required_graph
+    @mandatory_graph.deleter
+    def mandatory_graph(self):
+        del self.__mandatory_graph
 
 
     @forbidden_graph.deleter
@@ -205,7 +205,7 @@ class CutRealization:
 
 
     def __del__(self):
-        del self.__required_graph
+        del self.__mandatory_graph
         del self.__forbidden_graph
         del self.__graph_neighbors
         del self.__intervals
@@ -379,13 +379,13 @@ class CutRealization:
 
     def create_graph_neighbors_cache(self):
         return {
-            vertex: OrderedSet(self.required_graph.neighbors(vertex))
-            for vertex in self.required_graph.nodes()
+            vertex: OrderedSet(self.mandatory_graph.neighbors(vertex))
+            for vertex in self.mandatory_graph.nodes()
         }
 
     def create_copy_realization(self):
         return CutRealization(
-            self.required_graph, self.forbidden_graph,
+            self.mandatory_graph, self.forbidden_graph,
             self.graph_neighbors, list(map(copy.copy, self.intervals)),
             copy.copy(self.domain_vertex), self.max_width,
             self.__cached_active_vertices,
@@ -396,7 +396,7 @@ class CutRealization:
 
     def can_extend_vertex(self, possible_vertex):
         temporary_realization = CutRealization(
-            self.required_graph, self.forbidden_graph,
+            self.mandatory_graph, self.forbidden_graph,
             self.graph_neighbors, self.intervals + [Interval(possible_vertex)],
             self.domain_vertex + [possible_vertex]
         )
@@ -509,7 +509,7 @@ class CutRealization:
         
         assert isinstance(realization, CutRealization)
         new_dangling = realization.dangling_vertices(possible_vertex)
-        new_edges = OrderedSet(self.required_graph.neighbors(possible_vertex)) - self.get_active_vertices()
+        new_edges = OrderedSet(self.mandatory_graph.neighbors(possible_vertex)) - self.get_active_vertices()
         return new_dangling == new_edges
 
 

@@ -27,63 +27,48 @@ class Graph:
         self.__vertices_pedigree_union      =   self.build_vertices_pedigree_union()
 
         self.__graph_instance               =   self.build_pedigree_graph()
-        self.__required_graph               =   self.build_required_graph()
+        self.__mandatory_graph              =   self.build_mandatory_graph()
         self.__forbidden_graph              =   self.build_forbidden_graph()
 
 
     @property
-    def pedigree_family(self):
+    def pedigree_family(self) -> PedigreeFamily:
         return self.__pedigree_family
 
 
     @property
-    def vertices_individuals(self):
+    def vertices_individuals(self) -> list:
         return self.__vertices_individuals
 
 
     @property
-    def vertices_mating_units(self):
+    def vertices_mating_units(self) -> list:
         return self.__vertices_mating_units
 
 
     @property
-    def vertices_sibship_units(self):
+    def vertices_sibship_units(self) -> list:
         return self.__vertices_sibship_units
 
 
     @property
-    def vertices_pedigree_union(self):
+    def vertices_pedigree_union(self) -> OrderedSet:
         return self.__vertices_pedigree_union
 
 
     @property
-    def graph_instance(self):
+    def graph_instance(self) -> nx.Graph:
         return self.__graph_instance
 
 
     @property
-    def required_graph(self):
-        return self.__required_graph
+    def mandatory_graph(self) -> OrderedSet:
+        return self.__mandatory_graph
 
 
     @property
-    def forbidden_graph(self):
+    def forbidden_graph(self) -> OrderedSet:
         return self.__forbidden_graph
-
-
-    @pedigree_family.setter
-    def pedigree_family(self, pedigree_family):
-        self.__pedigree_family = pedigree_family
-
-
-    @vertices_mating_units.setter
-    def vertices_mating_units(self, vertices_mating_units):
-        self.__vertices_mating_units = vertices_mating_units
-
-
-    @vertices_sibship_units.setter
-    def vertices_sibship_units(self, vertices_sibship_units):
-        self.__vertices_sibship_units = vertices_sibship_units
 
 
     @vertices_pedigree_union.setter
@@ -96,9 +81,9 @@ class Graph:
         self.__graph_instance = graph_instance
 
 
-    @required_graph.setter
-    def required_graph(self, required_graph):
-        self.__required_graph = required_graph
+    @mandatory_graph.setter
+    def mandatory_graph(self, mandatory_graph):
+        self.__mandatory_graph = mandatory_graph
 
 
     @forbidden_graph.setter
@@ -136,9 +121,9 @@ class Graph:
         del self.__graph_instance
 
 
-    @required_graph.deleter
-    def required_graph(self):
-        del self.__required_graph
+    @mandatory_graph.deleter
+    def mandatory_graph(self):
+        del self.__mandatory_graph
 
 
     @forbidden_graph.deleter
@@ -153,7 +138,7 @@ class Graph:
         del self.__vertices_sibship_units
         del self.__vertices_pedigree_union
         del self.__graph_instance
-        del self.__required_graph
+        del self.__mandatory_graph
         del self.__forbidden_graph
 
 
@@ -440,7 +425,7 @@ class Graph:
         return edges_minus
 
     
-    def build_required_graph(self):
+    def build_mandatory_graph(self):
         return  self.find_edges_rule_b()[1] | \
                 self.find_edges_rule_c()[1] | \
                 self.find_edges_rule_d()
@@ -454,9 +439,9 @@ class Graph:
 
 
 class SandwichInstance:
-    def __init__(self, pedigree_vertices, required_graph, forbidden_graph):
+    def __init__(self, pedigree_vertices, mandatory_graph, forbidden_graph):
         self.__pedigree_vertices    =   pedigree_vertices
-        self.__required_graph       =   self.build_graph(required_graph)
+        self.__mandatory_graph      =   self.build_graph(mandatory_graph)
         self.__forbidden_graph      =   self.build_graph(forbidden_graph)
 
 
@@ -466,8 +451,8 @@ class SandwichInstance:
 
 
     @property
-    def required_graph(self):
-        return self.__required_graph
+    def mandatory_graph(self):
+        return self.__mandatory_graph
 
 
     @property
@@ -480,9 +465,9 @@ class SandwichInstance:
         self.__pedigree_vertices = pedigree_vertices
 
 
-    @required_graph.setter
-    def required_graph(self, required_graph):
-        self.__required_graph = required_graph
+    @mandatory_graph.setter
+    def mandatory_graph(self, mandatory_graph):
+        self.__mandatory_graph = mandatory_graph
 
 
     @forbidden_graph.setter
@@ -495,9 +480,9 @@ class SandwichInstance:
         del self.__pedigree_vertices
 
 
-    @required_graph.deleter
-    def required_graph(self):
-        del self.__required_graph
+    @mandatory_graph.deleter
+    def mandatory_graph(self):
+        del self.__mandatory_graph
 
 
     @forbidden_graph.deleter
@@ -507,7 +492,7 @@ class SandwichInstance:
     
     def __del__(self):
         del self.__pedigree_vertices
-        del self.__required_graph
+        del self.__mandatory_graph
         del self.__forbidden_graph
 
 
@@ -547,17 +532,17 @@ class SandwichSolver:
 
     def solve_interval_sandwich_algorithm(self):
         cut_realizations = list()
-        required_graph_neighbors = dict()
+        mandatory_graph_neighbors = dict()
 
-        for vertex in self.sandwich_instance.required_graph.nodes():
-            required_graph_neighbors[vertex] = OrderedSet(self.sandwich_instance.required_graph.neighbors(vertex))
+        for vertex in self.sandwich_instance.mandatory_graph.nodes():
+            mandatory_graph_neighbors[vertex] = OrderedSet(self.sandwich_instance.mandatory_graph.neighbors(vertex))
         
         for vertex in self.sandwich_instance.pedigree_vertices:
             current_interval = Interval(vertex)
             realization_instance = CutRealization(
-                self.sandwich_instance.required_graph,
+                self.sandwich_instance.mandatory_graph,
                 self.sandwich_instance.forbidden_graph,
-                required_graph_neighbors,
+                mandatory_graph_neighbors,
                 [current_interval], [vertex]
             )
             cut_realizations.append(realization_instance)
