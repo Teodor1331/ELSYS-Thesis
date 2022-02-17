@@ -5,8 +5,8 @@ import ordered_set
 
 sys.path.append('..')
 
-from loader import Loader
-from builder import Builder
+from pedigree_builder import Loader
+from pedigree_builder import Builder
 from family_units import Individual
 from family_units import MatingUnit
 from family_units import SibshipUnit

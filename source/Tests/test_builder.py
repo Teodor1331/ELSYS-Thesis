@@ -1,8 +1,8 @@
 import sys, pytest
 sys.path.append('..')
 
-from loader import Loader
-from builder import Builder
+from pedigree_builder import Loader
+from pedigree_builder import Builder
 from family_units import Individual
 from pedigree_family import PedigreeFamily
 

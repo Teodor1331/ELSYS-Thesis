@@ -1,7 +1,7 @@
 import sys, pytest
 sys.path.append('..')
 
-from Source.loader import Loader
+from pedigree_builder import Loader
 
 
 def test_loader_constructor():

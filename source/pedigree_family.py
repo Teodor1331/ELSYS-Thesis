@@ -107,6 +107,7 @@ class PedigreeFamily:
 
 
     def add_individual(self, individual):
+        print(type(individual))
         assert isinstance(individual, Individual)
         key = individual.individual_identifier
         self.__pedigree_individuals[key] = individual

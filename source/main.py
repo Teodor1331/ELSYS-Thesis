@@ -1,7 +1,7 @@
 import sys
 
-from loader import Loader
-from builder import Builder
+from pedigree_builder import Loader
+from pedigree_builder import Builder
 
 from graph import Graph, SandwichInstance
 from graph import SandwichSolver
