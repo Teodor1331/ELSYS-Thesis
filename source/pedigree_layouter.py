@@ -5,11 +5,11 @@ from matplotlib.patches import Circle
 from collections import defaultdict
 from matplotlib.backends.backend_pdf import PdfPages
 
-from family_units import Individual
-from family_units import MatingUnit
-from family_units import SibshipUnit
-from interval_sandwich import Interval
-from fields import Sex, Status
+from pedigree_units import Individual
+from pedigree_units import MatingUnit
+from pedigree_units import SibshipUnit
+from pedigree_problem import Interval
+from pedigree_fields import Sex, Status
 
 
 class Drawer:

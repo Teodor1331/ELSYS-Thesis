@@ -1,10 +1,10 @@
 import sys, pytest
 sys.path.append('..')
 
-from family_units import Individual
-from family_units import MatingUnit
-from family_units import SibshipUnit
-from fields import Sex, Status, Role
+from pedigree_units import Individual
+from pedigree_units import MatingUnit
+from pedigree_units import SibshipUnit
+from pedigree_fields import Sex, Status, Role
 
 
 def test_individual_constructor():
@@ -36,12 +36,11 @@ def test_individual_constructor():
     assert locals()['individual6'] is individual6
 
     with pytest.raises(AssertionError):
-        Individual(None)
-        Individual(bool)
-        Individual(int)
-        Individual(float)
-        Individual(complex)
-        Individual(str)
+        Individual(None), Individual(bool)
+        Individual(int), Individual(float), Individual(complex)
+        Individual(bytes), Individual(bytearray), Individual(str)
+        Individual(tuple), Individual(range)
+        Individual(set), Individual(frozenset), Individual(dict)
 
 
 def test_individual_destructor():

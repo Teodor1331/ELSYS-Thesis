@@ -4,13 +4,14 @@ This file contains the logic of reading a pedigree file
 and building pedigree families with pedigree units.
 """
 
+import os
 import re
 import csv
 
 from pathlib import Path
 from io import TextIOWrapper
 
-from family_units import Individual
+from pedigree_units import Individual
 from pedigree_family import PedigreeFamily
 
 
@@ -41,19 +42,22 @@ class Loader:
         Parameters: The path to the file.
         """
         try:
-            assert isinstance(file_path, str)
+            assertion_message1 = 'The file path is not a string!'
+            assertion_message2 = 'The file path was not found!'
+            assertion_message3 = 'The file data is not valid!'
+
+            assert isinstance(file_path, str), assertion_message1
+            assert os.path.exists(file_path), assertion_message2
 
             self.__file_path = file_path
             self.__file_name = Path(file_path).name
             self.__file_stem = Path(file_path).stem
             self.__file_suffix = Path(file_path).suffix
             self.__file_data = self.read_file_data()
+
+            assert self.validate_file_data(), assertion_message3
         except AssertionError as assertion_error:
-            message = 'The file path is not a correct name!'
-            raise AssertionError(message) from assertion_error
-        except FileNotFoundError as assertion_error:
-            message = 'The file with this name was not found!'
-            raise FileNotFoundError(message) from assertion_error
+            raise assertion_error
 
     @property
     def file_path(self) -> str:
@@ -208,6 +212,29 @@ class Loader:
                 file_data.append(ordered_line)
 
         return file_data
+
+
+    def validate_file_data(self) -> bool:
+        for data_unit in self.file_data:
+            if data_unit[2] != '0':
+                found_father = False
+                for unit in self.file_data:
+                    if data_unit[2] == unit[1]:
+                        found_father = True
+
+                if found_father is False:
+                    return False
+
+            if data_unit[3] != '0':
+                found_mother = False
+                for unit in self.file_data:
+                    if data_unit[3] == unit[1]:
+                        found_mother = True
+
+                if found_mother is False:
+                    return False
+
+        return True
 
 
 class Builder:

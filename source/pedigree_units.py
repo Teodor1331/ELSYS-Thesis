@@ -1,4 +1,14 @@
-from fields import Sex, Status, Role
+from pedigree_fields import Sex
+from pedigree_fields import Status
+from pedigree_fields import Role
+
+from typing import Union
+from typing import Optional
+
+
+class Individual: pass
+class MatingUnit: pass
+class SibshipUnit: pass
 
 
 class Individual:
@@ -61,17 +71,17 @@ class Individual:
 
 
     @property
-    def mating_unit_relation(self):
+    def mating_unit_relation(self) -> Union[MatingUnit, None]:
         return self.__mating_unit_relation
 
 
     @property
-    def sibship_unit_relation(self):
+    def sibship_unit_relation(self) -> Union[SibshipUnit, None]:
         return self.__sibship_unit_relation
 
 
     @property
-    def generation_rank(self):
+    def generation_rank(self) -> Union[int, None]:
         return self.__generation_rank
 
 
@@ -254,7 +264,7 @@ class MatingUnit:
             assert isinstance(sibship_unit_relation, (SibshipUnit, type(None)))
         except AssertionError:
             raise AssertionError('The mating unit constructor arguments are not correct!')
-        
+
         self.__pedigree_identifier      =   pedigree_identifier
 
         self.__male_mate_individual     =   male_mate_individual
@@ -280,12 +290,12 @@ class MatingUnit:
 
 
     @property
-    def sibship_unit_relation(self):
+    def sibship_unit_relation(self) -> Union[SibshipUnit, None]:
         return self.__sibship_unit_relation
 
 
     @property
-    def generation_rank(self):
+    def generation_rank(self) -> Union[int, None]:
         return self.__generation_rank
 
 
@@ -365,8 +375,8 @@ class SibshipUnit:
 
         self.__pedigree_identifier      =   pedigree_identifier
 
-        self.__siblings_individuals     =   list()
-        self.__siblings_extended        =   list()
+        self.__siblings_individuals     =   []
+        self.__siblings_extended        =   []
 
         self.__mating_unit_relation     =   mating_unit_relation
         self.__generation_rank          =   None

@@ -1,7 +1,7 @@
-from family_units import Individual
-from family_units import MatingUnit
-from family_units import SibshipUnit
-from fields import Role
+from pedigree_fields import Role
+from pedigree_units import Individual
+from pedigree_units import MatingUnit
+from pedigree_units import SibshipUnit
 
 
 class PedigreeFamily:
@@ -11,14 +11,14 @@ class PedigreeFamily:
         except AssertionError:
             raise AssertionError('The pedigree identifier is invalid!')
 
-        self.__pedigree_identifier      =   pedigree_identifier
+        self.__pedigree_identifier = pedigree_identifier
 
-        self.__pedigree_individuals     =   dict()
-        self.__pedigree_mating_units    =   dict()
-        self.__pedigree_sibship_units   =   dict()
+        self.__pedigree_individuals = dict()
+        self.__pedigree_mating_units = dict()
+        self.__pedigree_sibship_units = dict()
 
-        self.__min_generation_rank      =   None
-        self.__max_generation_rank      =   None
+        self.__min_generation_rank = None
+        self.__max_generation_rank = None
 
 
     @property
@@ -196,12 +196,12 @@ class PedigreeFamily:
 
 
     def build_generation_rank(self):
-        touched_individuals = list()
+        touched_individuals = []
         touched_individuals.append(self.get_proband())
 
         while self.validate_propagated_rank() is False:
-            next_touched_individuals = list()
-            last_touched_individuals = list()
+            next_touched_individuals = []
+            last_touched_individuals = []
 
             for individual in touched_individuals:
                 assert isinstance(individual, Individual)
@@ -330,7 +330,7 @@ class PedigreeFamily:
                             
 
     def get_individuals_by_generation(self, generation_rank):
-        generation_individuals = list()
+        generation_individuals = []
 
         for key in self.pedigree_individuals:
             individual = self.pedigree_individuals[key]

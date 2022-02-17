@@ -3,12 +3,12 @@ import sys
 from pedigree_builder import Loader
 from pedigree_builder import Builder
 
-from graph import Graph, SandwichInstance
-from graph import SandwichSolver
-from interval_sandwich import Interval
-from layouter import Drawer
+from pedigree_graph import Graph, SandwichInstance
+from pedigree_graph import SandwichSolver
+from pedigree_problem import Interval
+from pedigree_layouter import Drawer
 
-from family_units import Individual
+from pedigree_units import Individual
 from pedigree_family import PedigreeFamily
 
 

@@ -7,11 +7,11 @@ sys.path.append('..')
 
 from pedigree_builder import Loader
 from pedigree_builder import Builder
-from family_units import Individual
-from family_units import MatingUnit
-from family_units import SibshipUnit
+from pedigree_units import Individual
+from pedigree_units import MatingUnit
+from pedigree_units import SibshipUnit
 from pedigree_family import PedigreeFamily
-from graph import Graph
+from pedigree_graph import Graph
 
 
 def test_graph_constructor():

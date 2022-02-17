@@ -5,12 +5,12 @@ from ordered_set import OrderedSet
 from collections import deque
 
 
-from family_units import Individual
-from family_units import MatingUnit
-from family_units import SibshipUnit
+from pedigree_units import Individual
+from pedigree_units import MatingUnit
+from pedigree_units import SibshipUnit
 from pedigree_family import PedigreeFamily
-from interval_sandwich import Interval
-from interval_sandwich import CutRealization
+from pedigree_problem import Interval
+from pedigree_problem import CutRealization
 
 
 class Graph:

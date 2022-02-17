@@ -1,17 +1,29 @@
-import sys, pytest
+import sys
+import pytest
+
 sys.path.append('..')
 
 from pedigree_builder import Loader
 from pedigree_builder import Builder
-from family_units import Individual
+from pedigree_units import Individual
 from pedigree_family import PedigreeFamily
 
+@pytest.fixture(name='loader1')
+def fixture_loader1() -> Loader:
+    return Loader('../../Examples/CSV Examples/Pedigree1.csv')
 
-def test_loader_constructor():
-    loader1 = Loader('../../Examples/TXT Examples/Pedigree1.txt')
-    loader2 = Loader('../../Examples/TXT Examples/Pedigree2.txt')
-    loader3 = Loader('../../Examples/TXT Examples/Pedigree3.txt')
 
+@pytest.fixture(name='loader2')
+def fixture_loader2() -> Loader:
+    return Loader('../../Examples/PED Examples/Pedigree1.ped')
+
+
+@pytest.fixture(name='loader3')
+def fixture_loader3() -> Loader:
+    return Loader('../../Examples/TXT Examples/Pedigree1.txt')
+
+
+def test_loader_constructor(loader1, loader2, loader3):
     assert isinstance(loader1, Loader)
     assert isinstance(loader2, Loader)
     assert isinstance(loader3, Loader)
@@ -21,16 +33,11 @@ def test_loader_constructor():
     assert 'loader3' in locals()
 
     with pytest.raises(AssertionError):
-        Loader(None)
-        Loader(bool)
-        Loader(int)
-        Loader(float)
-        Loader(complex)
-
-    with pytest.raises(AssertionError):
-        Loader(str)
-
-    with pytest.raises(FileNotFoundError):
+        Loader(None), Loader(bool)
+        Loader(int), Loader(float), Loader(complex)
+        Loader(bytes), Loader(bytearray), Loader(str)
+        Loader(list), Loader(tuple), Loader(range)
+        Loader(set), Loader(frozenset), Loader(dict)
         Loader('Hello, World!')
 
 
@@ -300,12 +307,11 @@ def test_builder_constructor():
     assert 'builder3' in locals()
 
     with pytest.raises(AssertionError):
-        Builder(None)
-        Builder(bool)
-        Builder(int)
-        Builder(float)
-        Builder(complex)
-        Builder(str)
+        Builder(None), Builder(bool)
+        Builder(int), Builder(float), Builder(complex)
+        Builder(bytes), Builder(bytearray), Builder(str)
+        Builder(list), Builder(tuple), Builder(range)
+        Builder(set), Builder(frozenset), Builder(dict)
 
 
 def test_builder_destructor():
