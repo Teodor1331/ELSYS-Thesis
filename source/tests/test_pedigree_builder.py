@@ -33,12 +33,13 @@ def test_loader_constructor(loader1, loader2, loader3):
     assert 'loader3' in locals()
 
     with pytest.raises(AssertionError):
-        Loader(None), Loader(bool)
-        Loader(int), Loader(float), Loader(complex)
-        Loader(bytes), Loader(bytearray), Loader(str)
-        Loader(list), Loader(tuple), Loader(range)
-        Loader(set), Loader(frozenset), Loader(dict)
-        Loader('Hello, World!')
+        result = Loader(None), Loader(bool)
+        result = Loader(int), Loader(float), Loader(complex)
+        result = Loader(bytes), Loader(bytearray), Loader(str)
+        result = Loader(list), Loader(tuple), Loader(range)
+        result = Loader(set), Loader(frozenset), Loader(dict)
+        result = Loader('Hello, World!')
+        del result
 
 
 def test_loader_constants():

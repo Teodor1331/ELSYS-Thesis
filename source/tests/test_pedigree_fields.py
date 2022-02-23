@@ -1,7 +1,10 @@
-import sys, pytest
+import sys
+import pytest
 sys.path.append('..')
 
-from pedigree_fields import Sex, Status, Role
+from pedigree_fields import Sex
+from pedigree_fields import Status
+from pedigree_fields import Role
 
 
 def test_sex_enumeration():

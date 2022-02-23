@@ -1,4 +1,5 @@
-import sys, pytest
+import sys
+import pytest
 sys.path.append('..')
 
 from pedigree_units import Individual
@@ -94,7 +95,7 @@ def test_individual_properties():
     assert hasattr(individual4, 'individual_father')
     assert hasattr(individual5, 'individual_father')
     assert hasattr(individual6, 'individual_father')
-    
+
     assert hasattr(individual1, 'individual_mother')
     assert hasattr(individual2, 'individual_mother')
     assert hasattr(individual3, 'individual_mother')
@@ -297,12 +298,12 @@ def test_individual_properties():
     assert individual5.generation_rank is None
     assert individual6.generation_rank is None
 
-    assert individual1.mating_instances == list()
-    assert individual2.mating_instances == list()
-    assert individual3.mating_instances == list()
-    assert individual4.mating_instances == list()
-    assert individual5.mating_instances == list()
-    assert individual6.mating_instances == list()
+    assert individual1.mating_instances == []
+    assert individual2.mating_instances == []
+    assert individual3.mating_instances == []
+    assert individual4.mating_instances == []
+    assert individual5.mating_instances == []
+    assert individual6.mating_instances == []
 
     assert len(individual1.mating_instances) == 0
     assert len(individual2.mating_instances) == 0

@@ -4,7 +4,7 @@ sys.path.append('..')
 from pedigree_family import PedigreeFamily
 
 
-def test_pedigree_family_instances():
+def test_pedigree_family_constructor():
     pedigree_family1 = PedigreeFamily('pedigree_family1')
     pedigree_family2 = PedigreeFamily('pedigree_family2')
     pedigree_family3 = PedigreeFamily('pedigree_family3')
@@ -13,14 +13,20 @@ def test_pedigree_family_instances():
     assert isinstance(pedigree_family2, PedigreeFamily)
     assert isinstance(pedigree_family3, PedigreeFamily)
 
+    assert 'pedigree_family1' in locals()
+    assert 'pedigree_family2' in locals()
+    assert 'pedigree_family3' in locals()
 
-def test_pedigree_family_constructor():
+    assert locals()['pedigree_family1'] is pedigree_family1
+    assert locals()['pedigree_family2'] is pedigree_family2
+    assert locals()['pedigree_family3'] is pedigree_family3
+
     with pytest.raises(AssertionError):
-        PedigreeFamily(None)
-        PedigreeFamily(bool)
-        PedigreeFamily(int)
-        PedigreeFamily(float)
-        PedigreeFamily(complex)
+        PedigreeFamily(None), PedigreeFamily(bool)
+        PedigreeFamily(int), PedigreeFamily(float), PedigreeFamily(complex)
+        PedigreeFamily(bytes), PedigreeFamily(bytearray), PedigreeFamily(str)
+        PedigreeFamily(tuple), PedigreeFamily(range)
+        PedigreeFamily(set), PedigreeFamily(frozenset), PedigreeFamily(dict)
 
 
 def test_pedigree_family_destructor():

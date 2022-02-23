@@ -1,9 +1,8 @@
+from typing import Union
+
 from pedigree_fields import Sex
 from pedigree_fields import Status
 from pedigree_fields import Role
-
-from typing import Union
-from typing import Optional
 
 
 class Individual: pass
@@ -204,8 +203,9 @@ class Individual:
     def decide_sex_individual(string) -> Sex:
         try:
             assert isinstance(string, str)
-        except AssertionError:
-            raise AssertionError('The given argument is not a string!')
+        except AssertionError as assertion_error:
+            message = 'The given argument is not a string!'
+            raise AssertionError(message) from assertion_error
 
         if string == '1':
             return Sex.MALE
@@ -226,8 +226,8 @@ class Individual:
             return Status.UNAFFECTED
         elif string == '2':
             return Status.AFFECTED
-        else:
-            return Status.UNKNOWN
+        
+        return Status.UNKNOWN
 
 
     @staticmethod
@@ -370,8 +370,9 @@ class SibshipUnit:
         try:
             assert isinstance(pedigree_identifier,  str)
             assert isinstance(mating_unit_relation, (MatingUnit, type(None)))
-        except AssertionError:
-            raise AssertionError('The sibship unit constructor arguments are not correct!')
+        except AssertionError as assertion_error:
+            message = 'The sibship unit constrcutor arguments are not cirrect!'
+            raise AssertionError(message) from assertion_error
 
         self.__pedigree_identifier      =   pedigree_identifier
 

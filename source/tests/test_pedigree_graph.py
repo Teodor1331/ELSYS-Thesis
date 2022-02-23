@@ -40,12 +40,33 @@ def test_graph_constructor():
     assert isinstance(graph3, Graph)
 
     with pytest.raises(AssertionError):
-        Graph(None)
-        Graph(bool)
-        Graph(int)
-        Graph(float)
-        Graph(complex)
-        Graph(str)
+        Graph(None), Graph(bool)
+        Graph(int), Graph(float), Graph(complex)
+        Graph(bytes), Graph(bytearray), Graph(str)
+        Graph(tuple), Graph(range)
+        Graph(set), Graph(frozenset), Graph(dict)
+
+
+def test_graph_destructor():
+    loader1 = Loader('../../Examples/CSV Examples/Pedigree1.csv')
+    loader2 = Loader('../../Examples/PED Examples/Pedigree1.ped')
+    loader3 = Loader('../../Examples/TXT Examples/Pedigree1.txt')
+
+    builder1 = Builder(loader1.file_data)
+    builder2 = Builder(loader2.file_data)
+    builder3 = Builder(loader3.file_data)
+
+    graph1 = Graph(builder1.file_pedigrees[0])
+    graph2 = Graph(builder2.file_pedigrees[0])
+    graph3 = Graph(builder3.file_pedigrees[0])
+
+    del graph1
+    del graph2
+    del graph3
+
+    assert 'graph1' not in locals()
+    assert 'graph2' not in locals()
+    assert 'graph3' not in locals()
 
 
 def test_graph_instances():

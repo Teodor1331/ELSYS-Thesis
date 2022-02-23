@@ -1,2 +1,3 @@
-import sys, pytest
+import sys
+import pytest
 sys.path.append('..')
