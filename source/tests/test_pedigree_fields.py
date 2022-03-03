@@ -1,67 +1,72 @@
-import sys
-import pytest
-sys.path.append('..')
+"""Test module on the enumerations of the Individual properties."""
 
+import sys
+
+from pedigree_fields import Role
 from pedigree_fields import Sex
 from pedigree_fields import Status
-from pedigree_fields import Role
+
+sys.path.append('..')
 
 
-def test_sex_enumeration():
-    assert 'UNKNOWN' in Sex._member_names_
-    assert 'MALE' in Sex._member_names_
-    assert 'FEMALE' in Sex._member_names_
-
-    assert 0 in Sex._value2member_map_
-    assert 1 in Sex._value2member_map_
-    assert 2 in Sex._value2member_map_
-
+def test_sex_enumeration_instances():
+    """Test Sex Enumeration Type Instances."""
     assert isinstance(Sex.UNKNOWN, Sex)
     assert isinstance(Sex.MALE, Sex)
     assert isinstance(Sex.FEMALE, Sex)
 
+
+def test_sex_enumeration_members():
+    """Test Sex Enumeration Type Members."""
+    assert 'UNKNOWN' in Sex.__members__
+    assert 'MALE' in Sex.__members__
+    assert 'FEMALE' in Sex.__members__
+
+
+def test_sex_enumeration_names():
+    """Test Sex Enumeration Type Names."""
+    assert Sex.UNKNOWN.name == 'UNKNOWN'
+    assert Sex.MALE.name == 'MALE'
+    assert Sex.FEMALE.name == 'FEMALE'
+
+
+def test_sex_enumeration_values():
+    """Test Sex Enumeration Type Values."""
     assert Sex.UNKNOWN.value == 0
     assert Sex.MALE.value == 1
     assert Sex.FEMALE.value == 2
 
 
-def test_status_enumeration():
-    assert 'UNKNOWN' in Status._member_names_
-    assert 'UNAFFECTED' in Status._member_names_
-    assert 'AFFECTED' in Status._member_names_
-
-    assert 0 in Status._value2member_map_
-    assert 1 in Status._value2member_map_
-    assert 2 in Status._value2member_map_
-
+def test_status_enumeration_instances():
+    """Test Status Enumeration Type."""
     assert isinstance(Status.UNKNOWN, Status)
     assert isinstance(Status.UNAFFECTED, Status)
     assert isinstance(Status.AFFECTED, Status)
 
+
+def test_status_enumeration_members():
+    """Test Status Enumeration Members."""
+    assert 'UNKNOWN' in Status.__members__
+    assert 'UNAFFECTED' in Status.__members__
+    assert 'AFFECTED' in Status.__members__
+
+
+def test_status_enumeration_names():
+    """Test Status Enumeration Names."""
+    assert Status.UNKNOWN.name == 'UNKNOWN'
+    assert Status.UNAFFECTED.name == 'UNAFFECTED'
+    assert Status.AFFECTED.name == 'AFFECTED'
+
+
+def test_status_enumeration_values():
+    """Test Status Enumeration Values."""
     assert Status.UNKNOWN.value == 0
     assert Status.UNAFFECTED.value == 1
     assert Status.AFFECTED.value == 2
 
 
-def test_role_enumeration():
-    assert 'UNKNOWN' in Role._member_names_
-    assert 'PROBAND' in Role._member_names_
-    assert 'FATHER' in Role._member_names_
-    assert 'MOTHER' in Role._member_names_
-    assert 'BROTHER' in Role._member_names_
-    assert 'SISTER' in Role._member_names_
-    assert 'GRANDFATHER' in Role._member_names_
-    assert 'GRANDMOTHER' in Role._member_names_
-    
-    assert 0 in Role._value2member_map_
-    assert 1 in Role._value2member_map_
-    assert 2 in Role._value2member_map_
-    assert 3 in Role._value2member_map_
-    assert 4 in Role._value2member_map_
-    assert 5 in Role._value2member_map_
-    assert 6 in Role._value2member_map_
-    assert 7 in Role._value2member_map_
-
+def test_role_enumeration_instances():
+    """Test Role Enumeration Type."""
     assert isinstance(Role.UNKNOWN, Role)
     assert isinstance(Role.PROBAND, Role)
     assert isinstance(Role.FATHER, Role)
@@ -71,6 +76,33 @@ def test_role_enumeration():
     assert isinstance(Role.GRANDFATHER, Role)
     assert isinstance(Role.GRANDMOTHER, Role)
 
+
+def test_role_enumeration_members():
+    """Test Role Enumeration Members."""
+    assert 'UNKNOWN' in Role.__members__
+    assert 'PROBAND' in Role.__members__
+    assert 'FATHER' in Role.__members__
+    assert 'MOTHER' in Role.__members__
+    assert 'BROTHER' in Role.__members__
+    assert 'SISTER' in Role.__members__
+    assert 'GRANDFATHER' in Role.__members__
+    assert 'GRANDMOTHER' in Role.__members__
+
+
+def test_role_enumeration_names():
+    """Test Role Enumeration Names."""
+    assert Role.UNKNOWN.name == 'UNKNOWN'
+    assert Role.PROBAND.name == 'PROBAND'
+    assert Role.FATHER.name == 'FATHER'
+    assert Role.MOTHER.name == 'MOTHER'
+    assert Role.BROTHER.name == 'BROTHER'
+    assert Role.SISTER.name == 'SISTER'
+    assert Role.GRANDFATHER.name == 'GRANDFATHER'
+    assert Role.GRANDMOTHER.name == 'GRANDMOTHER'
+
+
+def test_role_enumeration_values():
+    """Test Role Enumeration Values."""
     assert Role.UNKNOWN.value == 0
     assert Role.PROBAND.value == 1
     assert Role.FATHER.value == 2
