@@ -1,12 +1,8 @@
 """Test module on the enumerations of the Individual properties."""
 
-import sys
-
 from pedigree_fields import Role
 from pedigree_fields import Sex
 from pedigree_fields import Status
-
-sys.path.append('..')
 
 
 def test_sex_enumeration_instances():
