@@ -1,2 +1,12 @@
 networkx
 matplotlib
+
+pytest
+coverage
+
+pylint
+pylama
+pycodestyle
+pydocstyle
+pyflakes
+pyright
