@@ -1,0 +1,5 @@
+#pedigree_identifier	#individual_identifier	#individual_father	#individual_mother	#individual_sex	#individual_status	#individual_role
+ped			father			0			0			1		2			prb
+ped			mother			0			0			2		1			null
+pedigree		mother			0			0			2		1			null
+pedigree		father1			0			0			1		1			null

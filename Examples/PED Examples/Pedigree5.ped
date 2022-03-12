@@ -1,0 +1,6 @@
+#pedigree_identifier	#individual_identifier	#individual_father	#individual_mother	#individual_sex	#individual_status	#individual_role
+pedigree		mother			0			0			2		1			null
+pedigree		father			0			0			1		1			null
+pedigree		kid1			father			mother			2		1			null
+pedigree        kid2            father          UNKNOWN         2       1           prb
+pedigree        kid3            UNKNOWN         mother          2       1           null
