@@ -1,4 +1,4 @@
-make: pylint pylama pycodestyle pydocstyle pyflakes pyright
+make: pylint pylama pycodestyle pydocstyle pyflakes
 
 pylint:
 	cd logic/ && pylint pedigree_fields.py
@@ -33,13 +33,6 @@ pyflakes:
 	cd logic/ && pyflakes pedigree_builder.py
 
 	cd tests/ && pyflakes test_pedigree_fields.py
-
-
-pyright:
-	cd logic/ && pyright pedigree_fields.py
-	cd logic/ && pyright pedigree_builder.py
-
-	cd tests/ && pyright test_pedigree_fields.py
 
 
 test:

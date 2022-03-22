@@ -224,6 +224,9 @@ class Loader:
             if not Loader.find_proband_individual(data):
                 return False
 
+            if not Loader.validate_individual_parents(data):
+                return False
+
         return True
 
     @staticmethod
@@ -251,6 +254,34 @@ class Loader:
             found_mother = Loader.find_parent_individual(data, data_unit, 3)
 
             if not found_mother or not found_father:
+                return False
+
+        return True
+
+    @staticmethod
+    def validate_individual_parents(data: list) -> bool:
+        """Validate the gender of the parents of an individual.
+
+        Accepts: DATA of type list
+        Returns: Boolean result
+        """
+        for unit in data:
+            validated_father = True
+            validated_mother = True
+
+            if unit[2] != '0':
+                for data_unit in data:
+                    if data_unit[1] == unit[2]:
+                        validated_father = data_unit[4] == '1'
+                        break
+
+            if unit[3] != '0':
+                for data_unit in data:
+                    if data_unit[1] == unit[3]:
+                        validated_mother = data_unit[4] == '2'
+                        break
+
+            if not validated_father or not validated_mother:
                 return False
 
         return True
