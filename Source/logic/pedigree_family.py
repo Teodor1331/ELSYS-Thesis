@@ -7,14 +7,18 @@ that manages the whole pedigree structure.
 """
 
 from typing import Union
+from typing import TypeVar
+from typing import Generic
 
 from .pedigree_fields import Role
 from .pedigree_units import Individual
 from .pedigree_units import MatingUnit
 from .pedigree_units import SibshipUnit
 
+PedigreeFamilyBase = TypeVar('PedigreeFamilyBase')
 
-class PedigreeFamily:
+
+class PedigreeFamily(Generic[PedigreeFamilyBase]):
     """Class Name: Pedigree Family.
 
     This class is used to manage the
@@ -81,7 +85,7 @@ class PedigreeFamily:
     def __hash__(self) -> int:
         return hash(self.pedigree_identifier)
 
-    def __eq__(self, pedigree_family) -> bool:
+    def __eq__(self, pedigree_family: PedigreeFamilyBase) -> bool:
         if not isinstance(pedigree_family, PedigreeFamily):
             return False
         return self.__hash__() == pedigree_family.__hash__()
@@ -89,19 +93,19 @@ class PedigreeFamily:
     def __repr__(self) -> str:
         return self.pedigree_identifier
 
-    def add_individual(self, individual) -> None:
+    def add_individual(self, individual: Individual) -> None:
         """Add Individual instance to the individuals' collection."""
         assert isinstance(individual, Individual)
         key = individual.individual_identifier
         self.__pedigree_individuals[key] = individual
 
-    def add_mating_unit(self, mating_unit) -> None:
+    def add_mating_unit(self, mating_unit: Individual) -> None:
         """Add Mating Unit instance to the mating units' collection."""
         assert isinstance(mating_unit, MatingUnit)
         key = mating_unit.__repr__
         self.__pedigree_mating_units[key] = mating_unit
 
-    def add_sibship_unit(self, sibship_unit) -> None:
+    def add_sibship_unit(self, sibship_unit: Individual) -> None:
         """Add Sibship Unit instance to the sibship units' collection."""
         assert isinstance(sibship_unit, SibshipUnit)
         key = sibship_unit.__repr__
@@ -339,7 +343,7 @@ class PedigreeFamily:
                         if condition1 and condition2:
                             sibship_unit[1].add_sibling_individual_mate(mating_unit[1].male_mate_individual)
 
-    def get_individuals_by_generation(self, generation_rank) -> list:
+    def get_individuals_by_generation(self, generation_rank: int) -> list:
         """Get all individuals by a given generation.
 
         This method gets a whole generation by a given
