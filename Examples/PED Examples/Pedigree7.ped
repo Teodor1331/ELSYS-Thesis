@@ -5,3 +5,4 @@ ped			son1			father			mother			1		2			null
 ped			son2			father			mother			1		1			null
 ped			dau1			father			mother			2		2			prb
 ped			dau2			father			mother			2		1			null
+

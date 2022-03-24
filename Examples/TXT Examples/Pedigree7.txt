@@ -11,3 +11,4 @@ ped1            	father-hus          		0           		0           		1           	
 ped1            	mother-hus          		0           		0           		2           		1			null
 ped1            	husband             		father-hus  		mother-hus  		1           		1			null
 ped1            	kiddo2              		husband     		wife        		2           		1			null
+

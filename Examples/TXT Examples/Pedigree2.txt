@@ -3,3 +3,4 @@ ped			father			0			0			1		2			prb
 ped			mother			0			0			2		1			null
 pedigree		sibling1		father2			mother			2		2			null
 pedigree		sibling2		father2			mother			1		2			prb
+

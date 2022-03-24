@@ -176,7 +176,12 @@ class Loader:
             if self.file_suffix.lower() in Loader.TAB_SEPARATED_EXTENSIONS:
                 dictionary_order = self.manage_tabbed_separated(file)
 
-                for file_line in file:
+                filelines = file.readlines()
+
+                if len(filelines) != 1 and filelines[-1] != '\n':
+                    raise ValueError('The file must end with a new line!')
+
+                for file_line in filelines[:-1]:
                     file_line = re.sub(' +', '\t', file_line)
                     file_line = re.sub('\t+', '\t', file_line)
                     file_line = file_line.strip('\n').split('\t')
