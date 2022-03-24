@@ -1,23 +1,27 @@
 make: pylint pylama pycodestyle pydocstyle pyflakes test
 
 pylint:
-	cd logic/ && pylint pedigree_fields.py
+	cd logic/ && pylint __init__.py
 	cd logic/ && pylint pedigree_builder.py
+	cd logic/ && pylint pedigree_fields.py
 
 
 pylama:
-	cd logic/ && pylama pedigree_fields.py
+	cd logic/ && pylama __init__.py
 	cd logic/ && pylama pedigree_builder.py
+	cd logic/ && pylama pedigree_fields.py
 
 
 pycodestyle:
-	cd logic/ && pycodestyle pedigree_fields.py
+	cd logic/ && pycodestyle __init__.py
 	cd logic/ && pycodestyle pedigree_builder.py
+	cd logic/ && pycodestyle pedigree_fields.py
 
 
 pydocstyle:
-	cd logic/ && pydocstyle pedigree_fields.py
+	cd logic/ && pydocstyle __init__.py
 	cd logic/ && pydocstyle pedigree_builder.py
+	cd logic/ && pydocstyle pedigree_fields.py
 
 
 pyflakes:
