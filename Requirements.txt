@@ -9,4 +9,3 @@ pylama
 pycodestyle
 pydocstyle
 pyflakes
-pyright

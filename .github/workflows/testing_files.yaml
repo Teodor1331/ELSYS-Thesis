@@ -1,0 +1,38 @@
+name: Testing Source Files
+
+on:
+  push:
+    branches: [ main ]
+    paths: 
+      - Source/**
+  pull_request:
+    branches: [ main ]
+    paths: 
+      - Source/**
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.6.9"]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install Dependencies from Requirements.txt
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r Requirements.txt
+    - name: Run Unit Tests
+      run: |
+        cd Source/
+        make test
+    - name: Delete Cache
+      run: |
+        cd Source/
+        make clean
