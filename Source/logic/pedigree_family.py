@@ -19,23 +19,16 @@ PedigreeFamilyBase = TypeVar('PedigreeFamilyBase')
 
 
 class PedigreeFamily(Generic[PedigreeFamilyBase]):
-    """Class Name: Pedigree Family.
+    """PedigreeFamily Class.
 
     This class is used to manage the
     whole structure of a single pedigree.
     """
 
-    __pedigree_identifier: str
-    __pedigree_individuals: dict
-    __pedigree_mating_units: dict
-    __pedigree_sibship_units: dict
-    __min_generation_rank: int
-    __max_generation_rank: int
-
     def __init__(self, pedigree_identifier) -> None:
         """Initialize an instance of the PedigreeFamily class.
 
-        Parameters: The pedigree identifier of the pedigree.
+        It accepts the pedigree identifier of the pedigree.
         """
         try:
             assert isinstance(pedigree_identifier, str)
@@ -83,14 +76,17 @@ class PedigreeFamily(Generic[PedigreeFamilyBase]):
         return self.__max_generation_rank
 
     def __hash__(self) -> int:
+        """Return the hash code of the class."""
         return hash(self.pedigree_identifier)
 
     def __eq__(self, pedigree_family: PedigreeFamilyBase) -> bool:
+        """Return if two instance of the class are equal."""
         if not isinstance(pedigree_family, PedigreeFamily):
             return False
         return self.__hash__() == pedigree_family.__hash__()
 
     def __repr__(self) -> str:
+        """Return the string representation of the class."""
         return self.pedigree_identifier
 
     def add_individual(self, individual: Individual) -> None:
@@ -99,27 +95,15 @@ class PedigreeFamily(Generic[PedigreeFamilyBase]):
         key = individual.individual_identifier
         self.__pedigree_individuals[key] = individual
 
-    def add_mating_unit(self, mating_unit: Individual) -> None:
-        """Add Mating Unit instance to the mating units' collection."""
-        assert isinstance(mating_unit, MatingUnit)
-        key = mating_unit.__repr__
-        self.__pedigree_mating_units[key] = mating_unit
-
-    def add_sibship_unit(self, sibship_unit: Individual) -> None:
-        """Add Sibship Unit instance to the sibship units' collection."""
-        assert isinstance(sibship_unit, SibshipUnit)
-        key = sibship_unit.__repr__
-        self.__pedigree_sibship_units[key] = sibship_unit
-
     def build_mating_units(self) -> None:
         """Build all the mating units in the pedigree structure.
 
         The method iterates through all the individuals and builds
         the needed mating units and creates an empty linked instances
-        of the sibships units, corresponding to the respective mating
-        units. At the end, the mating units are added to the individuals
+        of the sibship units, corresponding to the respective mating
+        units. At the end, the mating units are added to the individuals'
         mating units collections, where the individual has taken part
-        in the respective mating unit.
+        in the respective mating unit in the meaning of a mate.
         """
         for individual in self.pedigree_individuals.items():
             assert isinstance(individual[1], Individual)
@@ -173,7 +157,7 @@ class PedigreeFamily(Generic[PedigreeFamilyBase]):
     def get_proband(self) -> Union[Individual, None]:
         """Get the proband individual.
 
-        The method find the proband in the pedigree structure.
+        The method finds the proband in the pedigree structure.
         Returns an Individual instance if such a proband exists
         in the pedigree. If not, return None as a result.
         """
@@ -203,21 +187,23 @@ class PedigreeFamily(Generic[PedigreeFamilyBase]):
     def build_generation_rank(self) -> None:
         """Build the generation rank for all the base units.
 
-        The method attach a generation rank to all the
-        base units in the pedigree structure according
-        to the strategy:
+        The method attaches a generation rank to all the
+        base units in the pedigree structure according to
+        the well-known strategy:
             1. Siblings - first given
             2. Parents - second given
             3. Children - third given
-            4. Mates - fourth given
-        At the end, the method attach a generation rank
-        to the mating units and the sibship units.
+            4. Mates - last given
+        At the end, the method attaches a generation
+        rank to the mating units and the sibship units.
         """
         touched_individuals = [self.get_proband()]
 
+        if touched_individuals[0] is None:
+            raise ValueError('There is not any proband in the pedigree!')
+
         while self.validate_propagated_rank() is False:
             next_touched_individuals = []
-            last_touched_individuals = []
 
             for individual in touched_individuals:
                 assert isinstance(individual, Individual)
@@ -276,8 +262,6 @@ class PedigreeFamily(Generic[PedigreeFamilyBase]):
                         mating_unit[1].male_mate_individual.generation_rank = individual.generation_rank
                         next_touched_individuals.append(mating_unit[1].male_mate_individual)
 
-                last_touched_individuals.append(individual)
-
             touched_individuals = next_touched_individuals
 
         self.transform_generation_rank()
@@ -311,6 +295,7 @@ class PedigreeFamily(Generic[PedigreeFamilyBase]):
         difference_rank = max(generation_ranks) - min(generation_ranks)
         self.__min_generation_rank = 1
         self.__max_generation_rank = difference_rank + 1
+        difference_rank = self.__max_generation_rank - max(generation_ranks)
 
         for individual in self.pedigree_individuals.items():
             assert isinstance(individual[1], Individual)

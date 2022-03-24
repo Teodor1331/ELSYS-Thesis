@@ -20,29 +20,17 @@ SibshipUnitBase = TypeVar('SibshipUnitBase')
 
 
 class Individual(Generic[IndividualBase]):
-    """Class Name: Individual.
+    """Individual Class..
 
     This class is used to manage the
     base unit of a single individual
     in the structure of the pedigree.
     """
 
-    __pedigree_identifier: str
-    __individual_identifier: str
-    __individual_father: str
-    __individual_mother: str
-    __individual_sex: Sex
-    __individual_status: Status
-    __individual_role: Role
-    __mating_unit_relation: Union[MatingUnitBase, None]
-    __sibship_unit_relation: Union[SibshipUnitBase, None]
-    __generation_rank: Union[int, None]
-    __mating_instances: list
-
     def __init__(self, individual_data: list) -> None:
         """Initialize an instance of the Individual class.
 
-        Parameters: The individual data for the individual.
+        It accepts the individual data for the individual.
         """
         try:
             assert isinstance(individual_data, list)
@@ -135,28 +123,26 @@ class Individual(Generic[IndividualBase]):
         assert isinstance(generation_rank, int)
         self.__generation_rank = generation_rank
 
-    @mating_instances.setter
-    def mating_instances(self, mating_instances: list) -> None:
-        self.__mating_instances = mating_instances
-
     def __hash__(self) -> int:
+        """Return the hash code of the class."""
         return hash(self.pedigree_identifier) + \
-                hash(self.individual_identifier)
+            hash(self.individual_identifier)
 
     def __eq__(self, individual: IndividualBase) -> bool:
+        """Return if two instances of the class are equal."""
         if not isinstance(individual, Individual):
             return False
         return self.__hash__() == individual.__hash__()
 
     def __repr__(self) -> str:
+        """Return the string representation of the class."""
         return self.individual_identifier
 
     @staticmethod
     def decide_sex_individual(string: str) -> Sex:
         """Decide the sex of the individual.
 
-        Accepts: String - the value of the sex.
-        Returns: A value from the Sex Enum Type.
+        Return the associative value from Sex Enum Type.
         """
         try:
             assert isinstance(string, str)
@@ -173,8 +159,7 @@ class Individual(Generic[IndividualBase]):
     def decide_status_individual(string: str) -> Status:
         """Decide the status of the individual.
 
-        Accepts: String - the value of the status.
-        Returns: A value from the Status Enum Type.
+        Return the associative value from Status Enum Type.
         """
         try:
             assert isinstance(string, str)
@@ -191,8 +176,7 @@ class Individual(Generic[IndividualBase]):
     def decide_role_individual(string: str) -> Role:
         """Decide the role of the individual.
 
-        Accepts: String - the value of the role.
-        Returns: A value from the Role Enum Type.
+        Return the associative value from Role Enum Type.
         """
         try:
             assert isinstance(string, str)
@@ -207,21 +191,13 @@ class Individual(Generic[IndividualBase]):
             if string != 'null' else Sex.UNKNOWN
 
     def has_parents(self) -> bool:
-        """Check if the individual has parents.
-
-        Accepts: No arguments.
-        Returns: Boolean result.
-        """
+        """Check if the individual has parents."""
         condition1 = self.individual_father != '0'
         condition2 = self.individual_mother != '0'
         return condition1 and condition2
 
     def are_mates(self, mate: IndividualBase) -> bool:
-        """Check if two individuals are mates.
-
-        Accepts: Possible mate of type Individual.
-        Returns: Boolean result.
-        """
+        """Check if two individuals are mates."""
         assert isinstance(mate, Individual)
 
         for mating_instance in self.mating_instances:
@@ -236,11 +212,7 @@ class Individual(Generic[IndividualBase]):
         return False
 
     def are_siblings(self, sibling: IndividualBase) -> bool:
-        """Check if two individuals are siblings.
-
-        Accepts: Possible sibling of type Individual.
-        Returns: Boolean result.
-        """
+        """Check if two individuals are siblings."""
         assert isinstance(sibling, Individual)
 
         condition1 = self.pedigree_identifier == sibling.pedigree_identifier
@@ -256,22 +228,14 @@ class Individual(Generic[IndividualBase]):
         return False
 
     def get_father_individual(self) -> Union[IndividualBase, None]:
-        """Return the father of the individual like class object.
-
-        Accepts: No arguments.
-        Returns: Individual instance or None.
-        """
+        """Return the father of the individual like class object."""
         if self.mating_unit_relation is not None:
             assert isinstance(self.mating_unit_relation, MatingUnit)
             return self.mating_unit_relation.male_mate_individual
         return None
 
     def get_mother_individual(self) -> Union[IndividualBase, None]:
-        """Return the mother of the individual like class object.
-
-        Accepts: No arguments.
-        Returns: Individual instance or None.
-        """
+        """Return the mother of the individual like class object."""
         if self.mating_unit_relation is not None:
             assert isinstance(self.mating_unit_relation, MatingUnit)
             return self.mating_unit_relation.female_mate_individual
@@ -279,17 +243,12 @@ class Individual(Generic[IndividualBase]):
 
 
 class MatingUnit(Generic[MatingUnitBase]):
-    """Class Name: MatingUnit.
+    """MatingUnit Class.
 
     This class is used to manage the
     base unit of a single mating unit
     in the structure of the pedigree.
     """
-
-    __pedigree_identifier: str
-    __male_mate_individual: Individual
-    __female_mate_individual: Individual
-    __sibship_unit_relation: Union[SibshipUnitBase, None]
 
     def __init__(self, pedigree_identifier: str,
                  male_mate_individual: Individual,
@@ -297,7 +256,7 @@ class MatingUnit(Generic[MatingUnitBase]):
                  sibship_unit_relation=None) -> None:
         """Initialize an instance of the MatingUnit class.
 
-        Parameters: The pedigree identifier of the pedigree,
+        It accepts the pedigree identifier of the pedigree,
         the male and the female mates (individuals) in the
         mating, the relation to the associated sibship.
         """
@@ -353,15 +312,18 @@ class MatingUnit(Generic[MatingUnitBase]):
         self.__generation_rank = generation_rank
 
     def __hash__(self) -> int:
+        """Return the hash code of the class."""
         return hash(self.male_mate_individual) + \
-                hash(self.female_mate_individual)
+            hash(self.female_mate_individual)
 
     def __eq__(self, mating_unit: MatingUnitBase) -> bool:
+        """Return if two instances of the class is equal."""
         if not isinstance(mating_unit, MatingUnit):
             return False
         return self.__hash__() == mating_unit.__hash__()
 
     def __repr__(self) -> str:
+        """Return the string representation of the class."""
         return "MU" + self.mating_string()
 
     def mating_string(self) -> str:
@@ -371,19 +333,21 @@ class MatingUnit(Generic[MatingUnitBase]):
 
 
 class SibshipUnit(Generic[SibshipUnitBase]):
-    """Class Name: SibshipUnit.
+    """SibshipUnit Class.
 
     This class is used to manage the
     base unit of a single sibship unit
     in the structure of the pedigree.
     """
 
-    __pedigree_identifier: str
-    __mating_unit_relation: Union[MatingUnitBase, None]
-
     def __init__(self, pedigree_identifier: str, mating_unit_relation=None) -> None:
+        """Initialize an instance of the SibshipUnit class.
+
+        It accepts the pedigree identifier of the pedigree
+        and, if it has, relation to a single mating unit.
+        """
         try:
-            assert isinstance(pedigree_identifier,  str)
+            assert isinstance(pedigree_identifier, str)
             assert isinstance(mating_unit_relation, (MatingUnit, type(None)))
         except AssertionError as assertion_error:
             message = 'The sibship unit constructor arguments are not correct!'
@@ -433,33 +397,32 @@ class SibshipUnit(Generic[SibshipUnitBase]):
         self.__generation_rank = generation_rank
 
     def __hash__(self) -> int:
+        """Return the hash code of the class."""
         return hash(self.mating_unit_relation)
 
     def __eq__(self, sibship_unit: SibshipUnitBase) -> bool:
+        """Return if two instances of the class are equal."""
         if not isinstance(sibship_unit, (SibshipUnit, type(None))):
             return False
         return self.__hash__() == sibship_unit.__hash__()
 
     def __repr__(self) -> str:
+        """Return the string representation of the class."""
         assert isinstance(self.mating_unit_relation, MatingUnit)
         return "SU" + self.mating_unit_relation.mating_string()
 
     def add_sibling_individual(self, sibling_individual: Individual) -> None:
-        """Add an individual to the collection of siblings.
-        The function accepts an instance of Individual class."""
+        """Add an individual to the collection of siblings."""
         assert isinstance(sibling_individual, Individual)
         self.__siblings_individuals.append(sibling_individual)
 
     def add_sibling_individual_mate(self, sibling_individual_mate: Individual) -> None:
-        """Add an individual mate to the collection of extended siblings.
-        The function accepts an instance of Individual class."""
+        """Add an individual mate to the collection of extended siblings."""
         assert isinstance(sibling_individual_mate, Individual)
         self.__siblings_extended.append(sibling_individual_mate)
 
     def change_sibling_individual(self, sibling_individual: Individual, index_child: int) -> None:
-        """Change an individual from the collection of siblings.
-        The function accepts an instance of Individual class
-        and the index of the child - integer value."""
+        """Change an individual from the collection of siblings."""
         assert isinstance(sibling_individual, Individual)
         assert isinstance(index_child, int)
         self.__siblings_individuals[index_child] = sibling_individual
