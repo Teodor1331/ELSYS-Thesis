@@ -32,4 +32,3 @@ jobs:
         make pycodestyle
         make pydocstyle
         make pyflakes
-    - name: Delete Cache
