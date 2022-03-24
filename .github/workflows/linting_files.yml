@@ -33,7 +33,3 @@ jobs:
         make pycodestyle
         make pydocstyle
         make pyflakes
-    - name: Delete Cache
-      run: |
-        cd Source/
-        make clean
