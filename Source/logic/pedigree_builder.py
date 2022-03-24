@@ -128,6 +128,10 @@ class Loader:
                 message = 'The column name {} is not recognized!'
                 raise ValueError(message.format(column_name[1:]))
 
+        if len(dictionary_order) != len(Loader.PEDIGREE_COLUMNS):
+            message = 'There is a missing column in the file!'
+            raise ValueError(message)
+
         return dictionary_order
 
     @classmethod
@@ -160,6 +164,10 @@ class Loader:
             else:
                 message = 'The column name {} is not recognized!'
                 raise ValueError(message.format(column_name))
+
+        if len(dictionary_order) != len(Loader.PEDIGREE_COLUMNS):
+            message = 'There is a missing column in the file!'
+            raise ValueError(message)
 
         return dictionary_order
 
