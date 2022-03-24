@@ -80,7 +80,6 @@ class Loader:
             print("Check the data in your file!")
             sys.exit(3)
 
-
     @property
     def file_path(self) -> str:
         """Return the file path property of the class."""
