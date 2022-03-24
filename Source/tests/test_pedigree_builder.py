@@ -131,30 +131,45 @@ def test_loader_instances(loader1, loader2, loader3):
 
 def test_loader_constructor():
     """Test Loader Class Constructor."""
-    with pytest.raises(AssertionError, match='The file path is not a string!'):
+    with pytest.raises(SystemExit) as pytest_wrapped_error:
         Loader(None), Loader(bool), Loader(str)
         Loader(int), Loader(float), Loader(complex)
         Loader(bytes), Loader(bytearray), Loader(memoryview)
         Loader(list), Loader(tuple), Loader(range)
         Loader(set), Loader(frozenset), Loader(dict)
 
-    with pytest.raises(AssertionError, match='The file path was not found!'):
+    assert pytest_wrapped_error.type == SystemExit
+    assert pytest_wrapped_error.value.code == 1
+
+    with pytest.raises(SystemExit) as pytest_wrapped_error:
         Loader('Hello, World!')
         Loader('Hello, Python!')
         Loader('Python World!')
 
-    with pytest.raises(AssertionError, match='The file has invalid format!'):
+    assert pytest_wrapped_error.type == SystemExit
+    assert pytest_wrapped_error.value.code == 1
+
+    with pytest.raises(SystemExit) as pytest_wrapped_error:
         Loader('../../Examples/Others/Example Folder')
 
-    with pytest.raises(AssertionError, match='The file is not accessible!'):
+    assert pytest_wrapped_error.type == SystemExit
+    assert pytest_wrapped_error.value.code == 1
+
+    with pytest.raises(SystemExit) as pytest_wrapped_error:
         os.chmod('../../Examples/Others/Example.ped', ~stat.S_IRUSR)
         Loader('../../Examples/Others/Example.ped')
 
-    with pytest.raises(AssertionError, match='The file data is not valid!'):
+    assert pytest_wrapped_error.type == SystemExit
+    assert pytest_wrapped_error.value.code == 1
+
+    with pytest.raises(SystemExit) as pytest_wrapped_error:
         Loader('../../Examples/PED Examples/Pedigree4.ped')
         Loader('../../Examples/PED Examples/Pedigree5.ped')
         Loader('../../Examples/PED Examples/Pedigree6.ped')
         Loader('../../Examples/PED Examples/Pedigree7.ped')
+
+    assert pytest_wrapped_error.type == SystemExit
+    assert pytest_wrapped_error.value.code == 1
 
     os.chmod('../../Examples/Others/Example.ped', stat.S_IRUSR)
 
@@ -312,11 +327,17 @@ def test_managing_tabbed_separated_file_method(column_order):
         loader.manage_tabbed_separated(dict)
         loader.manage_tabbed_separated('Hello, World!')
 
-    with pytest.raises(ValueError, match='The column name invalid_column is not recognized!'):
+    with pytest.raises(SystemExit) as pytest_wrapped_error:
         Loader('../../Examples/PED Examples/Pedigree2.ped')
 
-    with pytest.raises(ValueError, match='The column name  is not recognized!'):
+    assert pytest_wrapped_error.type == SystemExit
+    assert pytest_wrapped_error.value.code == 2
+
+    with pytest.raises(SystemExit) as pytest_wrapped_error:
         Loader('../../Examples/PED Examples/Pedigree3.ped')
+
+    assert pytest_wrapped_error.type == SystemExit
+    assert pytest_wrapped_error.value.code == 2
 
     file_descriptor = open(loader.file_path)
     result = loader.manage_tabbed_separated(file_descriptor)
@@ -348,11 +369,17 @@ def test_manage_comma_separated_file_method(column_order):
         loader.manage_comma_separated(dict)
         loader.manage_comma_separated('Hello, World!')
 
-    with pytest.raises(StopIteration, match='The column iteration stopped!'):
+    with pytest.raises(SystemExit) as pytest_wrapped_error:
         Loader('../../Examples/CSV Examples/Pedigree3.csv')
 
-    with pytest.raises(ValueError, match='The column name invalid_column is not recognized!'):
+    assert pytest_wrapped_error.type == SystemExit
+    assert pytest_wrapped_error.value.code == 3
+
+    with pytest.raises(SystemExit) as pytest_wrapped_error:
         Loader('../../Examples/CSV Examples/Pedigree2.csv')
+
+    assert pytest_wrapped_error.type == SystemExit
+    assert pytest_wrapped_error.value.code == 2
 
     file_descriptor = open(loader.file_path)
     result = loader.manage_comma_separated(file_descriptor)
@@ -401,9 +428,8 @@ def test_validate_file_data_method():
     pass
 
 
-def test_validate_number_individuals_method(valid_dictionary, invalid_dictionary):
-    assert Loader.validate_number_individuals(valid_dictionary) is True
-    assert Loader.validate_number_individuals(invalid_dictionary) is False
+def test_validate_number_individuals_method():
+    pass
 
 
 def test_validate_context_individuals_method():
@@ -428,12 +454,15 @@ def test_builder_instances(builder1, builder2, builder3):
 def test_builder_constructor():
     """Test Builder Class Constructor."""
 
-    with pytest.raises(AssertionError, match='The constructor arguments are not correct!'):
+    with pytest.raises(SystemExit) as pytest_wrapped_error:
         Builder(None), Builder(bool), Builder(str)
         Builder(int), Builder(float), Builder(complex)
         Builder(bytes), Builder(bytearray), Builder(memoryview)
         Builder(list), Builder(tuple), Builder(range)
         Builder(set), Builder(frozenset), Builder(dict)
+
+    assert pytest_wrapped_error.type == SystemExit
+    assert pytest_wrapped_error.value.code == 4
 
 
 def test_builder_properties(builder1, builder2, builder3):

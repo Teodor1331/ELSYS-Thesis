@@ -12,6 +12,7 @@ from io import TextIOWrapper
 from collections import defaultdict
 
 import os
+import sys
 import re
 import csv
 
@@ -27,12 +28,6 @@ class Loader:
     can be tabbed separated or comma separated.
     By default, the file is in PED format.
     """
-
-    __file_path: str
-    __file_name: str
-    __file_stem: str
-    __file_suffix: str
-    __file_data: list
 
     PEDIGREE_COLUMNS = {
         'pedigree_identifier': 0,
@@ -73,7 +68,18 @@ class Loader:
 
             assert self.validate_file_data(), not_valid_message
         except AssertionError as assertion_error:
-            raise assertion_error
+            print(str(assertion_error))
+            print("Check the data in your file!")
+            sys.exit(1)
+        except ValueError as value_error:
+            print(str(value_error))
+            print("Check the data in your file!")
+            sys.exit(2)
+        except StopIteration as stop_iteration:
+            print(str(stop_iteration))
+            print("Check the data in your file!")
+            sys.exit(3)
+
 
     @property
     def file_path(self) -> str:
@@ -104,8 +110,8 @@ class Loader:
     def manage_tabbed_separated(cls, file_object: TextIO) -> dict:
         """Manage a tabbed separated file and return column order.
 
-        Accepts: FILE_OBJECT of type TextIOWrapper
-        Returns: DICT_OBJECT of type dict
+        This method accepts a file object and returns a dictionary
+        with the order of the columns in the file as they are.
         """
         try:
             assert isinstance(file_object, TextIOWrapper)
@@ -136,10 +142,10 @@ class Loader:
 
     @classmethod
     def manage_comma_separated(cls, file_object: TextIO) -> dict:
-        """Manage a comma file and return column order.
+        """Manage a comma separated file and return column order.
 
-        Accepts: FILE_OBJECT of type TextIOWrapper
-        Returns: DICT_OBJECT of type dict
+        This method accepts a file object and returns a dictionary
+        with the order of the columns in the file as they are.
         """
         try:
             assert isinstance(file_object, TextIOWrapper)
@@ -174,8 +180,8 @@ class Loader:
     def read_file_data(self) -> list:
         """Read the file data from a given file.
 
-        Accepts: No arguments.
-        Returns: FILE_DATA of type list.
+        This method manages the whole reading of the file,
+        no matter if it is tabbed or comma separated.
         """
         file_data = []
         buffer_data = []
@@ -215,52 +221,44 @@ class Loader:
         return file_data
 
     def validate_file_data(self) -> bool:
-        """Validate the file data from a given file.
-
-        Accepts: No arguments
-        Returns: Boolean type result
-        """
+        """Validate the file data from a given file."""
         distributed_data = defaultdict(list)
 
         for data_unit in self.file_data:
             distributed_data[data_unit[0]].append(data_unit)
 
-        if not Loader.validate_number_individuals(distributed_data):
-            return False
-
         for key in distributed_data:
             data = distributed_data[key]
 
-            if not Loader.validate_context_individuals(data):
+            if not Loader.validate_number_individuals(data):
                 return False
 
-            if not Loader.find_proband_individual(data):
+            if not Loader.validate_context_individuals(data):
                 return False
 
             if not Loader.validate_individual_parents(data):
                 return False
 
-        return True
-
-    @staticmethod
-    def validate_number_individuals(distributed_data: defaultdict) -> bool:
-        """Validate the number of the individuals in a file.
-
-        Accepts: DISTRIBUTED_DATA of type default dict.
-        Returns: Boolean type result.
-        """
-        for key in distributed_data:
-            if len(distributed_data[key]) == 2:
+            if not Loader.find_proband_individual(data):
                 return False
 
         return True
 
     @staticmethod
+    def validate_number_individuals(data: list) -> bool:
+        """Validate the number of the individuals in a file.
+
+        This methods checks if the number of the individuals
+        in the file is exactly less than 3 or not.
+        """
+        return not len(data) < 3
+
+    @staticmethod
     def validate_context_individuals(data: list) -> bool:
         """Validate the context of the individuals in a file.
 
-        Accepts: DATA of type list
-        Returns: Boolean type result
+        This method checks if every individual in the file has
+        its own father and mother in the same file data.
         """
         for data_unit in data:
             found_father = Loader.find_parent_individual(data, data_unit, 2)
@@ -275,8 +273,9 @@ class Loader:
     def validate_individual_parents(data: list) -> bool:
         """Validate the gender of the parents of an individual.
 
-        Accepts: DATA of type list
-        Returns: Boolean result
+        This methods validates the gender of the parents of
+        every single individual. For example, if the individual
+        is not a product of two mothers or two fathers.
         """
         for unit in data:
             validated_father = True
@@ -304,10 +303,8 @@ class Loader:
                                data_unit: list, index: int) -> bool:
         """Find a parent of the individual in the file.
 
-        Accepts: DATA of type list
-                 DATA_UNIT of type list
-                 INDEX of type integer
-        Returns: Boolean result
+        This methods looks for the parent individual of a
+        current one on the read file data of the same file.
         """
         if data_unit[index] == '0':
             return True
@@ -322,8 +319,8 @@ class Loader:
     def find_proband_individual(data: list) -> bool:
         """Find a single proband individual in the file.
 
-        Accepts: DATA of type list
-        Returns: Boolean result
+        This method looks for the proband individual in
+        the whole file data of the pedigree.
         """
         return len([1 for data_unit in data
                     if data_unit[6] == 'prb'
@@ -338,10 +335,6 @@ class Builder:
     sibship units inside by given file data.
     """
 
-    __file_data: list
-    __file_pedigrees: list
-    __file_individuals: list
-
     def __init__(self, file_data: list) -> None:
         """Initialize an instance of the Builder class.
 
@@ -350,8 +343,9 @@ class Builder:
         try:
             assert isinstance(file_data, list)
         except AssertionError as assertion_error:
-            message = 'The constructor arguments are not correct!'
-            raise AssertionError(message) from assertion_error
+            print(str(assertion_error))
+            print("Invalid file data!")
+            sys.exit(4)
 
         self.__file_data = file_data
         self.__file_pedigrees = self.build_file_units()[0]
@@ -377,8 +371,10 @@ class Builder:
     def build_file_units(self) -> tuple:
         """Build file units by given data.
 
-        Accepts: No arguments
-        Returns: A pair of type tuple
+        This method build the units which comes
+        directly from the file data. These units
+        are the individuals and the pedigree
+        (without its internal structure).
         """
         file_pedigrees = []
         file_individuals = []
@@ -394,8 +390,10 @@ class Builder:
     def build_inner_units(self) -> None:
         """Build inner structure units from already built file units.
 
-        Accepts: No arguments
-        Returns: No result
+        This method builds the whole structure of a pedigree by
+        distributing the individuals to their corresponding pedigrees
+        and calling the needed methods in every single pedigree for
+        building the hierarchy and the organization of the base units.
         """
         for file_individual in self.file_individuals:
             assert isinstance(file_individual, Individual)
