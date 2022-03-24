@@ -5,8 +5,10 @@ on:
     branches: [ main ]
     paths: 
       - Source/**
-
-  workflow_dispatch:
+  pull_request:
+    branches: [ main ]
+    paths: 
+      - Source/**
 
 jobs:
   build:
@@ -33,3 +35,4 @@ jobs:
         make pycodestyle
         make pydocstyle
         make pyflakes
+    - name: Delete Cache
