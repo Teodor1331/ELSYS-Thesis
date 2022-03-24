@@ -21,7 +21,7 @@ from .pedigree_family import PedigreeFamily
 
 
 class Loader:
-    """Class Name: Loader.
+    """Load Class.
 
     This class is used to load the whole
     data from a pedigree file. The file
@@ -45,7 +45,7 @@ class Loader:
     def __init__(self, file_path: str) -> None:
         """Initialize an instance of the Loader class.
 
-        Parameters: The path to the file with the data.
+        It accepts the path to the file with the data.
         """
         try:
             not_string_message = 'The file path is not a string!'
@@ -69,15 +69,15 @@ class Loader:
             assert self.validate_file_data(), not_valid_message
         except AssertionError as assertion_error:
             print(str(assertion_error))
-            print("Check the data in your file!")
+            print("Check your file carefully!")
             sys.exit(1)
         except ValueError as value_error:
             print(str(value_error))
-            print("Check the data in your file!")
+            print("Check your file carefully!")
             sys.exit(2)
         except StopIteration as stop_iteration:
             print(str(stop_iteration))
-            print("Check the data in your file!")
+            print("Check your file carefully!")
             sys.exit(3)
 
     @property
@@ -107,10 +107,10 @@ class Loader:
 
     @classmethod
     def manage_tabbed_separated(cls, file_object: TextIO) -> dict:
-        """Manage a tabbed separated file and return column order.
+        """Manage a tab separated file and return its column order.
 
         This method accepts a file object and returns a dictionary
-        with the order of the columns in the file as they are.
+        with the order of the columns in the file as they are given.
         """
         try:
             assert isinstance(file_object, TextIOWrapper)
@@ -141,10 +141,10 @@ class Loader:
 
     @classmethod
     def manage_comma_separated(cls, file_object: TextIO) -> dict:
-        """Manage a comma separated file and return column order.
+        """Manage a comma separated file and its return column order.
 
         This method accepts a file object and returns a dictionary
-        with the order of the columns in the file as they are.
+        with the order of the columns in the file as they are given.
         """
         try:
             assert isinstance(file_object, TextIOWrapper)
@@ -180,7 +180,7 @@ class Loader:
         """Read the file data from a given file.
 
         This method manages the whole reading of the file,
-        no matter if it is tabbed or comma separated.
+        no matter if it is in tab or comma separated format.
         """
         file_data = []
         buffer_data = []
@@ -189,12 +189,12 @@ class Loader:
             if self.file_suffix.lower() in Loader.TAB_SEPARATED_EXTENSIONS:
                 dictionary_order = self.manage_tabbed_separated(file)
 
-                filelines = file.readlines()
+                file_lines = file.readlines()
 
-                if len(filelines) != 1 and filelines[-1] != '\n':
+                if len(file_lines) != 1 and file_lines[-1] != '\n':
                     raise ValueError('The file must end with a new line!')
 
-                for file_line in filelines[:-1]:
+                for file_line in file_lines[:-1]:
                     file_line = re.sub(' +', '\t', file_line)
                     file_line = re.sub('\t+', '\t', file_line)
                     file_line = file_line.strip('\n').split('\t')
@@ -247,8 +247,8 @@ class Loader:
     def validate_number_individuals(data: list) -> bool:
         """Validate the number of the individuals in a file.
 
-        This methods checks if the number of the individuals
-        in the file is exactly less than 3 or not.
+        This method checks if the number of the individuals
+        in the file is less than 3 or not (for example 1 or 2).
         """
         return not len(data) < 3
 
@@ -272,7 +272,7 @@ class Loader:
     def validate_individual_parents(data: list) -> bool:
         """Validate the gender of the parents of an individual.
 
-        This methods validates the gender of the parents of
+        This method validates the gender of the parents of
         every single individual. For example, if the individual
         is not a product of two mothers or two fathers.
         """
@@ -302,7 +302,7 @@ class Loader:
                                data_unit: list, index: int) -> bool:
         """Find a parent of the individual in the file.
 
-        This methods looks for the parent individual of a
+        This method looks for the parent individual of a
         current one on the read file data of the same file.
         """
         if data_unit[index] == '0':
@@ -319,7 +319,7 @@ class Loader:
         """Find a single proband individual in the file.
 
         This method looks for the proband individual in
-        the whole file data of the pedigree.
+        the whole file data of the pedigree file.
         """
         return len([1 for data_unit in data
                     if data_unit[6] == 'prb'
@@ -327,7 +327,7 @@ class Loader:
 
 
 class Builder:
-    """Class Name: Builder.
+    """Builder Class.
 
     This class is used to build every pedigree
     with its own individuals, mating units and
@@ -337,7 +337,7 @@ class Builder:
     def __init__(self, file_data: list) -> None:
         """Initialize an instance of the Builder class.
 
-        Parameters: The file data from a file.
+        It accepts file data from a file.
         """
         try:
             assert isinstance(file_data, list)
@@ -372,8 +372,8 @@ class Builder:
 
         This method build the units which comes
         directly from the file data. These units
-        are the individuals and the pedigree
-        (without its internal structure).
+        are the individuals and the pedigrees
+        (without their internal structure).
         """
         file_pedigrees = []
         file_individuals = []

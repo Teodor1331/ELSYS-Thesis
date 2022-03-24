@@ -1,6 +1,6 @@
 # This Python file uses the following encoding: UTF-8
 
-"""Module with all enumerations for the Individual properties."""
+"""Module with all enumerations for the Individual class properties."""
 
 from enum import Enum
 

@@ -6,6 +6,8 @@ on:
     paths: 
       - Source/**
 
+  workflow-dispatch:
+
 jobs:
   build:
 
