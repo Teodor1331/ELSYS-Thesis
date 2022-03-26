@@ -18,7 +18,7 @@ from .pedigree_units import Individual
 from .pedigree_units import MatingUnit
 from .pedigree_units import SibshipUnit
 from .pedigree_family import PedigreeFamily
-from .pedigree_problem import Interval
+from .pedigree_problem import VertexInterval
 from .pedigree_problem import Cut
 
 
@@ -474,7 +474,7 @@ class ProblemSolver:
 
         # For each v ∈ V, add the cut {v} to Q.
         for vertex in self.sandwich_instance.pedigree_vertices:
-            current_interval = Interval(vertex)
+            current_interval = VertexInterval(vertex)
             realization_instance = Cut(
                 self.sandwich_instance.mandatory_graph,
                 self.sandwich_instance.forbidden_graph,
@@ -507,13 +507,13 @@ class ProblemSolver:
             # For every z ∉ X (every element of other_vertices), do:
             for vertex in other_vertices:
                 # Try to extend X by z (using Lemma 2.1).
-                condition_extend = feasible_cut.can_extend_vertex(vertex)
+                condition_extend = feasible_cut.validate_extend_vertex(vertex)
 
                 if not condition_extend:
                     continue
 
                 # Suppose a feasible cut Y is generated.
-                copy_realization = feasible_cut.create_copy_realization()
+                copy_realization = feasible_cut.build_copy_cut()
                 copy_realization.extend_vertex(vertex)
 
                 # If Y has domain V then output "success" and stop.
