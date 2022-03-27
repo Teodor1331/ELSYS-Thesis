@@ -383,9 +383,9 @@ class SandwichInstance:
     """
 
     def __init__(self,
-                 pedigree_vertices: OrderedSet,
-                 mandatory_graph: OrderedSet,
-                 forbidden_graph: OrderedSet) -> None:
+                 pedigree_vertices: AbstractSet,
+                 mandatory_graph: AbstractSet,
+                 forbidden_graph: AbstractSet) -> None:
         """Initialize an instance of the SandwichInstance class.
 
         It accepts a set of vertices, a set of mandatory
