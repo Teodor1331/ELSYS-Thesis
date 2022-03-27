@@ -20,7 +20,7 @@ SibshipUnitBase = TypeVar('SibshipUnitBase')
 
 
 class Individual(Generic[IndividualBase]):
-    """Individual Class..
+    """Individual Class.
 
     This class is used to manage the
     base unit of a single individual

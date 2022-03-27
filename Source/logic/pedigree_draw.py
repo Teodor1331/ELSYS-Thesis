@@ -48,7 +48,7 @@ class PDFBuilder:
 
     This class is used to create a PDF file
     with exactly one page and plot a whole
-    drawing of a pedigree in in the page.
+    drawing of a pedigree in the page.
     """
 
     def __init__(self, filename: str) -> None:
