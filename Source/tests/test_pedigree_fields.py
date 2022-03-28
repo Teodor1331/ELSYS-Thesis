@@ -4,9 +4,9 @@
 
 import inspect
 
-from ..logic.pedigree_fields import Sex
-from ..logic.pedigree_fields import Status
-from ..logic.pedigree_fields import Role
+from logic.pedigree_fields import Sex
+from logic.pedigree_fields import Status
+from logic.pedigree_fields import Role
 
 
 def test_imported_modules():

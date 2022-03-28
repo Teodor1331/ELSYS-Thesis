@@ -9,10 +9,10 @@ import pytest
 import os
 import stat
 
-from ..logic.pedigree_builder import Loader
-from ..logic.pedigree_builder import Builder
-from ..logic.pedigree_units import Individual
-from ..logic.pedigree_family import PedigreeFamily
+from logic.pedigree_builder import Loader
+from logic.pedigree_builder import Builder
+from logic.pedigree_units import Individual
+from logic.pedigree_family import PedigreeFamily
 
 
 @pytest.fixture(name='loader1')

@@ -11,11 +11,11 @@ from typing import Union
 from collections import defaultdict
 from collections import OrderedDict
 
-from .pedigree_units import Individual
-from .pedigree_units import MatingUnit
-from .pedigree_units import SibshipUnit
+from logic.pedigree_units import Individual
+from logic.pedigree_units import MatingUnit
+from logic.pedigree_units import SibshipUnit
 
-from .pedigree_problem import VertexInterval
+from logic.pedigree_problem import VertexInterval
 
 
 class Shape:

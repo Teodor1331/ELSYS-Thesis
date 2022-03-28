@@ -10,10 +10,10 @@ from typing import Union
 from typing import TypeVar
 from typing import Generic
 
-from .pedigree_fields import Role
-from .pedigree_units import Individual
-from .pedigree_units import MatingUnit
-from .pedigree_units import SibshipUnit
+from logic.pedigree_fields import Role
+from logic.pedigree_units import Individual
+from logic.pedigree_units import MatingUnit
+from logic.pedigree_units import SibshipUnit
 
 PedigreeFamilyBase = TypeVar('PedigreeFamilyBase')
 

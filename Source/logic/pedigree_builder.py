@@ -16,8 +16,8 @@ import sys
 import re
 import csv
 
-from .pedigree_units import Individual
-from .pedigree_family import PedigreeFamily
+from logic.pedigree_units import Individual
+from logic.pedigree_family import PedigreeFamily
 
 
 class Loader:

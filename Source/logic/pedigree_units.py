@@ -10,9 +10,9 @@ from typing import Union
 from typing import TypeVar
 from typing import Generic
 
-from .pedigree_fields import Sex
-from .pedigree_fields import Status
-from .pedigree_fields import Role
+from logic.pedigree_fields import Sex
+from logic.pedigree_fields import Status
+from logic.pedigree_fields import Role
 
 IndividualBase = TypeVar('IndividualBase')
 MatingUnitBase = TypeVar('MatingUnitBase')

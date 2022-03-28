@@ -1,4 +1,4 @@
-make: pylint pylama pycodestyle pydocstyle pyflakes test
+make: pylint pycodestyle pydocstyle pyflakes test
 
 pylint:
 	cd logic/ && pylint __init__.py

@@ -14,12 +14,12 @@ from ordered_set import OrderedSet
 
 import networkx as nx
 
-from .pedigree_units import Individual
-from .pedigree_units import MatingUnit
-from .pedigree_units import SibshipUnit
-from .pedigree_family import PedigreeFamily
-from .pedigree_problem import VertexInterval
-from .pedigree_problem import Cut
+from logic.pedigree_units import Individual
+from logic.pedigree_units import MatingUnit
+from logic.pedigree_units import SibshipUnit
+from logic.pedigree_family import PedigreeFamily
+from logic.pedigree_problem import VertexInterval
+from logic.pedigree_problem import Cut
 
 
 class Graph:

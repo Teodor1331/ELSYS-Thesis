@@ -17,15 +17,15 @@ from matplotlib.patches import Rectangle
 from matplotlib.lines import Line2D
 from matplotlib.backends.backend_pdf import PdfPages
 
-from .pedigree_fields import Sex
-from .pedigree_fields import Status
-from .pedigree_fields import Role
+from logic.pedigree_fields import Sex
+from logic.pedigree_fields import Status
+from logic.pedigree_fields import Role
 
-from .pedigree_units import Individual
+from logic.pedigree_units import Individual
 
-from .pedigree_layouter import Shape
-from .pedigree_layouter import Line
-from .pedigree_layouter import Layout
+from logic.pedigree_layouter import Shape
+from logic.pedigree_layouter import Line
+from logic.pedigree_layouter import Layout
 
 
 mpl.use("PS")

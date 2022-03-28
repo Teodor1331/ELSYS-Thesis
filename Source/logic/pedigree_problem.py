@@ -15,9 +15,9 @@ import networkx as nx
 
 from ordered_set import OrderedSet
 
-from .pedigree_units import Individual
-from .pedigree_units import MatingUnit
-from .pedigree_units import SibshipUnit
+from logic.pedigree_units import Individual
+from logic.pedigree_units import MatingUnit
+from logic.pedigree_units import SibshipUnit
 
 
 class Interval:
