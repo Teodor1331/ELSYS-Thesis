@@ -8,19 +8,19 @@ import shutil
 
 import matplotlib.pyplot as plt
 
-from .logic.pedigree_builder import Loader
-from .logic.pedigree_builder import Builder
+from logic.pedigree_builder import Loader
+from logic.pedigree_builder import Builder
 
-from .logic.pedigree_family import PedigreeFamily
+from logic.pedigree_family import PedigreeFamily
 
-from .logic.pedigree_graph import Graph
-from .logic.pedigree_graph import SandwichInstance
-from .logic.pedigree_graph import ProblemSolver
+from logic.pedigree_graph import Graph
+from logic.pedigree_graph import SandwichInstance
+from logic.pedigree_graph import ProblemSolver
 
-from .logic.pedigree_layouter import Layout
-from .logic.pedigree_drawer import LayoutDrawer
-from .logic.pedigree_drawer import PDFBuilder
-from .logic.pedigree_drawer import validate_colors_statuses
+from logic.pedigree_layouter import Layout
+from logic.pedigree_drawer import LayoutDrawer
+from logic.pedigree_drawer import PDFBuilder
+from logic.pedigree_drawer import validate_colors_statuses
 
 
 def main() -> None:
