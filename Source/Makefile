@@ -6,12 +6,6 @@ pylint:
 	cd logic/ && pylint pedigree_fields.py
 
 
-pylama:
-	cd logic/ && pylama __init__.py
-	cd logic/ && pylama pedigree_builder.py
-	cd logic/ && pylama pedigree_fields.py
-
-
 pycodestyle:
 	cd logic/ && pycodestyle __init__.py
 	cd logic/ && pycodestyle pedigree_builder.py
