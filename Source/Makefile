@@ -34,9 +34,9 @@ coverage:
 
 
 clean:
-	rm -r __pycache__
-	cd logic/ && rm -r __pycache__
-	cd tests/ && rm -r __pycache__
-	cd tests/ && rm -r .pytest_cache
-	# cd tests/ && rm -r .coverage
-	# cd tests/ && rm -r htmlcov/
+	rm -r -f __pycache__
+	cd logic/ && rm -r -f __pycache__
+	cd tests/ && rm -r -f __pycache__
+	cd tests/ && rm -r -f .pytest_cache
+	cd tests/ && rm -r -f .coverage
+	cd tests/ && rm -r -f htmlcov/
