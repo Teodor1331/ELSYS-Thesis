@@ -38,5 +38,3 @@ clean:
 	cd logic/ && rm -r -f __pycache__
 	cd tests/ && rm -r -f __pycache__
 	cd tests/ && rm -r -f .pytest_cache
-	cd tests/ && rm -r -f .coverage
-	cd tests/ && rm -r -f htmlcov/
