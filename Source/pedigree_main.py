@@ -4,6 +4,7 @@
 
 import os
 import sys
+import stat
 import shutil
 import argparse
 
@@ -51,8 +52,8 @@ def main() -> None:
             print('Some of the colors are unknown!')
             sys.exit(3)
 
-        if not os.path.isdir('./PDF Files'):
-            os.mkdir('./PDF Files')
+        if not os.path.isdir('./Visualizations'):
+            os.mkdir('./Visualizations')
 
         for pedigree in builder.file_pedigrees:
             assert isinstance(pedigree, PedigreeFamily)
@@ -75,17 +76,18 @@ def main() -> None:
                 layouter = Layout(solver.solved_intervals)
                 layout_drawer = LayoutDrawer(layouter, 0, 0, colors)
                 figure = layout_drawer.draw(pedigree.pedigree_identifier)
-                file_name = './PDF Files/' + pedigree.pedigree_identifier + '.pdf'
+                file_name = './Visualizations/' + pedigree.pedigree_identifier + '.pdf'
 
                 with PDFBuilder(file_name) as pdf_drawer:
                     pdf_drawer.savefig(figure)
                     plt.close(figure)
+                    print('A visualization of the pedigree was created!')      
 
     if arguments.clean_flag:
-        if not os.path.isdir('./PDF Files'):
-            print('There is no folder for the PDF files!')
+        if not os.path.isdir('./Visualizations'):
+            print('There is no folder for the visualiations!')
         else:
-            shutil.rmtree('./PDF Files')
+            shutil.rmtree('./Visualizations')
 
 
 if __name__ == '__main__':
