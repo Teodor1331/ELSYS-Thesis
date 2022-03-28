@@ -424,26 +424,6 @@ def test_reading_file_data_method():
     assert result2 == expected_result
 
 
-def test_validate_file_data_method():
-    pass
-
-
-def test_validate_number_individuals_method():
-    pass
-
-
-def test_validate_context_individuals_method():
-    pass
-
-
-def test_find_parent_individual_method():
-    pass
-
-
-def test_find_proband_individual_method():
-    pass
-
-
 def test_builder_instances(builder1, builder2, builder3):
     assert isinstance(builder1, Builder)
     assert isinstance(builder2, Builder)

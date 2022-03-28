@@ -5,6 +5,7 @@
 import os
 import sys
 import shutil
+import argparse
 
 import matplotlib.pyplot as plt
 
@@ -25,9 +26,13 @@ from logic.pedigree_drawer import validate_colors_statuses
 
 def main() -> None:
     """Manage the consequence in the logic of pedigree vizualization."""
+    parser = argparse.ArgumentParser(description='Manage a Pedigree File.')
+    parser.add_argument('-o', dest='file_name')
+    parser.add_argument('-clean', action='store_true', dest='clean_flag')
+    arguments = parser.parse_args()
 
-    if sys.argv[1:][0] == '-o':
-        loader = Loader(sys.argv[1:][1])
+    if arguments.file_name:
+        loader = Loader(arguments.file_name)
         builder = Builder(loader.file_data)
 
         colors = {'affected': input('Input the color for the affected individuals: '),
@@ -75,13 +80,12 @@ def main() -> None:
                 with PDFBuilder(file_name) as pdf_drawer:
                     pdf_drawer.savefig(figure)
                     plt.close(figure)
-    elif sys.argv[1:][0] == 'clean':
+
+    if arguments.clean_flag:
         if not os.path.isdir('./PDF Files'):
             print('There is no folder for the PDF files!')
         else:
             shutil.rmtree('./PDF Files')
-    else:
-        print('The command is unknown!')
 
 
 if __name__ == '__main__':
