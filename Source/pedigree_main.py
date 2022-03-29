@@ -4,7 +4,6 @@
 
 import os
 import sys
-import stat
 import shutil
 import argparse
 

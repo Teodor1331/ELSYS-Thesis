@@ -28,11 +28,6 @@ test:
 	cd tests/ && pytest test_pedigree_builder.py
 
 
-coverage:
-	cd tests/ && coverage run -m pytest test_pedigree_fields.py && coverage html && cd htmlcov && google-chrome index.html
-	cd tests/ && coverage run -m pytest test_pedigree_builder.py && coverage html && cd htmlcov && google-chrome index.html
-
-
 clean:
 	rm -r -f __pycache__
 	cd logic/ && rm -r -f __pycache__
