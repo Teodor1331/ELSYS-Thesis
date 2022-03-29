@@ -88,6 +88,7 @@ def main() -> None:
             print('There is no folder for the visualiations!')
         else:
             shutil.rmtree('./Visualizations')
+            print('All pedigree visualizations were deleted!')
 
 
 if __name__ == '__main__':
