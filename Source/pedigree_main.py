@@ -24,6 +24,7 @@ from logic.pedigree_drawer import PDFBuilder
 from logic.pedigree_drawer import validate_colors_statuses
 
 def manage_input_colors() -> dict:
+    """Manage the user input for the status colors."""
     option = input("Do you want to change the default colors for the statuses of the individuals (Y/N): ")
 
     if option == 'Y':
@@ -52,6 +53,7 @@ def manage_input_colors() -> dict:
 
 
 def manage_existing_pedigree(pedigree_identifier: str) -> bool:
+    """Manage the user input for leaving or overwriting a pedigree."""
     if pedigree_identifier + '.pdf' in os.listdir('./Visualizations'):
         option = input('A visualization of this pedigree already exists! Are you sure you want to overwrite it (Y/N): ')
 
