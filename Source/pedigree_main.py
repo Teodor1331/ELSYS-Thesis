@@ -23,14 +23,19 @@ from logic.pedigree_drawer import LayoutDrawer
 from logic.pedigree_drawer import PDFBuilder
 from logic.pedigree_drawer import validate_colors_statuses
 
+
 def manage_input_colors() -> dict:
     """Manage the user input for the status colors."""
     option = input("Do you want to change the default colors for the statuses of the individuals (Y/N): ")
 
+    if option not in ('Y', 'N'):
+        print('You entered an unknown option for the colors!')
+        sys.exit(4)
+
     if option == 'Y':
         colors = {'affected': input('Input the color for the affected individuals: '),
-                'unaffected': input('Input the color for the unaffected individuals: '),
-                'unknown': input('Input the colors for the unknown individuals: ')}
+                  'unaffected': input('Input the color for the unaffected individuals: '),
+                  'unknown': input('Input the colors for the unknown individuals: ')}
 
         if len(set(colors.values())) != 3:
             print('The colors for the statuses should be different!')
@@ -45,26 +50,20 @@ def manage_input_colors() -> dict:
             sys.exit(3)
 
         return colors
-    elif option == 'N':
-        return {'affected': 'red', 'unaffected': 'white', 'unknown': 'grey'}
-    else:
-        print('You entered an unknown option for the colors!')
-        sys.exit(4)
+
+    return {'affected': 'red', 'unaffected': 'white', 'unknown': 'grey'}
 
 
 def manage_existing_pedigree(pedigree_identifier: str) -> bool:
     """Manage the user input for leaving or overwriting a pedigree."""
     if pedigree_identifier + '.pdf' in os.listdir('./Visualizations'):
-        option = input('A visualization of this pedigree already exists! Are you sure you want to overwrite it (Y/N): ')
+        option = input('A visualization of ' + pedigree_identifier + ' already exists! Are you sure you want to overwrite it (Y/N): ')
 
-        if option == 'Y':
-            return True
-        elif option == 'N':
-            return False
-        else:
+        if option not in ('Y', 'N'):
             print('You entered an unknown option for the overwriting!')
             sys.exit(5)
 
+        return bool(option == 'Y')
     return True
 
 
@@ -113,7 +112,7 @@ def main() -> None:
                 with PDFBuilder(file_name) as pdf_drawer:
                     pdf_drawer.savefig(figure)
                     plt.close(figure)
-                    print('A visualization of the pedigree was created!')      
+                    print('A visualization of the pedigree was created!')
 
     if arguments.clean_flag:
         if not os.path.isdir('./Visualizations'):
